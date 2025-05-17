@@ -1,4 +1,6 @@
 import Image from "next/image";
+import PayPalButton from "./components/Paypal";
+import { PluxButton } from "./components/PluxButton";
 
 export default function Home() {
   return (
@@ -23,7 +25,17 @@ export default function Home() {
           <li className="tracking-[-.01em]">
             Save and see your changes instantly.
           </li>
-        </ol>
+        </ol>        
+        <div className="w-full max-w-md p-6 border rounded-lg shadow-sm">
+          <h2 className="text-xl font-bold mb-4 text-center">Complete Your Purchase</h2>
+          <PayPalButton 
+            productDescription="Your Amazing Product"
+            amount={47}
+            currency="USD"
+          />
+        </div>
+
+        <PluxButton />
 
         <div className="flex gap-4 items-center flex-col sm:flex-row">
           <a
@@ -41,6 +53,7 @@ export default function Home() {
             />
             Deploy now
           </a>
+          
           <a
             className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
             href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
@@ -50,7 +63,9 @@ export default function Home() {
             Read our docs
           </a>
         </div>
+        
       </main>
+      
       <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
         <a
           className="flex items-center gap-2 hover:underline hover:underline-offset-4"
