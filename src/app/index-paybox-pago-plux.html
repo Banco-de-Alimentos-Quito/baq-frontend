@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registro tarjeta de Pagoplux</title>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+
+    <script type="text/javascript">
+            var data = {
+              /* Requerido. Email del establecimiento o Id/Class  del elemento html que posee el valor */
+              PayboxRemail: "correocomercio@gmail.com",
+              /* Opcional. Email del usuario que realiza el pago o Id/Class del elemento html que posee el valor */
+              PayboxSendmail: "correocliente@gmail.com",
+              /* Requerido. Nombre del usuario/cuenta Plux o Id/Class del elemento html que posee el valor */
+              PayboxRename: "Nombre Negocio",
+              /* Opcional. nombre de persona que realiza el pago o Id/Class del elemento html */
+              PayboxSendname: "Nombre tarjetahabiente",
+              /* Requerido. Valor Base 0. Valor que no incluye impuesto */
+              PayboxBase0: "2.0",
+              /* Requerido. Valor Base 12. Valor que si incluye impuesto */
+              PayboxBase12: "10.0",
+              /* Requerido. Descripcion del pago o Id/Class del elemento html que posee el valor */
+              PayboxDescription: "Descripcion del pago",
+              /* Opcional. Lenguaje del Paybox
+               * Español: es | (string) (Paybox en español)
+               * Inglés: us | (string) (Paybox en Inglés)*/
+              PayboxLanguage: "es",
+              /* Requerido. direccion del pago */
+              PayboxDirection: "Dirección tarjetahabiente",
+              /*Requerido. Teléfono del cliente */
+              PayBoxClientPhone: "Teléfono tarjetahabiente",
+              /**
+               * True -> producción
+               * False -> test */
+              PayboxProduction: false,
+              // ===============================LOS SIGUIENTES PARÁMETROS SOLO SE USA EN PAGOS RECURRENTES============================================
+              /* True -> en caso de realizar un pago recurrente almacena datos tarjeta
+               * False -> si es pago normal */
+              PayboxRecurrent: true,
+              /* Id o nombre del plan registrado en el comercio en la plataforma de plux (el nombre debe ser exacto) */
+              PayboxIdPlan: "171",
+              /* true -> los cobros se realizan de manera automática según la frecuencia del plan asignado en PLUX
+               * false -> los cobros se realizan mediante solicitud */
+              PayboxPermitirCalendarizar: true,
+              /**
+               * true -> El débito se realiza en el momento del pago
+               * false -> El débito se realizará en la fecha de corte según el plan contratado */
+              PayboxPagoInmediato: true,
+              /**
+               * true -> si desea realizar un pago de prueba de 1$ y reverso del mismo de manera automática
+               * nota: PayboxPagoImediato debe ser igual false
+               * false -> no se realizará ningún cobro de prueba */
+              PayboxCobroPrueba: false,
+              /**
+               * Valor de identificación de tarjetahabiente
+               */
+              PayBoxClientIdentification: "Cédula tarjetahabiente",
+              /* Entorno de ejecución del botón de pagos valores:  prod (ambiente de producción), sandbox (ambiente de pruebas)*/
+              PayboxEnvironment: "sandbox",
+              //<----ESTAS VARIABLES SE USAN PARA PAGOS RECURRENTES CON MONTO VARIABLES ---->
+              PayboxAmountVariablePlan: true,
+              /*Frecuencia del plan
+                "SEM"            SEMANAL
+                "MEN"            MENSUAL
+                "BME"            BIMESTRAL
+                "TME"            TRIMESTRAL
+                "SME"            SEMESTRAL
+                "ANU"            ANUAL */
+              PayboxFrequencyPlan: "MEN",
+              /**
+               * true ->tiene iva
+               * false ->no tiene iva
+               */
+              PayboxTieneIvaPlan: true,
+              /**
+               * La descripción del plan, no debe superar los 200 caracteres.
+               */
+              PayboxDescriptionPlan: "Descripcion plan",
+              /**
+               * Se usa en TRUE cuando se necesita enlazar el paybox a un botón ya existente en el sitio del cliente, caso contrario FALSE o NULL
+               */
+              PayboxPagoPlux: true,
+              /* Requerido para manejo de ofertas
+               * Nombre del evento configurado, que podría hacer referencia a una oferta de tipo descuento y preventa. */
+              PayboxEvento: "Evento descuento uno",
+              /* Opcional
+                * true o false->
+                * Bandera booleana que permite o no pagos solo con tarjeta de crédito.
+                */
+             PayboxOnlyCredit: true,
+                /* Opcional
+                * true o false->
+                * Bandera booleana que permite o no pagos solo con tarjeta de débito.
+                */
+            PayboxOnlyDebit: true,
+            /**
+             * Identificador del botón o elemento en el comercio del cliente
+             */
+                PayboxIdElement: 'ButtonPaybox',
+            /**
+             * Información adicional a incluir en la transacción como un ID único
+             */
+                PayboxExtras: 'id de pedido',
+            /**
+             * Habilita SOLO la forma de pago de tipo corriente, caso contrario se muestran las opciones de corriente y diferidos
+             */
+                PayboxPermitirBloquearDiferimientos: true,
+            /**
+             * Permite agregar los campos de entradas para dirección y teléfono del tarjeta habiente
+             */
+                PayboxPermitirDatosAdicionales: true
+      };
+
+    </script>
+
+    <script type="text/javascript">
+        //// Pago exitoso response contiene la información del pago la cual puede  
+        // usarse para validaciones que depende del tipo de pago realizado
+        //acquirer: "INTERNA", // Entidad adquirente
+        // amount: 120,  // Monto total
+        // amountAuthorized: 0, // Monto autorizado
+        // amountWTaxes: "0.00", // Monto con impuestos
+        // amountWoTaxes: "1.00", // Monto sin impuestos
+        // cardInfo: "4540 63XX XXXX 8783", // Información de la tarjeta
+        // cardIssuer: "VISA", // Emisor de la tarjeta
+        // cardType: "credit", // Tipo de tarjeta
+        // clientID: "1010101010", // Cédula/RUC del cliente
+        // clientName: "NOMBRE CLIENTE", // Nombre del cliente
+        // deferred: 0,  // Diferido (0 = no)
+        // description: "Descripcion del pago", // Descripción del pago
+        // direction: "Direccion de cliente",  // Dirección
+        // discountRate: null, // Tasa de descuento (nulo)
+        // email: "correo@gmail.com", // Correo del cliente
+        // extras: "extras", // Campos extra
+        // fecha: "2025-04-29 11:35:46", // Fecha de la transacción
+        // fullname: "NOMBRE CLIENTE", // Nombre completo
+        // id_transaccion: "48c1176b-a4ff-42d7-a4ef-28087ac90501", // ID de transacción
+        // interestValue: 0,  // Valor de intereses
+        // interests: "NO",  // Tiene intereses
+        //mid: "0000000000", // ID del comercio
+        // paymentType: "UNIQUE", // Tipo de pago
+        // phone: "999999999", // Teléfono del cliente
+        // state: "PAGADO", // Estado del pago
+        // taxesValue: "0.00", // Valor de impuestos
+        // tid: "PX000000", // TID terminal
+        // tipoPago: "TARJETA", // Tipo de pago
+        // token: "398762-250429-008368"  // Token de transacción
+
+
+      var onAutorize = function (response) {
+        if (response.status == "succeded") {
+          console.log(response);
+          alert("Tarjeta registrada con éxito");
+        } else {
+          alert("Error al registrar la tarjeta");
+          console.log(response);
+        }
+      };
+
+      // ¡ESTA LÍNEA ES CLAVE PARA QUE SE MUESTRE EL BOTÓN!
+      window.onload = function() {
+        Paybox.init(data, onAutorize);
+      };
+
+    </script>
+    <script src="https://sandbox-paybox.pagoplux.com/paybox/index.js"></script>
+
+  </head>
+  <body>
+    <div id="ButtonPaybox">
+
+    </div>
+  </body>
+</html>
