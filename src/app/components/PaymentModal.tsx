@@ -55,13 +55,20 @@ export default function PaymentModal({
     router.push(`/donacion/qr?${params.toString()}`);
   };
 
+  // const newLocal = <button
+  //   className="flex items-center justify-center gap-2 py-3 rounded-lg border-2 border-[#0070ba] text-[#0070ba] font-semibold hover:bg-[#0070ba] hover:text-white transition"
+  //   onClick={() => { } }
+  // >
+  //   <span className="text-xl">💳</span>
+  //   Pagar con tarjeta
+  // </button>;
   return (
     <div
-      className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center"
+      className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center overflow-y-auto"
       onClick={onClose}
     >
-      <div
-        className="bg-white rounded-xl p-8 w-full max-w-lg shadow-xl relative"
+<div
+        className="bg-white rounded-xl p-8 w-full max-w-lg shadow-xl relative my-8 max-h-[90vh] overflow-y-auto"
         onClick={e => e.stopPropagation()}
       >
         <button
@@ -74,15 +81,14 @@ export default function PaymentModal({
           Selecciona tu método de pago
         </h2>
         <div className="flex flex-col gap-4">
-          <Paypal />
+          <Paypal 
+            amount={cantidad} 
+            productDescription="Donación" 
+            successUrl="/donacion/agradecimiento"
+          />
 
-          <button
-            className="flex items-center justify-center gap-2 py-3 rounded-lg border-2 border-[#0070ba] text-[#0070ba] font-semibold hover:bg-[#0070ba] hover:text-white transition"
-            onClick={() => {/* Lógica tarjeta */}}
-          >
-            <span className="text-xl">💳</span>
-            Pagar con tarjeta
-          </button>
+
+          {/* {newLocal} */}
 
           <button
             className="flex items-center justify-center gap-2 py-3 rounded-lg bg-gradient-to-r from-orange-500 to-orange-300 text-white font-semibold hover:from-[#2F3388] hover:to-[#ff7300] transition"

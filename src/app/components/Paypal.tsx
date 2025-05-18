@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import Script from 'next/script';
 
 interface PayPalButtonProps {
@@ -10,41 +10,23 @@ interface PayPalButtonProps {
   successUrl?: string;
 }
 
-// PayPal SDK type definitions
-interface PayPalActions {
-  order: {
-    create: (data: {
-      purchase_units: Array<{
-        description: string;
-        amount: {
-          currency_code: string;
-          value: number;
-        };
-      }>;
-    }) => Promise<string>;
-    capture: () => Promise<PayPalOrderData>;
-  };
-}
-
-interface PayPalOrderData {
-  id: string;
-  status: string;
-  payer: Record<string, unknown>;
-  purchase_units: Array<Record<string, unknown>>;
-  [key: string]: unknown;
-}
-
 export default function PayPalButton({
   productDescription = "LA DESCRIPCION DE TU PRODUCTO",
-  amount = 47,
+  amount = 0,
   currency = "USD",
   successUrl = "/thank-you"
 }: PayPalButtonProps) {
+  // Usar useRef para verificar si los botones ya han sido renderizados
+  const buttonsRendered = useRef(false);
+  const containerRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
-    // Initialize PayPal button after script is loaded
+    // Función para inicializar los botones de PayPal
     const initPayPalButton = () => {
-      if (window.paypal) {
+      if (window.paypal && containerRef.current && !buttonsRendered.current) {
+        // Limpiamos el contenedor antes de renderizar
+        containerRef.current.innerHTML = '';
+        
         window.paypal.Buttons({
           style: {
             shape: 'rect',
@@ -53,7 +35,7 @@ export default function PayPalButton({
             label: 'pay',
           },
 
-          createOrder: function(_data: unknown, actions: PayPalActions) {
+          createOrder: function(_data: unknown, actions: any) {
             return actions.order.create({
               purchase_units: [{
                 description: productDescription,
@@ -65,8 +47,8 @@ export default function PayPalButton({
             });
           },
 
-          onApprove: function(_data: unknown, actions: PayPalActions) {
-            return actions.order.capture().then(function(orderData: PayPalOrderData) {
+          onApprove: function(_data: unknown, actions: any) {
+            return actions.order.capture().then(function(orderData: any) {
               console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
               
               // Redirect to success page
@@ -77,17 +59,25 @@ export default function PayPalButton({
           onError: function(err: Error) {
             console.log(err);
           }
-        }).render('#paypal-button-container');
+        }).render(containerRef.current);
+        
+        // Marcar que los botones ya han sido renderizados
+        buttonsRendered.current = true;
       }
     };
 
-    // Check if PayPal script has already been loaded
+    // Verificar si PayPal ya está cargado
     if (window.paypal) {
       initPayPalButton();
     } else {
-      // The script will call initPayPalButton when it loads
+      // El script llamará a initPayPalButton cuando se cargue
       window.paypalButtonCallback = initPayPalButton;
     }
+
+    // Limpieza al desmontar el componente
+    return () => {
+      buttonsRendered.current = false;
+    };
   }, [productDescription, amount, currency, successUrl]);
 
   return (
@@ -103,7 +93,7 @@ export default function PayPalButton({
       />
       <div id="smart-button-container">
         <div style={{ textAlign: 'center' }}>
-          <div id="paypal-button-container"></div>
+          <div ref={containerRef} id="paypal-button-container"></div>
         </div>
       </div>
     </>
@@ -113,9 +103,7 @@ export default function PayPalButton({
 // Add these declarations to make TypeScript happy
 declare global {
   interface Window {
-    paypal: {
-      Buttons: (config: unknown) => { render: (selector: string) => void };
-    };
-    paypalButtonCallback?: () => void;
-  }
+    paypal: any;
+    paypalButtonCallback?: () => void;
+  }
 }
