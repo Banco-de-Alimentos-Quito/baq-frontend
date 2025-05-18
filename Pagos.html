@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Botón de Pago PagoPlux</title>
+    <!-- <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Expires" content="-1">
+    <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /> -->
+    
+    <!-- Llamada a las dependencias necesarias -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+
+    <!-- Declaración de variables -->
+    <script type="text/javascript">
+    var data = {
+    PayboxRemail: "abautista@pagoplux.com",
+    PayboxSendmail: "user@user.com",
+    PayboxRename: "Hackaton Grupo X",
+    PayboxSendname: "Nombre Persona",
+    PayboxBase0: "80.0",
+    PayboxBase12: "5.0",
+    PayboxDescription: "GRUPO X Descripción",
+    PayboxRequired: [],
+    PayboxLanguage: "es",
+    PayboxDirection: "Av.Napoleon y Ofradia",
+    PayBoxClientPhone: '0992726945',
+    PayboxProduction: false,
+    PayboxRecurrent: true,
+    //PayboxOnlyDebit: true,
+    //PayboxOnlyCredit: false,
+    //PayboxOnlyDebit
+    //PayboxOnlyCredit
+    PayboxLinkBloqueoDatos: false,
+    PayboxQuotas: '3',
+    PayboxIdPlan: '749',
+    PayboxPermitirCalendarizar: false,
+    
+    
+    PayboxAmountVariablePlan: false,
+    PayboxTieneIvaPlan: false,
+    PayboxFrequencyPlan: 'MEN',
+    PayboxPagoInmediato: true,
+    PayboxCobroPrueba: false,
+    
+    PayBoxClientName: 'Monica Sanchez',
+    PayBoxClientIdentification: '1890138507001',
+    PayboxTypeIdentification: 'RUC', //CC
+    PayboxDescriptionPlan: 'Descripcion plan',
+    PayboxEnvironment: 'sandbox',
+    PayboxPagoPlux: false,
+    PayboxIdElement: 'idElementoTest',
+    // 
+    // PayboxPlanIds: [
+    //     {
+            
+    //         idPlan: "212",
+    //         cuotas: 3
+    //     },
+    //     {
+    //         idPlan: "195",
+    //         cuotas: 2
+    //     }
+    // ],
+    PayboxExtras: "GRUPO X"
+    
+    // Agregado nuevo array de planes
+};
+    </script>
+    <script src="https://sandbox-paybox.pagoplux.com/paybox/index.js"></script>
+    <style>
+        .language_es {
+            background: url(./pagar.png) no-repeat center center;
+            height: 96px;
+            width: 215px;
+            border: none;
+            cursor: pointer;
+            background-size: contain;
+            outline: 0;
+        }
+    </style>
+
+</head>
+<body>
+    <div id="payment">
+        <div class="splash-container">
+            <div id="ButtonPaybox"></div>
+        </div>
+    </div>
+    
+    <script type="text/javascript">
+        var onAuthorize = function(response) {
+            if (response.status == 'succeeded') {
+                console.log("Pago exitoso:", response);
+                alert('Pago realizado con éxito!');
+            } else {
+                console.log("El pago no fue exitoso o fue cancelado.");
+            }
+        };
+    </script>
+</body>
+</html>
