@@ -40,7 +40,6 @@ export default function PaymentModal({
 }: PaymentModalProps) {
   const router = useRouter();
   if (!isOpen) return null;
-
   const goToDeuna = () => {
     onClose();
     const params = new URLSearchParams({
@@ -84,7 +83,7 @@ export default function PaymentModal({
           <Paypal 
             amount={cantidad} 
             productDescription="Donación" 
-            successUrl="/donacion/agradecimiento"
+            successUrl="thank-you"
           />
 
 
