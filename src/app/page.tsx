@@ -35,7 +35,7 @@ export default function Home() {
           />
         </div>
 
-        <PluxButton />
+        {/*<PluxButton />*/}
 
         <div className="flex gap-4 items-center flex-col sm:flex-row">
           <a
