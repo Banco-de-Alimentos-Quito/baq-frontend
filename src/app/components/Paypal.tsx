@@ -14,7 +14,7 @@ export default function PayPalButton({
   productDescription = "LA DESCRIPCION DE TU PRODUCTO",
   amount = 0,
   currency = "USD",
-  successUrl = "/thank-you"
+  successUrl = "thank-you"
 }: PayPalButtonProps) {
   // Usar useRef para verificar si los botones ya han sido renderizados
   const buttonsRendered = useRef(false);

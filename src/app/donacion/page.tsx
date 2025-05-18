@@ -89,7 +89,11 @@ export default function DonacionPage() {
   const handleDonarAhora = (e: React.MouseEvent) => {
     e.preventDefault();
     if (cantidad < 2) return;
-    setShowPagoModal(true);
+    if (tipo === 'mensual') {
+      router.push(`/donacion/mensual?monto=${cantidad}`);
+    } else {
+      setShowPagoModal(true);
+    }
   };
 
   const handleDeunaSubmit = (e: React.FormEvent) => {
