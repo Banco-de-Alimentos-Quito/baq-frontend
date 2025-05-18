@@ -4,11 +4,18 @@ import type { PayPalWebhookData } from '../types/paypal';
 import fs from 'fs';
 import path from 'path';
 
-// Mailgun configuration
-// The Mailgun API key should look like: key-1234567890abcdefghijklmn
-const API_KEY = 'c7bc4752bdf54d0225508a6a2b1222ec-e71583bb-e677a194';
-const DOMAIN = 'sandbox84b630233b6741bb99e3d14a72bd78a5.mailgun.org';
+// Mailgun configuration - Use environment variables with fallbacks for TypeScript safety
+const API_KEY = process.env.API_KEY;
+const DOMAIN = process.env.DOMAIN;
 const RECIPIENT_EMAIL = 'alekseinavalforever@gmail.com';
+
+// Ensure required environment variables are set
+if (!API_KEY) {
+  throw new Error('Missing Mailgun API_KEY environment variable');
+}
+if (!DOMAIN) {
+  throw new Error('Missing Mailgun DOMAIN environment variable');
+}
 
 // Define voucher data type
 interface VoucherData {
@@ -24,12 +31,12 @@ interface VoucherData {
 const saveVoucherToFile = (voucherData: VoucherData): boolean => {
   try {
     const vouchersPath = path.join(__dirname, '../vouchers');
-    
+
     // Create directory if it doesn't exist
     if (!fs.existsSync(vouchersPath)) {
       fs.mkdirSync(vouchersPath, { recursive: true });
     }
-    
+
     const voucherFile = path.join(vouchersPath, `voucher-${new Date().getTime()}.json`);
     fs.writeFileSync(voucherFile, JSON.stringify(voucherData, null, 2), 'utf8');
     console.log(`Voucher guardado en: ${voucherFile}`);
@@ -47,7 +54,7 @@ export const sendPaymentVoucher = async (webhookData: PayPalWebhookData): Promis
     // Check for amount in different possible locations in the PayPal data structure
     let paymentAmount = 'Unknown';
     let paymentCurrency = 'USD';
-    
+
     if (webhookData.resource?.amount) {
       paymentAmount = webhookData.resource.amount.value;
       paymentCurrency = webhookData.resource.amount.currency_code;
@@ -62,9 +69,9 @@ export const sendPaymentVoucher = async (webhookData: PayPalWebhookData): Promis
         paymentCurrency = summaryMatch[2];
       }
     }
-    
+
     const paymentDate = new Date().toLocaleString();
-    
+
     // Create voucher data
     const voucherData: VoucherData = {
       transactionId: paymentId,
@@ -74,22 +81,22 @@ export const sendPaymentVoucher = async (webhookData: PayPalWebhookData): Promis
       timestamp: new Date().toISOString(),
       recipient: RECIPIENT_EMAIL
     };
-    
+
     // Save voucher to file regardless of email success
     saveVoucherToFile(voucherData);
-    
+
     console.log('Attempting to send email for payment:', {
       paymentId,
       paymentAmount,
       paymentCurrency
     });
-    
+
     const mailgun = new Mailgun(FormData);
     const mg = mailgun.client({
       username: "api",
-      key: API_KEY
+      key: API_KEY as string // Now guaranteed to be string
     });
-    
+
     // Create email HTML content
     const htmlContent = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0;">
@@ -103,7 +110,7 @@ export const sendPaymentVoucher = async (webhookData: PayPalWebhookData): Promis
         <p style="font-size: 14px; color: #666;">This is an automated message, please do not reply.</p>
       </div>
     `;
-    
+
     // Create plain text content as fallback
     const textContent = `
       Payment Confirmation
@@ -116,23 +123,23 @@ export const sendPaymentVoucher = async (webhookData: PayPalWebhookData): Promis
       
       This is an automated message, please do not reply.
     `;
-    
-    const data = await mg.messages.create(DOMAIN, {
+
+    const data = await mg.messages.create(DOMAIN as string, {
       from: `PayPal Payment <postmaster@${DOMAIN}>`,
       to: [`Payment Recipient <${RECIPIENT_EMAIL}>`],
       subject: "Payment Confirmation - Thank You for Your Purchase",
       text: textContent,
       html: htmlContent
     });
-    
+
     console.log('Email sent successfully:', data);
     return true;
   } catch (error) {
     console.log('Error sending email:', error);
-    
+
     // Check for sandbox limitation error
     if (error && typeof error === 'object' && 'details' in error) {
-      const details = (error as {details?: string}).details;
+      const details = (error as { details?: string }).details;
       if (details && details.includes('authorized recipients')) {
         console.error('SANDBOX LIMITATION: You need to authorize recipients in Mailgun');
         console.error('For Mailgun sandbox accounts, you must verify recipient emails:');
@@ -141,7 +148,7 @@ export const sendPaymentVoucher = async (webhookData: PayPalWebhookData): Promis
         console.error('3. Check your email and click the verification link from Mailgun');
       }
     }
-    
+
     return false;
   }
 };
