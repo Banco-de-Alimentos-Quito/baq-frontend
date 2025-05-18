@@ -7,9 +7,6 @@ export default function DonacionQRPage() {
   const cantidad = Number(params.get('monto')) || 0;
   return (
     <div style={{ minHeight: "100vh", background: "#f8fafc" }}>
-      <nav className="navbar-tomate">
-        <img src="/logo.webp" alt="Logo Banco de Alimentos" className="navbar-logo" />
-      </nav>
       <div style={{ paddingTop: 120, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{
           background: '#fff',

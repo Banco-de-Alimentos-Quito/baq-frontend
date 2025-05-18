@@ -1118,11 +1118,6 @@ export default function DonacionPage() {
           justify-content: center;
         }
       `}</style>
-      {/* Navbar tomate */}
-      <nav className="navbar-tomate">
-        <img src="/logo.webp" alt="Logo Banco de Alimentos" className="navbar-logo" />
-      </nav>
-
       {/* Bienvenida animada */}
       <div className="welcome-section">
       </div>
