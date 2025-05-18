@@ -66,8 +66,9 @@ export default function PaymentModal({
       className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center overflow-y-auto"
       onClick={onClose}
     >
-<div
-        className="bg-white rounded-xl p-8 w-full max-w-lg shadow-xl relative my-8 max-h-[90vh] overflow-y-auto"
+      <div
+        className="bg-white rounded-xl p-8 w-full max-w-md shadow-xl relative"
+        style={{ maxHeight: '90vh', overflowY: 'auto' }}
         onClick={e => e.stopPropagation()}
       >
         <button
