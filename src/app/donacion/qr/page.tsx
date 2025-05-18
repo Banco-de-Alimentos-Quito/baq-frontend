@@ -1,12 +1,13 @@
 // app/donacion/qr/page.tsx
 'use client';
 import React, { Suspense } from "react";
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 
 // Componente interno que usa useSearchParams
 function QRContent() {
   const params = useSearchParams();
   const cantidad = Number(params.get('monto')) || 0;
+  const router = useRouter();
   
   return (
     <div style={{ paddingTop: 120, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
@@ -32,6 +33,25 @@ function QRContent() {
           Una vez realizado el pago, tu donación será registrada automáticamente.<br />¡Gracias por tu solidaridad!
         </div>
         <img src="https://vectorseek.com/wp-content/uploads/2023/08/Deuna-Wordmark-Logo-Vector.svg-.png" alt="DeUna logo" style={{ height: 18, marginTop: 12, opacity: 0.7 }} />
+        <button
+          onClick={() => router.push('/thank-you')}
+          style={{
+            marginTop: 24,
+            width: '100%',
+            background: 'linear-gradient(90deg, #ff7300, #ffb347)',
+            color: '#fff',
+            fontWeight: 'bold',
+            fontSize: 18,
+            border: 'none',
+            borderRadius: 8,
+            padding: 14,
+            boxShadow: '0 2px 8px #ff730033',
+            cursor: 'pointer',
+            transition: 'background 0.2s',
+          }}
+        >
+          Confirmar pago
+        </button>
       </div>
     </div>
   );
