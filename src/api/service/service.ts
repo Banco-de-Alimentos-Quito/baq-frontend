@@ -1,16 +1,16 @@
 import { Request, Response } from 'express';
 import fs from 'fs';
 import path from 'path';
+import { sendPaymentVoucher } from '../utils/sendmail';
+import type { PayPalWebhookData } from '../types/paypal';
 
 export const helloService = {
-  getHelloWorld: (req: Request, res: Response) => {
-    res.json({ message: 'Hola mundo' });
-  },
+ 
   
-  handlePayPalWebhook: (req: Request, res: Response) => {
+  handlePayPalWebhook: async (req: Request, res: Response) => {
     try {
       // Recibir la notificación de PayPal
-      const webhookData = req.body;
+      const webhookData = req.body as PayPalWebhookData;
       
       // Loguear los datos recibidos para depuración
       console.log('PayPal Webhook recibido:', JSON.stringify(webhookData, null, 2));
@@ -40,6 +40,22 @@ export const helloService = {
       // Escribir los datos actualizados al archivo
       fs.writeFileSync(responsePath, JSON.stringify(existingData, null, 2), 'utf8');
       console.log('Datos guardados en response.json');
+      
+      // Enviar el voucher de pago por email
+      if (eventType === 'PAYMENT.CAPTURE.COMPLETED' || 
+          eventType === 'CHECKOUT.ORDER.APPROVED' ||
+          eventType === 'PAYMENT.SALE.COMPLETED') {
+        try {
+          const emailSent = await sendPaymentVoucher(webhookData);
+          if (emailSent) {
+            console.log('Voucher de pago enviado con éxito');
+          } else {
+            console.error('Error al enviar el voucher de pago');
+          }
+        } catch (emailError) {
+          console.error('Error en el envío del email:', emailError);
+        }
+      }
       
       // Responder a PayPal con éxito
       res.status(200).json({ status: 'success' });

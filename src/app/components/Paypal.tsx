@@ -93,7 +93,7 @@ export default function PayPalButton({
   return (
     <>
       <Script
-        src={`https://www.paypal.com/sdk/js?client-id=ATANZDWnV4uIo1U5CTQYrYtRq3fAG5ImkSYOTZvJvRXAxMjTArL-WO2SM6nMDsOlswE44oP0HiDUwBFn&currency=${currency}`}
+        src={`https://www.paypal.com/sdk/js?client-id=AYAlZJagqJe2cOJrvrnzhVX_8PqvggjKvQcG6TRp9mHcKvnx7U9LKQJp-kbiVzZ0WtGe0o0Wx81TSTtU&currency=${currency}`}
         data-sdk-integration-source="button-factory"
         onLoad={() => {
           if (window.paypalButtonCallback) {
