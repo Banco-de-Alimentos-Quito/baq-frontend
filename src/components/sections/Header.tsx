@@ -9,16 +9,16 @@ import Image from 'next/image';
 
 const NavLinks = ({ onClick }: { onClick?: () => void }) => (
   <>
-    <ScrollLink href="#what-we-do" className="text-sm font-medium hover:text-primary transition-colors" onClick={onClick}>
+    <ScrollLink href="/#what-we-do" className="text-sm font-medium hover:text-primary transition-colors" onClick={onClick}>
       ¿Qué Hacemos?
     </ScrollLink>
-    <ScrollLink href="#how-to-help" className="text-sm font-medium hover:text-primary transition-colors" onClick={onClick}>
+    <ScrollLink href="/#how-to-help" className="text-sm font-medium hover:text-primary transition-colors" onClick={onClick}>
       Cómo Ayudar
     </ScrollLink>
-    <ScrollLink href="#testimonials" className="text-sm font-medium hover:text-primary transition-colors" onClick={onClick}>
+    <ScrollLink href="/#testimonials" className="text-sm font-medium hover:text-primary transition-colors" onClick={onClick}>
       Testimonios
     </ScrollLink>
-    <ScrollLink href="#donate" className="text-sm font-medium hover:text-primary transition-colors" onClick={onClick}>
+    <ScrollLink href="/#donate" className="text-sm font-medium hover:text-primary transition-colors" onClick={onClick}>
       Donar
     </ScrollLink>
   </>
