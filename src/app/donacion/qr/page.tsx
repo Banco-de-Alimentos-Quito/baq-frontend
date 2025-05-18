@@ -1,3 +1,4 @@
+// app/donacion/qr/page.tsx
 'use client';
 import React, { Suspense } from "react";
 import { useSearchParams } from 'next/navigation';
@@ -69,4 +70,4 @@ export default function DonacionQRPage() {
       `}</style>
     </div>
   );
-} 
+}
