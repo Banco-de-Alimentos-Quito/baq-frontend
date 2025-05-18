@@ -18,9 +18,6 @@ const NavLinks = ({ onClick }: { onClick?: () => void }) => (
     <ScrollLink href="/#testimonials" className="text-sm font-medium hover:text-primary transition-colors" onClick={onClick}>
       Testimonios
     </ScrollLink>
-    <ScrollLink href="/#donate" className="text-sm font-medium hover:text-primary transition-colors" onClick={onClick}>
-      Donar
-    </ScrollLink>
   </>
 );
 

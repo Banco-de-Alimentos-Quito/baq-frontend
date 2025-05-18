@@ -11,7 +11,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'Alimento Para Todos - Banco de Alimentos de Quito',
+  title: 'Banco de Alimentos de Quito',
   description: 'Con tu ayuda, llevamos alimento a quienes más lo necesitan en Quito. Dona alimentos o dinero y sé parte del cambio.',
 };
 

@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Apple, HandCoins, Users } from 'lucide-react';
+import { Button } from '@//components/ui/button';
+import { Apple, HandCoins, Users, Factory } from 'lucide-react';
 import ScrollLink from '@/components/ScrollLink';
 
 const helpOptions = [
@@ -25,6 +25,13 @@ const helpOptions = [
     buttonText: "Conoce Más",
     aiHint: "volunteers helping",
   },
+  {
+    icon: Factory,
+    title: "Empresas Colaboradoras",
+    description: "Si representas a una empresa y deseas colaborar, contáctanos para explorar oportunidades de ayuda y de beneficios especiales para tu empresa.",
+    buttonText: "Contáctanos",
+    aiHint: "company collaboration",
+  },
 ];
 
 export default function HowToHelpSection() {
@@ -37,7 +44,7 @@ export default function HowToHelpSection() {
             Hay muchas formas de marcar la diferencia. Elige la que mejor se adapte a ti y ayúdanos a seguir alimentando esperanzas.
           </p>
         </div>
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-2 gap-8">
           {helpOptions.map((option, index) => (
             <Card 
               key={option.title} 
