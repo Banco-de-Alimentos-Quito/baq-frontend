@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
-import ScrollLink from '@/components/ScrollLink';
 import Image from 'next/image';
+import Link from 'next/link';
 
 export default function HeroSection() {
   return (
@@ -10,11 +10,10 @@ export default function HeroSection() {
     >
       <div className="absolute inset-0 opacity-20">
         <Image
-          src="https://www.baq.ec/wp-content/uploads/2025/05/wb-baq-headher-v1.webp"
+          src="/beneficiarios.webp"
           alt="Personas recibiendo alimentos"
-          layout="fill"
-          objectFit="cover"
-          data-ai-hint="community food"
+          fill
+          className="object-cover"
           priority
         />
          <div className="absolute inset-0 bg-background/30 dark:bg-background/60"></div>
@@ -30,7 +29,7 @@ export default function HeroSection() {
         </p>
         <div className="mt-10">
           <Button asChild size="lg" className="px-10 py-6 text-lg bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg transform hover:scale-105 transition-transform duration-300">
-            <ScrollLink href="#donate">Donar Ahora</ScrollLink>
+            <Link href="/donacion">Donar Ahora</Link>
           </Button>
         </div>
       </div>
