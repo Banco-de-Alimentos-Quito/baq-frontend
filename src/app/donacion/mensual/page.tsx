@@ -1,10 +1,12 @@
 'use client';
 import React, { useState } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { confetti } from 'sonner';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { toast } from 'sonner';
+import Link from 'next/link';
 
 export default function DonacionMensualPage() {
   const params = useSearchParams();
+  const router = useRouter();
   const monto = Number(params.get('monto')) || 0;
   const [form, setForm] = useState({
     correo: '',
@@ -15,12 +17,14 @@ export default function DonacionMensualPage() {
   });
   const [enviado, setEnviado] = useState(false);
   const [tocado, setTocado] = useState<{[k: string]: boolean}>({});
+  const [termsChecked, setTermsChecked] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value, type, checked } = e.target;
+    const target = e.target;
+    const { name, value, type } = target;
     setForm(f => ({
       ...f,
-      [name]: type === 'checkbox' ? checked : value,
+      [name]: type === 'checkbox' ? (target as HTMLInputElement).checked : value,
     }));
     setTocado(t => ({ ...t, [name]: true }));
   };
@@ -32,10 +36,20 @@ export default function DonacionMensualPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setTocado({ correo: true, cuenta: true, tipoCuenta: true, banco: true, acepta: true });
-    if (!(form.correo && form.cuenta && form.tipoCuenta && form.banco && form.acepta)) return;
+    if (!(form.correo && form.cuenta && form.tipoCuenta && form.banco && form.acepta && termsChecked)) return;
     setEnviado(true);
-    confetti();
-    setTimeout(() => setEnviado(false), 2200);
+    toast.success('¡Contrato generado!', {
+      description: 'Te hemos enviado el contrato generado a tu correo electrónico.',
+      duration: 2200,
+      action: {
+        label: '',
+        onClick: () => {},
+      },
+    });
+    setTimeout(() => {
+      setEnviado(false);
+      router.push('/thank-you');
+    }, 2200);
   };
 
   return (
@@ -69,7 +83,7 @@ export default function DonacionMensualPage() {
               value={form.correo}
               onChange={handleChange}
               onBlur={handleBlur}
-              style={{ width: '100%', padding: 12, borderRadius: 8, border: '1px solid #ddd', marginTop: 4, fontSize: 16, '::placeholder': { color: '#bbb' } }}
+              style={{ width: '100%', padding: 12, borderRadius: 8, border: '1px solid #ddd', marginTop: 4, fontSize: 16, color: '#222' }}
               placeholder="tucorreo@email.com"
             />
             {tocado.correo && !form.correo && <span style={{ color: '#e53e3e', fontSize: 13 }}>Falta completar este campo</span>}
@@ -83,7 +97,7 @@ export default function DonacionMensualPage() {
               value={form.cuenta}
               onChange={handleChange}
               onBlur={handleBlur}
-              style={{ width: '100%', padding: 12, borderRadius: 8, border: '1px solid #ddd', marginTop: 4, fontSize: 16, '::placeholder': { color: '#bbb' } }}
+              style={{ width: '100%', padding: 12, borderRadius: 8, border: '1px solid #ddd', marginTop: 4, fontSize: 16, color: '#222' }}
               placeholder="Ej: 1234567890"
             />
             {tocado.cuenta && !form.cuenta && <span style={{ color: '#e53e3e', fontSize: 13 }}>Falta completar este campo</span>}
@@ -163,9 +177,31 @@ export default function DonacionMensualPage() {
             </span>
             {tocado.acepta && !form.acepta && <span style={{ color: '#e53e3e', fontSize: 13, display: 'block', marginTop: 4 }}>Debes aceptar la cláusula</span>}
           </div>
+          <div style={{ width: '100%', margin: '12px 0', background: '#f8fafc', borderRadius: 8, padding: 12, border: '1px solid #eee', color: '#2F3388', fontSize: 15 }}>
+            <input
+              type="checkbox"
+              name="terms"
+              checked={termsChecked}
+              onChange={e => setTermsChecked(e.target.checked)}
+              required
+              style={{ marginRight: 8 }}
+            />
+            <span>
+              Acepto que he leído previamente los{' '}
+              <Link 
+                href="/politicas" 
+                className="text-primary hover:underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Términos y Condiciones, y Política de Tratamiento de Datos Personales
+              </Link>
+              .
+            </span>
+          </div>
           <button
             type="submit"
-            disabled={!(form.correo && form.cuenta && form.tipoCuenta && form.banco && form.acepta)}
+            disabled={!(form.correo && form.cuenta && form.tipoCuenta && form.banco && form.acepta && termsChecked)}
             style={{
               width: '100%',
               background: 'linear-gradient(90deg, #ff7300, #ffb347)',
@@ -177,8 +213,8 @@ export default function DonacionMensualPage() {
               padding: 14,
               marginTop: 8,
               boxShadow: '0 2px 8px #ff730033',
-              cursor: !(form.correo && form.cuenta && form.tipoCuenta && form.banco && form.acepta) ? 'not-allowed' : 'pointer',
-              opacity: !(form.correo && form.cuenta && form.tipoCuenta && form.banco && form.acepta) ? 0.5 : 1,
+              cursor: !(form.correo && form.cuenta && form.tipoCuenta && form.banco && form.acepta && termsChecked) ? 'not-allowed' : 'pointer',
+              opacity: !(form.correo && form.cuenta && form.tipoCuenta && form.banco && form.acepta && termsChecked) ? 0.5 : 1,
               transition: 'background 0.2s',
             }}
           >
