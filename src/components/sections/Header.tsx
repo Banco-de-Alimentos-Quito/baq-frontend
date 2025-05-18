@@ -44,7 +44,7 @@ export default function Header() {
             height={50}
             className="w-auto h-15"
           />
-          <span className="font-bold text-xl text-primary">Banco de Alimentos Quito</span>
+          <span className="font-bold text-xl text-orange-400">Banco de Alimentos Quito</span>
         </Link>
         <nav className="hidden md:flex items-center gap-6">
           <NavLinks />
