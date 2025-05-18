@@ -573,9 +573,9 @@ export default function DonacionPage() {
               </div>
               <ul>
                 <li>Programa atención a <strong>Organizaciones Sociales</strong>.</li>
-                <li>Programa de atención a <strong>"Familias de Grupos Prioritarios"</strong></li>
-                <li>Programa de atención <strong>"Setenta y Piquitos del Adulto Mayor"</strong></li>
-                <li>Programa de atención a <strong>"Comedores Escolares Infantiles"</strong></li>
+                <li>Programa de atención a <strong>&quot;Familias de Grupos Prioritarios&quot;</strong></li>
+                <li>Programa de atención <strong>&quot;Setenta y Piquitos del Adulto Mayor&quot;</strong></li>
+                <li>Programa de atención a <strong>&quot;Comedores Escolares Infantiles&quot;</strong></li>
               </ul>
               <div style={{marginTop: 18, color: '#666', fontWeight: 500}}>
                 Trabajamos para asegurar que cada dólar invertido en estos programas logre oportunidades reales para el desarrollo de nuestros usuarios y el futuro de nuestro país.
@@ -599,8 +599,8 @@ export default function DonacionPage() {
 function PersonasAlimentadas({ cantidad }: { cantidad: number }) {
   const [personas, setPersonas] = React.useState(cantidad);
   React.useEffect(() => {
-    let start = personas;
-    let end = cantidad;
+    const start = personas;
+    const end = cantidad;
     if (start === end) return;
     const step = start < end ? 1 : -1;
     const interval = setInterval(() => {
