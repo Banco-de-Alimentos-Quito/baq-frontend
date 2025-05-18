@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from 'next/navigation';
+import Paypal from "../components/Paypal";
 
 function calcularNinios(monto: number) {
   return Math.max(1, Math.floor(monto / 12));
@@ -1278,7 +1279,7 @@ export default function DonacionPage() {
             <button className="modal-pago-close" onClick={() => setShowPagoModal(false)}>&times;</button>
             <h2 className="modal-pago-title">Selecciona tu método de pago</h2>
             <div className="modal-pago-options">
-              <a
+              {/* <a
                 href="https://www.paypal.com/donate"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -1286,7 +1287,8 @@ export default function DonacionPage() {
               >
                 <img src="https://www.paypalobjects.com/webstatic/icon/pp258.png" alt="PayPal" className="modal-pago-logo" />
                 Pagar con PayPal
-              </a>
+              </a> */}
+              <Paypal></Paypal>
               <button className="modal-pago-btn local">
                 <span style={{fontSize: '1.5rem', marginRight: 8}}>💳</span>
                 Pagar con tarjeta
