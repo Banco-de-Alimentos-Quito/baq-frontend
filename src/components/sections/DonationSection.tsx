@@ -36,8 +36,14 @@ export default function DonationSection() {
                     Donar con Tarjeta
                   </Link>
                 </Button>
-                <Button variant="outline" size="lg" className="w-full py-6 text-lg border-primary text-primary hover:bg-primary/10 hover:text-primary transition-transform hover:scale-105">
-                  <Landmark className="mr-2 h-5 w-5" /> Transferencia Bancaria
+                <Button 
+                  asChild
+                  variant="outline" 
+                  size="lg" 
+                  className="w-full py-6 text-lg border-primary text-primary hover:bg-primary/10 hover:text-primary transition-transform hover:scale-105">
+                  <Link href="/transferencia">
+                    <Landmark className="mr-2 h-5 w-5" /> Transferencia Bancaria
+                  </Link>
                 </Button>
               </div>
               <p className="text-sm text-muted-foreground text-center">
