@@ -6,6 +6,9 @@ import type { PayPalWebhookData } from '../types/paypal';
 
 export const helloService = {
  
+  hello: async (req: Request, res: Response) => {
+    res.status(200).json({ message: 'Hello World' });
+  },
   
   handlePayPalWebhook: async (req: Request, res: Response) => {
     try {

@@ -9,6 +9,5 @@ const router = Router();
 router.post('/paypal-webhook', helloService.handlePayPalWebhook);
 
 // Ruta para fetch y log de ngrok URL
-router.post('/fetch-ngrok', );
-
+router.get('/hello', helloService.hello);
 export default router;
