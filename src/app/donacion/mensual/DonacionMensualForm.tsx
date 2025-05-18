@@ -1,10 +1,10 @@
 'use client';
-import React, { useState, Suspense } from 'react';
+import React, { useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { toast } from 'sonner';
+import { toast, Toaster } from 'sonner';
 import Link from 'next/link';
 
-function DonacionMensualForm() {
+export default function DonacionMensualForm() {
   const params = useSearchParams();
   const router = useRouter();
   const monto = Number(params.get('monto')) || 0;
@@ -279,25 +279,7 @@ function DonacionMensualForm() {
           .navbar-logo { width: 100px; }
         }
       `}</style>
+      <Toaster />
     </div>
   );
 }
-
-// Loading fallback for suspense
-function LoadingForm() {
-  return (
-    <div style={{ minHeight: '100vh', background: '#f8fafc', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-      <div style={{ background: '#fff', borderRadius: 24, boxShadow: '0 4px 24px #0001', padding: '40px 32px', maxWidth: 420, width: '100%', textAlign: 'center' }}>
-        <div style={{ color: '#2F3388', fontWeight: 900, fontSize: '1.5rem', marginBottom: 18 }}>Cargando formulario...</div>
-      </div>
-    </div>
-  );
-}
-
-export default function DonacionMensualPage() {
-  return (
-    <Suspense fallback={<LoadingForm />}>
-      <DonacionMensualForm />
-    </Suspense>
-  );
-} 
