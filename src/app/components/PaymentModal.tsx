@@ -4,7 +4,7 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import Paypal from "../components/Paypal";
-import { PluxButton } from "./PluxButton";
+
 
 interface DeunaForm {
   nombre: string;
