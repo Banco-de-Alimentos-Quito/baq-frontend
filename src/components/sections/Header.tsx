@@ -49,7 +49,7 @@ export default function Header() {
         <nav className="hidden md:flex items-center gap-6">
           <NavLinks />
           <Button asChild size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground">
-            <ScrollLink href="#donate">Donar Ahora</ScrollLink>
+            <Link href="/donacion">Donar Ahora</Link>
           </Button>
         </nav>
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
