@@ -43,7 +43,7 @@ export default function Footer() {
           <div>
             <h4 className="text-lg font-semibold text-gray-100 mb-3">Síguenos</h4>
             <div className="flex space-x-4">
-              <Link href="https://www.tiktok.com/@baqalimentos?_t=8gdx9t0zONR&_r=1" aria-label="TikTok" className="text-gray-400 hover:text-primary transition-colors">
+              <Link href="https://www.facebook.com/baqalimentosquito/?locale=es_LA" aria-label="TikTok" className="text-gray-400 hover:text-primary transition-colors">
                 <Facebook className="w-6 h-6" />
               </Link>
               <Link href="https://www.instagram.com/bancoalimentosquito?utm_source=qr" aria-label="Instagram" className="text-gray-400 hover:text-primary transition-colors">

@@ -4,6 +4,7 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import Paypal from '../components/Paypal';
+import { PluxButton } from './PluxButton';
 
 interface DeunaForm {
   nombre: string;
@@ -88,7 +89,7 @@ export default function PaymentModal({
           />
 
 
-          {/* {newLocal} */}
+          {/* <PluxButton /> */}
 
           <button
             className="flex items-center justify-center gap-2 py-3 rounded-lg bg-gradient-to-r from-orange-500 to-orange-300 text-white font-semibold hover:from-[#2F3388] hover:to-[#ff7300] transition"
