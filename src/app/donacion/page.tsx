@@ -4,6 +4,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import PaymentModal from '../components/PaymentModal';
+import Image from 'next/image';
 
 function calcularNinios(monto: number) {
   return Math.max(1, Math.floor(monto / 12));
@@ -23,6 +24,8 @@ function getPuzzlePieces(monto: number) {
   if (monto >= 2) return ['A1'];
   return [];
 }
+
+const MONTOS_DONACION = [2, 10, 30, 50];
 
 export default function DonacionPage() {
   const router = useRouter();
@@ -214,7 +217,7 @@ export default function DonacionPage() {
 
             {/* Montos predefinidos */}
             <div className="grid grid-cols-2 gap-4 mb-6 w-full">
-              {[2, 10, 30, 50].map(m => (
+              {MONTOS_DONACION.map(m => (
                 <button
                   key={m}
                   className={`flex flex-col items-center rounded-lg px-7 py-4 font-bold text-lg shadow-md transition-transform ${
@@ -289,21 +292,25 @@ export default function DonacionPage() {
               Tu eres la <strong>pieza</strong> que falta para <strong>acabar</strong> con la desnutrición
             </h1>
             <div className="relative w-80 max-w-full">
-              <img
+              <Image
                 src="/puzzle/completo.png"
                 alt="Puzzle completo"
+                width={800}  // Añadido width
+                height={800} // Añadido height
                 className="w-full h-auto opacity-20 rounded-lg"
               />
               {PUZZLE_PIECES.map(piece => {
                 const show = getPuzzlePieces(cantidad).includes(piece.key);
                 return (
-                  <img
+                  <Image
                     key={piece.key}
                     src={piece.src}
                     alt={piece.key}
                     className={`absolute w-full h-full object-contain transition-opacity duration-700 ${
                       show ? 'opacity-100' : 'opacity-0'
                     }`}
+                    width={400}  // Añadido width
+                    height={400} // Añadido height
                     style={{
                       top: piece.style.top ?? 'auto',
                       bottom: piece.style.bottom ?? 'auto',
@@ -321,7 +328,7 @@ export default function DonacionPage() {
 
       {/* Sección Informativa Horizontal */}
       <section
-        className="relative w-full bg-cover bg-center mb-8 px-4 py-12"
+        className="relative w-screen bg-cover bg-center mb-8 px-4 py-12"
         style={{ backgroundImage: "url('/beneficiarios.webp')" }}
       >
         {/* Overlay negro semitransparente que envuelve el texto */}
@@ -356,10 +363,12 @@ export default function DonacionPage() {
         <h2 className="text-4xl font-extrabold bg-gradient-to-r from-[#ff7300] to-[#FF6347] bg-clip-text text-transparent mb-8">
           Conoce el impacto que genera tu donación
         </h2>
-        <div className="w-full flex justify-center">
-          <img
+        <div className="flex justify-center">
+          <Image
             src="/que-hacemos.webp"
             alt="Impacto de tu donación"
+            width={800}  // Añadido width
+            height={800} // Añadido height
             className="w-[99vw] max-w-[900px] rounded-2xl object-cover"
           />
         </div>
