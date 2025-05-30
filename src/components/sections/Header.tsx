@@ -40,15 +40,15 @@ export default function Header() {
           <Image
             src="/icono-logo-naranja.webp"
             alt="Logo BAQ"
-            width={50}
-            height={50}
+            width={100}
+            height={100}
             className="w-auto h-15"
           />
           <span className="font-bold text-xl text-orange-400">Banco de Alimentos Quito</span>
         </Link>
         <nav className="hidden md:flex items-center gap-6">
           <NavLinks />
-          <Button asChild size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground">
+          <Button asChild size="sm" className="bg-primary text-[#ed6f1d] hover:bg-orange-400 text-primary-foreground">
             <Link href="/donacion">Donar Ahora</Link>
           </Button>
         </nav>

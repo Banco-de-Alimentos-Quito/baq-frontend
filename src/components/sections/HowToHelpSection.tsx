@@ -61,7 +61,7 @@ export default function HowToHelpSection() {
                 <CardDescription className="text-base">{option.description}</CardDescription>
               </CardContent>
               <CardFooter className="justify-center">
-                <Button asChild className="bg-primary hover:bg-primary/90 text-primary-foreground w-full sm:w-auto">
+                <Button asChild className="bg-primary bg-orange-400 hover:bg-orange-300 text-primary-foreground w-full sm:w-auto">
                   <ScrollLink href="#donate">{option.buttonText}</ScrollLink>
                 </Button>
               </CardFooter>

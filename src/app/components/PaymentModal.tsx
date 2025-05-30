@@ -1,10 +1,10 @@
 // components/PaymentModal.tsx
-'use client';
+"use client";
 
-import React from 'react';
-import { useRouter } from 'next/navigation';
-import Paypal from '../components/Paypal';
-import { PluxButton } from './PluxButton';
+import React from "react";
+import { useRouter } from "next/navigation";
+import Paypal from "../components/Paypal";
+import { PluxButton } from "./PluxButton";
 
 interface DeunaForm {
   nombre: string;
@@ -37,7 +37,7 @@ export default function PaymentModal({
   setComindadesChecked,
   consentChecked,
   setConsentChecked,
-  onSubmitDeuna
+  onSubmitDeuna,
 }: PaymentModalProps) {
   const router = useRouter();
   if (!isOpen) return null;
@@ -50,7 +50,7 @@ export default function PaymentModal({
       correo: deunaForm.correo,
       telefono: deunaForm.telefono,
       documento: deunaForm.documento,
-      comunidad: comindadesChecked ? '1' : '0',
+      comunidad: comindadesChecked ? "1" : "0",
     });
     router.push(`/donacion/qr?${params.toString()}`);
   };
@@ -69,8 +69,8 @@ export default function PaymentModal({
     >
       <div
         className="bg-white rounded-xl p-8 w-full max-w-md shadow-xl relative"
-        style={{ maxHeight: '90vh', overflowY: 'auto' }}
-        onClick={e => e.stopPropagation()}
+        style={{ maxHeight: "90vh", overflowY: "auto" }}
+        onClick={(e) => e.stopPropagation()}
       >
         <button
           className="absolute top-4 right-4 text-2xl text-orange-400 hover:text-orange-600 transition"
@@ -82,12 +82,13 @@ export default function PaymentModal({
           Selecciona tu método de pago
         </h2>
         <div className="flex flex-col gap-4">
-          <Paypal 
-            amount={cantidad} 
-            productDescription="Donación" 
-            successUrl="thank-you"
-          />
-
+          {cantidad > 0 && ( // Solo mostrar si hay un monto válido
+            <Paypal
+              amount={cantidad}
+              productDescription="Donación al Banco de Alimentos de Quito"
+              successUrl="thank-you"
+            />
+          )}
 
           {/* <PluxButton /> */}
 

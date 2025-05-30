@@ -54,7 +54,7 @@ export default function Footer() {
         </div>
         <div className="border-t border-gray-700 pt-8 text-center text-sm">
           <p>&copy; {currentYear} Banco de Alimentos Quito. Todos los derechos reservados.</p>
-          <p className="mt-1">Diseñado con <HeartHandshake className="inline h-4 w-4 text-primary" /> para luchar contra el hambre.</p>
+          <p className="mt-1">Diseñado con <HeartHandshake className="inline h-4 w-4 text-primary " /> para luchar contra el hambre.</p>
         </div>
       </div>
     </footer>
