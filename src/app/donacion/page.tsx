@@ -1,27 +1,80 @@
 // app/donacion/page.tsx
-'use client';
+"use client";
 
-import React, { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
-import PaymentModal from '../components/PaymentModal';
-import Image from 'next/image';
+import React, { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
+import PaymentModal from "../components/PaymentModal";
+import Image from "next/image";
 
 function calcularNinios(monto: number) {
   return Math.max(1, Math.floor(monto / 12));
 }
 
-const PUZZLE_PIECES = [
-  { key: 'A1', src: '/puzzle/A1.png', style: { top: 0, left: 0 } },
-  { key: 'A2', src: '/puzzle/A2.png', style: { bottom: 0, left: 0 } },
-  { key: 'B1', src: '/puzzle/B1.png', style: { top: 0, right: 0 } },
-  { key: 'B2', src: '/puzzle/B2.png', style: { bottom: 0, right: 0 } },
+// Imágenes para donación única - opción 1
+const PUZZLE_PIECES_UNICA_1 = [
+  { key: "A1", src: "/puzzle/A1.png", style: { top: 0, left: 0 } },
+  { key: "A2", src: "/puzzle/A2.png", style: { bottom: 0, left: 0 } },
+  { key: "B1", src: "/puzzle/B1.png", style: { top: 0, right: 0 } },
+  { key: "B2", src: "/puzzle/B2.png", style: { bottom: 0, right: 0 } },
 ];
 
-function getPuzzlePieces(monto: number) {
-  if (monto >= 50) return ['A1', 'A2', 'B1', 'B2'];
-  if (monto >= 30) return ['A1', 'A2', 'B1'];
-  if (monto >= 10) return ['A1', 'A2'];
-  if (monto >= 2) return ['A1'];
+// Imágenes para donación única - opción 2
+const PUZZLE_PIECES_UNICA_2 = [
+  { key: "C1", src: "/puzzle/C1.png", style: { top: 0, left: 0 } },
+  { key: "C2", src: "/puzzle/C2.png", style: { top: 0, left: 0 } },
+  { key: "D1", src: "/puzzle/D1.png", style: { top: 0, left: 0 } },
+  { key: "D2", src: "/puzzle/D2.png", style: { top: 0, left: 0 } },
+];
+
+// Imágenes para donación mensual - opción 1
+const PUZZLE_PIECES_MENSUAL_1 = [
+  { key: "E1", src: "/puzzle/E1.png", style: { top: 0, left: 0 } },
+  { key: "E2", src: "/puzzle/E2.png", style: { bottom: 0, left: 0 } },
+  { key: "F1", src: "/puzzle/F1.png", style: { top: 0, right: 0 } },
+  { key: "F2", src: "/puzzle/F2.png", style: { bottom: 0, right: 0 } },
+];
+
+// Imágenes para donación mensual - opción 2
+const PUZZLE_PIECES_MENSUAL_2 = [
+  { key: "G1", src: "/puzzle/G1.png", style: { top: 0, left: 0 } },
+  { key: "G2", src: "/puzzle/G2.png", style: { top: 0, left: 0 } },
+  { key: "H1", src: "/puzzle/H1.png", style: { top: 0, left: 0 } },
+  { key: "H2", src: "/puzzle/H2.png", style: { top: 0, left: 0 } },
+];
+
+// Función para obtener piezas de donación única - opción 1
+function getPuzzlePiecesUnica1(monto: number) {
+  if (monto >= 50) return ["A1", "A2", "B1", "B2"];
+  if (monto >= 30) return ["A1", "A2", "B1"];
+  if (monto >= 10) return ["A1", "A2"];
+  if (monto >= 2) return ["A1"];
+  return [];
+}
+
+// Función para obtener piezas de donación única - opción 2
+function getPuzzlePiecesUnica2(monto: number) {
+  if (monto >= 50) return ["C1", "C2", "D1", "D2"];
+  if (monto >= 30) return ["C1", "C2", "D1"];
+  if (monto >= 10) return ["C1", "C2"];
+  if (monto >= 2) return ["C1"];
+  return [];
+}
+
+// Función para obtener piezas de donación mensual - opción 1
+function getPuzzlePiecesMensual1(monto: number) {
+  if (monto >= 50) return ["E1", "E2", "F1", "F2"];
+  if (monto >= 30) return ["E1", "E2", "F1"];
+  if (monto >= 10) return ["E1", "E2"];
+  if (monto >= 2) return ["E1"];
+  return [];
+}
+
+// Función para obtener piezas de donación mensual - opción 2
+function getPuzzlePiecesMensual2(monto: number) {
+  if (monto >= 50) return ["G1", "G2", "H1", "H2"];
+  if (monto >= 30) return ["G1", "G2", "H1"];
+  if (monto >= 10) return ["G1", "G2"];
+  if (monto >= 2) return ["G1"];
   return [];
 }
 
@@ -29,22 +82,25 @@ const MONTOS_DONACION = [2, 10, 30, 50];
 
 export default function DonacionPage() {
   const router = useRouter();
-  const [tipo, setTipo] = useState<'unica' | 'mensual'>('mensual');
+  const [tipo, setTipo] = useState<"unica" | "mensual">("mensual");
   const [cantidad, setCantidad] = useState(0);
-  const [otro, setOtro] = useState('');
+  const [otro, setOtro] = useState("");
   const [otroActivo, setOtroActivo] = useState(false);
   const [animNinios, setAnimNinios] = useState(calcularNinios(12));
   const animRef = useRef<number | null>(null);
+
+  // Estado para controlar qué variante del puzzle mostrar
+  const [puzzleVariant, setPuzzleVariant] = useState<1 | 2>(1);
 
   const [showPagoModal, setShowPagoModal] = useState(false);
   const [showDeunaModal, setShowDeunaModal] = useState(false);
 
   const [deunaForm, setDeunaForm] = useState({
-    nombre: '',
-    apellido: '',
-    correo: '',
-    telefono: '',
-    documento: ''
+    nombre: "",
+    apellido: "",
+    correo: "",
+    telefono: "",
+    documento: "",
   });
   const [consentChecked, setConsentChecked] = useState(false);
   const [comindadesChecked, setComindadesChecked] = useState(false);
@@ -65,7 +121,7 @@ export default function DonacionPage() {
     if (animNinios === target) return;
     const step = animNinios < target ? 1 : -1;
     animRef.current = window.setInterval(() => {
-      setAnimNinios(prev => {
+      setAnimNinios((prev) => {
         if (prev === target) {
           if (animRef.current) clearInterval(animRef.current);
           return prev;
@@ -78,10 +134,56 @@ export default function DonacionPage() {
     };
   }, [cantidad]);
 
+  //LOGICA PARA EL PUZZLE
+
+  // Efecto para cambiar aleatoriamente la variante del puzzle cuando cambia el tipo
+  useEffect(() => {
+    setPuzzleVariant(Math.random() < 0.5 ? 1 : 2);
+  }, [tipo]);
+
+  // Función para obtener las piezas y configuración según el tipo y variante
+  const getPuzzleConfig = () => {
+    if (tipo === 'unica') {
+      if (puzzleVariant === 1) {
+        return {
+          pieces: PUZZLE_PIECES_UNICA_1,
+          activePieces: getPuzzlePiecesUnica1(cantidad),
+          backgroundImage: "/puzzle/unica-opcion1.png",
+          alt: "Puzzle donación única opción 1"
+        };
+      } else {
+        return {
+          pieces: PUZZLE_PIECES_UNICA_2,
+          activePieces: getPuzzlePiecesUnica2(cantidad),
+          backgroundImage: "/puzzle/unica-opcion2.png",
+          alt: "Puzzle donación única opción 2"
+        };
+      }
+    } else {
+      if (puzzleVariant === 1) {
+        return {
+          pieces: PUZZLE_PIECES_MENSUAL_1,
+          activePieces: getPuzzlePiecesMensual1(cantidad),
+          backgroundImage: "/puzzle/mensual-opcion1.png",
+          alt: "Puzzle donación mensual opción 1"
+        };
+      } else {
+        return {
+          pieces: PUZZLE_PIECES_MENSUAL_2,
+          activePieces: getPuzzlePiecesMensual2(cantidad),
+          backgroundImage: "/puzzle/mensual-opcion2.png",
+          alt: "Puzzle donación mensual opción 2"
+        };
+      }
+    }
+  };
+
+  const puzzleConfig = getPuzzleConfig();
+
   const handleCantidad = (valor: number) => {
     setCantidad(valor);
     setOtroActivo(false);
-    setOtro('');
+    setOtro("");
   };
 
   const handleOtroFocus = () => {
@@ -92,7 +194,7 @@ export default function DonacionPage() {
   const handleDonarAhora = (e: React.MouseEvent) => {
     e.preventDefault();
     if (cantidad < 2) return;
-    if (tipo === 'mensual') {
+    if (tipo === "mensual") {
       router.push(`/donacion/mensual?monto=${cantidad}`);
     } else {
       setShowPagoModal(true);
@@ -108,14 +210,26 @@ export default function DonacionPage() {
   return (
     <div className="bg-white min-h-screen">
       {/* Espacio para header fijo (si existe) */}
-      <div className="w-screen flex flex-col items-center justify-center mb-8 pt-32 pb-2">
-        {/* Puedes agregar logo o mensaje de bienvenida aquí */}
-      </div>
+      
+      {/* Puedes agregar logo o mensaje de bienvenida aquí */}
+      {/* <div className="w-screen flex flex-col items-center justify-center mb-8 pt-32 pb-2">
+        
+        
+      </div> */}
 
-      <div className="flex flex-col lg:flex-row justify-center items-start gap-12 px-4 lg:px-0">
+      <div
+        className="w-screen flex flex-col lg:flex-row justify-center items-start gap-12 px-4 lg:px-0 relative"
+        style={{
+          backgroundImage: "linear-gradient(rgba(255, 255, 255, 0.90), rgba(255, 255, 255, 0.90)), url('background.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          opacity: 0.85,
+        }}
+      >
         {/* Sección izquierda */}
         <div className="flex-1 max-w-md min-w-[320px] flex flex-col items-center">
-          <div className="bg-white rounded-2xl p-[44px_36px_36px_36px] w-full max-w-md shadow-[0_8px_32px_rgba(255,140,0,0.13)] flex flex-col items-center">
+          <div className="bg-white rounded-2xl p-4 sm:p-6 md:p-[44px_36px_36px_36px] w-full max-w-xs sm:max-w-sm md:max-w-md shadow-[0_8px_32px_rgba(255,140,0,0.13)] flex flex-col items-center">
             <h1 className="bg-gradient-to-r from-[#ff7300] to-[#FF6347] bg-clip-text text-transparent text-3xl font-extrabold text-center mb-4">
               A un <strong>clic</strong> para alimentar
             </h1>
@@ -123,18 +237,19 @@ export default function DonacionPage() {
               Tu aporte ayuda a transformar vidas.
             </p>
             <p className="text-center text-lg font-medium text-orange-700 mb-5">
-              Elige el <strong>tipo</strong> y <strong>monto</strong> de tu donación:
+              Elige el <strong>tipo</strong> y <strong>monto</strong> de tu
+              donación:
             </p>
 
             {/* Tipo de donación */}
             <div className="flex justify-center gap-4 mb-6">
               <button
                 className={`flex items-center gap-2 px-6 py-2 rounded-full font-bold text-lg transition-transform ${
-                  tipo === 'unica'
-                    ? 'bg-gradient-to-r from-[#2F3388] to-[#1D2394] text-white shadow-lg scale-105'
-                    : 'bg-gray-200 text-gray-700 shadow-md hover:bg-[#2F3388] hover:text-white'
+                  tipo === "unica"
+                    ? "bg-gradient-to-r from-[#2F3388] to-[#1D2394] text-white shadow-lg scale-105"
+                    : "bg-gray-200 text-gray-700 shadow-md hover:bg-[#2F3388] hover:text-white"
                 }`}
-                onClick={() => setTipo('unica')}
+                onClick={() => setTipo("unica")}
               >
                 {/* Ícono corazón */}
                 <svg
@@ -149,13 +264,13 @@ export default function DonacionPage() {
                        9.7 7 11.5 7 13.7c0 2.2 1.2 4.3 3.1 5.1.7.3
                        1.4.4 2.1.4.7 0 1.4-.1 2.1-.4 1.9-.8
                        3.1-2.9 3.1-5.1 0-2.2-1.1-4-2.9-5.2z"
-                    fill={tipo === 'unica' ? '#fff' : '#ff7300'}
+                    fill={tipo === "unica" ? "#fff" : "#ff7300"}
                   />
                   <path
                     d="M12.5 6.5c.6-.7 1.2-1.7 1.2-2.7
                        0-.2-.2-.3-.3-.3-.7 0-1.6.5-2.1 1.1-.5.6-.9
                        1.4-.9 2.2 0 .2.2.3.3.3.7 0 1.5-.4 2-1.1z"
-                    fill={tipo === 'unica' ? '#fff' : '#ff7300'}
+                    fill={tipo === "unica" ? "#fff" : "#ff7300"}
                   />
                 </svg>
                 Única vez
@@ -163,11 +278,11 @@ export default function DonacionPage() {
 
               <button
                 className={`flex items-center gap-2 px-6 py-2 rounded-full font-bold text-lg transition-transform ${
-                  tipo === 'mensual'
-                    ? 'bg-gradient-to-r from-[#2F3388] to-[#1D2394] text-white shadow-lg scale-105'
-                    : 'bg-gray-200 text-gray-700 shadow-md hover:bg-[#2F3388] hover:text-white'
+                  tipo === "mensual"
+                    ? "bg-gradient-to-r from-[#2F3388] to-[#1D2394] text-white shadow-lg scale-105"
+                    : "bg-gray-200 text-gray-700 shadow-md hover:bg-[#2F3388] hover:text-white"
                 }`}
-                onClick={() => setTipo('mensual')}
+                onClick={() => setTipo("mensual")}
               >
                 {/* Ícono calendario */}
                 <svg
@@ -183,7 +298,7 @@ export default function DonacionPage() {
                     width="18"
                     height="17"
                     rx="3"
-                    fill={tipo === 'mensual' ? '#fff' : '#ff7300'}
+                    fill={tipo === "mensual" ? "#fff" : "#ff7300"}
                     fillOpacity="0.15"
                   />
                   <rect
@@ -192,7 +307,7 @@ export default function DonacionPage() {
                     width="18"
                     height="13"
                     rx="2"
-                    fill={tipo === 'mensual' ? '#fff' : '#ff7300'}
+                    fill={tipo === "mensual" ? "#fff" : "#ff7300"}
                   />
                   <rect
                     x="7"
@@ -200,7 +315,7 @@ export default function DonacionPage() {
                     width="2"
                     height="4"
                     rx="1"
-                    fill={tipo === 'mensual' ? '#fff' : '#ff7300'}
+                    fill={tipo === "mensual" ? "#fff" : "#ff7300"}
                   />
                   <rect
                     x="15"
@@ -208,7 +323,7 @@ export default function DonacionPage() {
                     width="2"
                     height="4"
                     rx="1"
-                    fill={tipo === 'mensual' ? '#fff' : '#ff7300'}
+                    fill={tipo === "mensual" ? "#fff" : "#ff7300"}
                   />
                 </svg>
                 Mensual
@@ -217,13 +332,13 @@ export default function DonacionPage() {
 
             {/* Montos predefinidos */}
             <div className="grid grid-cols-2 gap-4 mb-6 w-full">
-              {MONTOS_DONACION.map(m => (
+              {MONTOS_DONACION.map((m) => (
                 <button
                   key={m}
                   className={`flex flex-col items-center rounded-lg px-7 py-4 font-bold text-lg shadow-md transition-transform ${
                     cantidad === m && !otroActivo
-                      ? 'bg-gradient-to-r from-orange-400 to-orange-500 text-white shadow-lg scale-105 filter brightness-95 contrast-125'
-                      : 'bg-white text-orange-600 opacity-95 hover:brightness-110'
+                      ? "bg-gradient-to-r from-orange-400 to-orange-500 text-white shadow-lg scale-105 filter brightness-95 contrast-125"
+                      : "bg-white text-orange-600 opacity-95 hover:brightness-110"
                   }`}
                   onClick={() => handleCantidad(m)}
                 >
@@ -238,8 +353,8 @@ export default function DonacionPage() {
               <button
                 className={`rounded-l-lg px-6 py-4 font-bold text-lg shadow-md transition-transform ${
                   otroActivo
-                    ? 'bg-gradient-to-r from-orange-500 to-orange-300 text-white shadow-lg scale-105'
-                    : 'bg-gradient-to-r from-orange-500 to-orange-300 text-white shadow-md'
+                    ? "bg-gradient-to-r from-orange-500 to-orange-300 text-white shadow-lg scale-105"
+                    : "bg-gradient-to-r from-orange-500 to-orange-300 text-white shadow-md"
                 }`}
                 onClick={handleOtroFocus}
                 type="button"
@@ -249,9 +364,9 @@ export default function DonacionPage() {
               <input
                 type="number"
                 placeholder="Ingresa el monto"
-                value={otroActivo ? otro : ''}
+                value={otroActivo ? otro : ""}
                 onFocus={handleOtroFocus}
-                onChange={e => {
+                onChange={(e) => {
                   // Validar que el valor sea un número positivo y sin decimales mayor a 2
                   const value = parseFloat(e.target.value);
                   if (value >= 2 && Number.isInteger(value)) {
@@ -259,13 +374,13 @@ export default function DonacionPage() {
                     setOtro(value.toString());
                   } else {
                     setCantidad(0);
-                    setOtro('');
+                    setOtro("");
                   }
                 }}
                 inputMode="numeric"
                 pattern="[0-9]*"
                 min={otroActivo ? 3 : undefined}
-                className="flex-1 rounded-r-lg p-4 font-bold text-lg bg-white shadow-md focus:outline-none"
+                className="flex-1 rounded-r-lg p-2 sm:p-3 md:p-4 font-bold text-sm sm:text-base md:text-lg bg-white shadow-md focus:outline-none"
               />
             </div>
 
@@ -287,20 +402,24 @@ export default function DonacionPage() {
 
         {/* Sección derecha: puzzle y contador */}
         <div className="flex-1 max-w-md min-w-[320px] flex flex-col items-center">
-          <div className="bg-gradient-to-r from-[#ffb347] to-[#ff7300] rounded-2xl p-8 w-full shadow-2xl flex flex-col items-center mb-8 animate-[fadeInBounce_1.2s_cubic-bezier(.68,-.55,.27,1.55)]">
+          <div className="bg-gradient-to-r from-[#ffb347] to-[#ff7300] rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 w-full max-w-xs sm:max-w-sm md:max-w-md mx-auto shadow-lg sm:shadow-xl md:shadow-2xl flex flex-col items-center mb-6 sm:mb-8 animate-[fadeInBounce_1.2s_cubic-bezier(.68,-.55,.27,1.55)]">
             <h1 className="text-white text-2xl sm:text-3xl md:text-4xl font-extrabold text-center mb-4">
-              Tu eres la <strong>pieza</strong> que falta para <strong>acabar</strong> con la desnutrición
+              Tu eres la <strong>pieza</strong> que falta para{" "}
+              <strong>acabar</strong> con la desnutrición
             </h1>
             <div className="relative w-80 max-w-full">
+              {/* Imagen base - cambia según el tipo */}
               <Image
-                src="/puzzle/completo.png"
-                alt="Puzzle completo"
-                width={800}  // Añadido width
-                height={800} // Añadido height
+                src={puzzleConfig.backgroundImage}
+                alt={puzzleConfig.alt}
+                width={800}
+                height={800}
                 className="w-full h-auto opacity-20 rounded-lg"
               />
-              {PUZZLE_PIECES.map(piece => {
-                const show = getPuzzlePieces(cantidad).includes(piece.key);
+
+              {/* Piezas del puzzle - renderiza según el tipo */}
+              {puzzleConfig.pieces.map(piece => {
+                const show = puzzleConfig.activePieces.includes(piece.key);
                 return (
                   <Image
                     key={piece.key}
@@ -309,8 +428,8 @@ export default function DonacionPage() {
                     className={`absolute w-full h-full object-contain transition-opacity duration-700 ${
                       show ? 'opacity-100' : 'opacity-0'
                     }`}
-                    width={400}  // Añadido width
-                    height={400} // Añadido height
+                    width={400}
+                    height={400}
                     style={{
                       top: piece.style.top ?? 'auto',
                       bottom: piece.style.bottom ?? 'auto',
@@ -326,6 +445,9 @@ export default function DonacionPage() {
         </div>
       </div>
 
+     {/* Linea de separacion*/}
+      <div className="w-full h-8 bg-white"></div>
+      
       {/* Sección Informativa Horizontal */}
       <section
         className="relative w-screen bg-cover bg-center mb-8 px-4 py-12"
@@ -338,9 +460,10 @@ export default function DonacionPage() {
               ¿Qué hacemos con tus donaciones?
             </h2>
             <p className="text-lg font-medium mb-8">
-              Sus contribuciones son utilizadas para{' '}
-              <b>adquirir alimentos de alto valor nutricional</b> y cubrir la logística
-              que asegure una buena gestión y calidad de los alimentos.
+              Sus contribuciones son utilizadas para{" "}
+              <b>adquirir alimentos de alto valor nutricional</b> y cubrir la
+              logística que asegure una buena gestión y calidad de los
+              alimentos.
             </p>
             <hr className="border-t-2 border-white mx-auto w-3/5 mb-8" />
             <h2 className="text-3xl md:text-4xl font-extrabold mb-4">
@@ -349,14 +472,13 @@ export default function DonacionPage() {
             <p className="text-lg font-medium">
               Los alimentos gestionados por diferentes fuentes de supermercados,
               centrales y otros, son complementados con los adquiridos por
-              donaciones y enviados a través de un sistema integral de organizaciones
-              sociales que garantizan trazabilidad y reportería para nuestros
-              benefactores.
+              donaciones y enviados a través de un sistema integral de
+              organizaciones sociales que garantizan trazabilidad y reportería
+              para nuestros benefactores.
             </p>
           </div>
         </div>
       </section>
-
 
       {/* Sección de Impacto */}
       <section className="w-screen bg-gradient-to-r from-[#fff7ed] to-[#ffe0c3] flex flex-col items-center py-16">
@@ -367,7 +489,7 @@ export default function DonacionPage() {
           <Image
             src="/que-hacemos.webp"
             alt="Impacto de tu donación"
-            width={800}  // Añadido width
+            width={800} // Añadido width
             height={800} // Añadido height
             className="w-[99vw] max-w-[900px] rounded-2xl object-cover"
           />
@@ -396,7 +518,7 @@ export default function DonacionPage() {
         >
           <div
             className="bg-white rounded-xl p-8 w-full max-w-md shadow-xl relative"
-            onClick={e => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
           >
             <button
               className="absolute top-4 right-4 text-2xl text-[#ff7300]"
@@ -407,27 +529,45 @@ export default function DonacionPage() {
             <h2 className="text-center text-2xl font-extrabold text-[#2F3388] mb-6">
               Información de Donación
             </h2>
-            <form
-              onSubmit={handleDeunaSubmit}
-              className="flex flex-col gap-4"
-            >
+            <form onSubmit={handleDeunaSubmit} className="flex flex-col gap-4">
               {/* Campos de correo, nombre, apellido, teléfono, documento */}
-              {(['correo','nombre','apellido','telefono','documento'] as const).map(field => (
+              {(
+                [
+                  "correo",
+                  "nombre",
+                  "apellido",
+                  "telefono",
+                  "documento",
+                ] as const
+              ).map((field) => (
                 <div key={field} className="flex flex-col">
                   <label className="text-sm font-semibold text-gray-600 mb-1">
-                    {field === 'correo' ? 'Correo Electrónico' :
-                     field === 'telefono' ? 'Número de Teléfono (opcional)' :
-                     field === 'documento' ? 'Documento de Identidad' :
-                     field === 'nombre' ? 'Nombre' : 'Apellido'}
+                    {field === "correo"
+                      ? "Correo Electrónico"
+                      : field === "telefono"
+                      ? "Número de Teléfono (opcional)"
+                      : field === "documento"
+                      ? "Documento de Identidad"
+                      : field === "nombre"
+                      ? "Nombre"
+                      : "Apellido"}
                   </label>
                   <input
-                    type={field==='correo'?'email':field==='telefono'?'tel':'text'}
-                    placeholder={field === 'telefono'
-                      ? 'Número de teléfono (opcional)'
-                      : `Ingresa tu ${field}`}
+                    type={
+                      field === "correo"
+                        ? "email"
+                        : field === "telefono"
+                        ? "tel"
+                        : "text"
+                    }
+                    placeholder={
+                      field === "telefono"
+                        ? "Número de teléfono (opcional)"
+                        : `Ingresa tu ${field}`
+                    }
                     value={deunaForm[field]}
-                    onChange={e =>
-                      setDeunaForm(prev => ({
+                    onChange={(e) =>
+                      setDeunaForm((prev) => ({
                         ...prev,
                         [field]: e.target.value,
                       }))
@@ -442,11 +582,15 @@ export default function DonacionPage() {
                   id="consent"
                   type="checkbox"
                   checked={consentChecked}
-                  onChange={e => setConsentChecked(e.target.checked)}
+                  onChange={(e) => setConsentChecked(e.target.checked)}
                   className="mt-[3px]"
                 />
-                <label htmlFor="consent" className="text-sm text-[#2F3388] font-medium">
-                  Al ingresar mis datos, podrán mantener mi racha y comunicar eventos.
+                <label
+                  htmlFor="consent"
+                  className="text-sm text-[#2F3388] font-medium"
+                >
+                  Al ingresar mis datos, podrán mantener mi racha y comunicar
+                  eventos.
                 </label>
               </div>
               <div className="flex items-start gap-2">
@@ -454,10 +598,13 @@ export default function DonacionPage() {
                   id="comunidad"
                   type="checkbox"
                   checked={comindadesChecked}
-                  onChange={e => setComindadesChecked(e.target.checked)}
+                  onChange={(e) => setComindadesChecked(e.target.checked)}
                   className="mt-[3px]"
                 />
-                <label htmlFor="comunidad" className="text-sm text-[#2F3388] font-medium">
+                <label
+                  htmlFor="comunidad"
+                  className="text-sm text-[#2F3388] font-medium"
+                >
                   Deseo pertenecer a la comunidad DeUna.
                 </label>
               </div>
@@ -477,11 +624,17 @@ export default function DonacionPage() {
                   <span
                     key={i}
                     style={{
-                      position: 'absolute',
+                      position: "absolute",
                       left: `${Math.random() * 100}%`,
                       top: `${Math.random() * 10}%`,
                       fontSize: `${Math.random() * 18 + 12}px`,
-                      color: ['#ff7300', '#ffb347', '#2F3388', '#FFD580', '#FF6347'][i % 5],
+                      color: [
+                        "#ff7300",
+                        "#ffb347",
+                        "#2F3388",
+                        "#FFD580",
+                        "#FF6347",
+                      ][i % 5],
                       animationDelay: `${Math.random()}s`,
                     }}
                   >
@@ -512,7 +665,7 @@ function PersonasAlimentadas({
     if (personas === end) return;
     const step = personas < end ? 1 : -1;
     const iv = setInterval(() => {
-      setPersonas(prev => {
+      setPersonas((prev) => {
         if (prev === end) {
           clearInterval(iv);
           return prev;
@@ -529,12 +682,12 @@ function PersonasAlimentadas({
         {personas}
       </div>
       <div className="text-[#b85c00] text-lg font-bold mb-2 text-center">
-        {personas === 1 ? 'persona alimentada' : 'Personas alimentadas'}
+        {personas === 1 ? "persona alimentada" : "Personas alimentadas"}
       </div>
       <div className="text-gray-500 text-sm text-center">
         Con un solo $1 alimentas a una persona durante todo un día.
       </div>
-      {tipo === 'mensual' && (
+      {tipo === "mensual" && (
         <div className="text-transparent bg-gradient-to-r from-[#2F3388] to-[#ff7300] bg-clip-text font-extrabold text-lg mt-4 animate-[fadeInUpBounce_1s_cubic-bezier(.68,-.55,.27,1.55)]">
           Proyección anual: {personas * 12} personas alimentadas al año
         </div>
