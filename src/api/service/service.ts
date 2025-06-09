@@ -1,10 +1,12 @@
 import { Request, Response } from 'express';
 import fs from 'fs';
 import path from 'path';
-import { sendPaymentVoucher } from '../utils/sendmail';
 import type { PayPalWebhookData } from '../types/paypal';
+import { processPayPalToMonday } from './mondayService';
 
-export const helloService = {
+
+
+export const paypalService = {
  
   hello: async (req: Request, res: Response) => {
     res.status(200).json({ message: 'Hello World' });
@@ -44,19 +46,21 @@ export const helloService = {
       fs.writeFileSync(responsePath, JSON.stringify(existingData, null, 2), 'utf8');
       console.log('Datos guardados en response.json');
       
-      // Enviar el voucher de pago por email
-      if (eventType === 'PAYMENT.CAPTURE.COMPLETED' || 
-          eventType === 'CHECKOUT.ORDER.APPROVED' ||
+      // Procesar pago completado y enviar a Monday - solo para eventos que tienen datos completos del pagador
+      if (eventType === 'CHECKOUT.ORDER.APPROVED' ||
           eventType === 'PAYMENT.SALE.COMPLETED') {
+        console.log('Pago completado exitosamente:', eventType);
+        
+        // Enviar datos a Monday.com
         try {
-          const emailSent = await sendPaymentVoucher(webhookData);
-          if (emailSent) {
-            console.log('Voucher de pago enviado con éxito');
+          const mondayItemId = await processPayPalToMonday(webhookData);
+          if (mondayItemId) {
+            console.log(`Datos enviados a Monday exitosamente. Item ID: ${mondayItemId}`);
           } else {
-            console.error('Error al enviar el voucher de pago');
+            console.error('Error al crear item en Monday');
           }
-        } catch (emailError) {
-          console.error('Error en el envío del email:', emailError);
+        } catch (mondayError) {
+          console.error('Error procesando Monday:', mondayError);
         }
       }
       
