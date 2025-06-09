@@ -18,8 +18,7 @@ app.listen(PORT, () => {
   
   // Log configuration for debugging
   console.log('Environment variables loaded:', {
-    API_KEY_SET: process.env.API_KEY ? 'Yes' : 'No',
-    DOMAIN_SET: process.env.DOMAIN ? 'Yes' : 'No',
-    PORT: PORT
+    PORT: PORT,
+    MONDAY_API_TOKEN_SET: process.env.MONDAY_API_TOKEN ? 'Yes' : 'No'
   });
 });
