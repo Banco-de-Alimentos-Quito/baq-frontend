@@ -4,6 +4,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import Header from '@/components/sections/Header';
 import Footer from '@/components/sections/Footer';
+import ClientLayout from '../app/ClientLayout';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -24,7 +25,9 @@ export default function RootLayout({
     <html lang="es">
       <body className={`${inter.variable} font-sans antialiased`}>
         <Header />
-        <main>{children}</main>
+        <ClientLayout>
+          <main>{children}</main>
+        </ClientLayout>
         <Footer />
         <Toaster />
       </body>
