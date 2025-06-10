@@ -5,6 +5,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import PaymentModal from "../components/PaymentModal";
 import Image from "next/image";
+import { useRouteLoading } from '@/hooks/useRouteLoading';
 
 function calcularNinios(monto: number) {
   return Math.max(1, Math.floor(monto / 12));
@@ -105,7 +106,9 @@ export default function DonacionPage() {
   const [consentChecked, setConsentChecked] = useState(false);
   const [comindadesChecked, setComindadesChecked] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
-
+  
+  const { navigateWithLoading } = useRouteLoading();
+  
   const canSubmitDeuna =
     consentChecked ||
     (!deunaForm.nombre &&
@@ -113,6 +116,8 @@ export default function DonacionPage() {
       !deunaForm.correo &&
       !deunaForm.telefono &&
       !deunaForm.documento);
+
+  // Carga 
 
   // Animación de conteo de niños
   useEffect(() => {
@@ -195,7 +200,7 @@ export default function DonacionPage() {
     e.preventDefault();
     if (cantidad < 2) return;
     if (tipo === "mensual") {
-      router.push(`/donacion/mensual?monto=${cantidad}`);
+      navigateWithLoading(`/donacion/mensual?monto=${cantidad}`, 2500);
     } else {
       setShowPagoModal(true);
     }
