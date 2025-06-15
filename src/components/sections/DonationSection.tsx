@@ -26,7 +26,7 @@ export default function DonationSection() {
               <Button
                 asChild
                 size="lg"
-                className="px-10 py-6 text-lg bg-primary hover:bg-primary/90 text-primary-foreground transition-transform hover:scale-105"
+                className="px-10 py-6 text-lg text-[#ed6f1d] hover:bg-orange-400 text-primary-foreground transition-transform hover:scale-105"
               >
                 <Link href="/donacion">
                   Donar Ahora
