@@ -1,6 +1,3 @@
-import Image from "next/image";
-import PayPalButton from "./components/Paypal";
-import { PluxButton } from "./components/PluxButton";
 import HeroSection from '@/components/sections/HeroSection';
 import WhatWeDoSection from '@/components/sections/WhatWeDoSection';
 import HowToHelpSection from '@/components/sections/HowToHelpSection';
