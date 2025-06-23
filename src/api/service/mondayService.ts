@@ -95,28 +95,28 @@ export function mapPayPalToMondayData(webhookData: PayPalWebhookData): MondayIte
   const columnValues: Record<string, string | number | { email: string; text: string }> = {};
   
   // Working columns
-  columnValues['text_mkreghav'] = payerName;
-  columnValues['numeric_mkrer28d'] = paymentAmount;
+  columnValues['text_mkrxarv5'] = payerName;
+  columnValues['numeric_mkrxs38c'] = paymentAmount;
   
   // Date in ISO format (YYYY-MM-DD)
   const now = new Date();
   const currentDate = now.toISOString().split('T')[0];
-  columnValues['date_mkrfw5g'] = currentDate;
+  columnValues['date'] = currentDate;
   
   // City (works)
   if (payerCity) {
-    columnValues['text_mkrmse6w'] = payerCity;
+    columnValues['text_mkrx4w4m'] = payerCity;
   }
   
   // Country code (direct string)
   if (payerCountry) {
-    columnValues['text_mkrmebsq'] = payerCountry;
+    columnValues['text_mkrx27e5'] = payerCountry;
     console.log(`🌍 País: ${payerCountry}`);
   }
   
   // Email (email column format)
   if (payerEmail) {
-    columnValues['email_mkrnmh1e'] = {
+    columnValues['email_mkrxg5ct'] = {
       email: payerEmail,
       text: payerEmail
     };
@@ -126,8 +126,8 @@ export function mapPayPalToMondayData(webhookData: PayPalWebhookData): MondayIte
   console.log('✅ Enviando todas las columnas:', columnValues);
 
   return {
-    boardId: MONDAY_CONFIG.BOARD_ID,
-    groupId: MONDAY_CONFIG.GROUP_ID,
+    boardId: MONDAY_CONFIG.BOARD_ID!,
+    groupId: MONDAY_CONFIG.GROUP_ID!,
     itemName: `pago-cliente-${paymentId}`,
     columnValues: columnValues as Record<string, string | number | { email: string; text: string }>
   };
@@ -208,14 +208,14 @@ export async function updateMondayItem(
   const columnValues: Partial<MondayColumnValues> = {};
   
   if (updates.phone) {
-    columnValues.phone_mkrgz8x = {
+    columnValues.phone_mkrxxch9 = {
       phone: updates.phone,
       countryShortName: 'EC'
     };
   }
   
   if (updates.birthDate) {
-    columnValues.date_mkrfvx99 = updates.birthDate; // Formato: YYYY-MM-DD
+    columnValues.date_mkrxxa9b = updates.birthDate; // Formato: YYYY-MM-DD
   }
   try {
     const query = `
