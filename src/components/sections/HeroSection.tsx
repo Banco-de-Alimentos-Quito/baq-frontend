@@ -21,14 +21,14 @@ export default function HeroSection() {
       <div className="container mx-auto px-4 md:px-6 text-center relative z-10 animate-in fade-in-0 slide-in-from-bottom-10 duration-700">
         <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl text-orange-600 dark:text-gray-100">
           <span className="block">Con tu ayuda,</span>
-          <span className="block text-primary">llevamos alimento</span>
+          <span className="block text-[#ed6f1d]">llevamos alimento</span>
           <span className="block">a quienes más lo necesitan.</span>
         </h1>
         <p className="mt-6 max-w-2xl mx-auto text-lg text-gray-600 dark:text-gray-300 md:text-xl">
           Cada donación, por pequeña que sea, marca una gran diferencia en la vida de familias y personas vulnerables en Quito.
         </p>
         <div className="mt-10">
-          <Button asChild size="lg" className="px-10 py-6 text-lg bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg transform hover:scale-105 transition-transform duration-300">
+          <Button asChild size="lg" className="px-10 py-6 text-lg text-[#ed6f1d] hover:bg-orange-400 text-primary-foreground shadow-lg transform hover:scale-105 transition-transform duration-300">
             <Link href="/donacion">Donar Ahora</Link>
           </Button>
         </div>

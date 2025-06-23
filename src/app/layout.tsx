@@ -4,6 +4,8 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import Header from '@/components/sections/Header';
 import Footer from '@/components/sections/Footer';
+import LoadingWrapper from '@/components/ui/LoadingWrapper';
+
 
 const inter = Inter({
   subsets: ['latin'],
@@ -23,10 +25,12 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className={`${inter.variable} font-sans antialiased`}>
-        <Header />
-        <main>{children}</main>
-        <Footer />
-        <Toaster />
+        <LoadingWrapper>
+          <Header />
+          <main>{children}</main>
+          <Footer />
+          <Toaster />
+        </LoadingWrapper>
       </body>
     </html>
   );
