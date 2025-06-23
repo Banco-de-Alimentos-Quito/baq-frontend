@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from 'react';
-import Script from 'next/script';
+import { useEffect, useRef } from "react";
+import Script from "next/script";
 
 interface PayPalButtonProps {
   productDescription?: string;
@@ -14,12 +14,12 @@ export default function PayPalButton({
   productDescription = "LA DESCRIPCION DE TU PRODUCTO",
   amount = 0,
   currency = "USD",
-  successUrl = "thank-you"
+  successUrl = "thank-you",
 }: PayPalButtonProps) {
   // Usar useRef para verificar si los botones ya han sido renderizados
   const buttonsRendered = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  
+
   useEffect(() => {
     // Función para inicializar los botones de PayPal
     const initPayPalButton = () => {
@@ -47,20 +47,24 @@ export default function PayPalButton({
             });
           },
 
-          onApprove: function(_data: unknown, actions: any) {
-            return actions.order.capture().then(function(orderData: any) {
-              console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
-              
-              // Redirect to success page
-              window.location.href = successUrl;
-            });
-          },
+            onApprove: async function (_data: unknown, actions: any) {
+              try {
+                const orderData = await actions.order.capture();
+                console.log("Capture result", orderData);
 
-          onError: function(err: Error) {
-            console.log(err);
-          }
-        }).render(containerRef.current);
-        
+                // Usar router.push en lugar de window.location
+                window.location.href = `/${successUrl}`;
+              } catch (error) {
+                console.error("Error al procesar el pago:", error);
+              }
+            },
+
+            onError: function (err: Error) {
+              console.error("Error en PayPal:", err);
+            },
+          })
+          .render(containerRef.current);
+
         // Marcar que los botones ya han sido renderizados
         buttonsRendered.current = true;
       }
@@ -83,7 +87,7 @@ export default function PayPalButton({
   return (
     <>
       <Script
-        src={`https://www.paypal.com/sdk/js?client-id=AYAlZJagqJe2cOJrvrnzhVX_8PqvggjKvQcG6TRp9mHcKvnx7U9LKQJp-kbiVzZ0WtGe0o0Wx81TSTtU&currency=${currency}`}
+        src={`https://www.paypal.com/sdk/js?client-id=${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID}&currency=${currency}`}
         data-sdk-integration-source="button-factory"
         onLoad={() => {
           if (window.paypalButtonCallback) {
@@ -92,7 +96,7 @@ export default function PayPalButton({
         }}
       />
       <div id="smart-button-container">
-        <div style={{ textAlign: 'center' }}>
+        <div style={{ textAlign: "center" }}>
           <div ref={containerRef} id="paypal-button-container"></div>
         </div>
       </div>

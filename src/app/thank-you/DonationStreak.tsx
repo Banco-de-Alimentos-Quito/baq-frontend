@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 
 export interface StreakData {
   currentStreak: number;

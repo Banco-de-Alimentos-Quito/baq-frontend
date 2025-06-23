@@ -2,6 +2,7 @@
 'use client';
 import React, { Suspense } from "react";
 import { useSearchParams, useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 // Componente interno que usa useSearchParams
 function QRContent() {
@@ -22,10 +23,16 @@ function QRContent() {
         flexDirection: 'column',
         alignItems: 'center',
       }}>
-        <h1 style={{ color: '#2F3388', fontWeight: 900, fontSize: '1.5rem', marginBottom: 18, textAlign: 'center' }}>
+        <h1 className="text-[#2F3388] font-black text-2xl mb-5 text-center">
           ¡Escanea el código QR para completar tu donación!
         </h1>
-        <img src="/qr_example.png" alt="QR para donación" style={{ width: 220, height: 220, margin: '18px 0', borderRadius: 16, border: '2px solid #ff7300', background: '#fff' }} />
+        <Image 
+          src="/qr_example.png" 
+          alt="QR para donación" 
+          width={220}
+          height={220}
+          className="my-[18px] rounded-2xl border-2 border-[#ff7300] bg-white"
+        />
         <div style={{ fontSize: '1.2rem', color: '#ff7300', fontWeight: 700, margin: '18px 0 8px 0' }}>
           Total a pagar: <span style={{ color: '#2F3388' }}>${cantidad}</span>
         </div>
