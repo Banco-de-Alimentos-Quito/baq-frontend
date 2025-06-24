@@ -7068,5 +7068,37 @@
         }
       ]
     }
+  },
+  {
+    "timestamp": "2025-06-24T00:41:40.895Z",
+    "type": "donacion-mensual",
+    "data": {
+      "cedula": "1754313458",
+      "nombres": "Julián Aleksei",
+      "genero": "Hombre",
+      "correo": "alekseinavalforever@gmail.com",
+      "direccion": "Armenia",
+      "cuenta": "1234567890",
+      "tipoCuenta": "Ahorros",
+      "banco": "Banco Pichincha",
+      "otroBanco": "",
+      "monto": 10
+    }
+  },
+  {
+    "timestamp": "2025-06-24T01:52:19.258Z",
+    "type": "donacion-mensual",
+    "data": {
+      "cedula": "1754313458",
+      "nombres": "Julián Aleksei",
+      "genero": "Hombre",
+      "correo": "alekseinavalforever@gmail.com",
+      "direccion": "Armenia",
+      "cuenta": "1234567890",
+      "tipoCuenta": "Ahorros",
+      "banco": "Banco Pichincha",
+      "otroBanco": "",
+      "monto": 10
+    }
   }
 ]

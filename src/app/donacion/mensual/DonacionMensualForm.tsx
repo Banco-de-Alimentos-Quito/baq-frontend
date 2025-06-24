@@ -9,10 +9,15 @@ export default function DonacionMensualForm() {
   const router = useRouter();
   const monto = Number(params.get('monto')) || 0;
   const [form, setForm] = useState({
+    cedula: '',
+    nombres: '',
+    genero: '',
     correo: '',
+    direccion: '',
     cuenta: '',
     tipoCuenta: '',
     banco: '',
+    otroBanco: '',
     acepta: false,
   });
   const [enviado, setEnviado] = useState(false);
@@ -33,10 +38,28 @@ export default function DonacionMensualForm() {
     setTocado(t => ({ ...t, [e.target.name]: true }));
   };
 
+  const isFormValid = () => {
+    const requiredFields = form.cedula && form.nombres && form.genero && form.correo && 
+                          form.direccion && form.cuenta && form.tipoCuenta && form.banco && 
+                          form.acepta && termsChecked;
+    
+    // Si seleccionó "Otra" en banco, también debe llenar otroBanco
+    if (form.banco === 'Otra') {
+      return requiredFields && form.otroBanco;
+    }
+    
+    return requiredFields;
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setTocado({ correo: true, cuenta: true, tipoCuenta: true, banco: true, acepta: true });
-    if (!(form.correo && form.cuenta && form.tipoCuenta && form.banco && form.acepta && termsChecked)) return;
+    setTocado({ 
+      cedula: true, nombres: true, genero: true, correo: true, direccion: true,
+      cuenta: true, tipoCuenta: true, banco: true, otroBanco: true, acepta: true 
+    });
+    
+    if (!isFormValid()) return;
+    
     setEnviado(true);
     toast.success('¡Contrato generado!', {
       description: 'Te hemos enviado el contrato generado a tu correo electrónico.',
@@ -74,6 +97,54 @@ export default function DonacionMensualForm() {
           <h1 style={{ color: '#2F3388', fontWeight: 900, fontSize: '1.5rem', marginBottom: 18, textAlign: 'center' }}>
             Donación mensual
           </h1>
+          
+          <label className="form-label" style={{ width: '100%', marginBottom: 8 }}>
+            Cédula/RUC
+            <input
+              type="text"
+              name="cedula"
+              required
+              value={form.cedula}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              style={{ width: '100%', padding: 12, borderRadius: 8, border: '1px solid #ddd', marginTop: 4, fontSize: 16, color: '#222' }}
+              placeholder="Ej: 1234567890"
+            />
+            {tocado.cedula && !form.cedula && <span style={{ color: '#e53e3e', fontSize: 13 }}>Falta completar este campo</span>}
+          </label>
+
+          <label className="form-label" style={{ width: '100%', marginBottom: 8 }}>
+            Nombres Completos
+            <input
+              type="text"
+              name="nombres"
+              required
+              value={form.nombres}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              style={{ width: '100%', padding: 12, borderRadius: 8, border: '1px solid #ddd', marginTop: 4, fontSize: 16, color: '#222' }}
+              placeholder="Ej: Juan Carlos Pérez González"
+            />
+            {tocado.nombres && !form.nombres && <span style={{ color: '#e53e3e', fontSize: 13 }}>Falta completar este campo</span>}
+          </label>
+
+          <label className="form-label" style={{ width: '100%', marginBottom: 8 }}>
+            Género
+            <select
+              name="genero"
+              required
+              value={form.genero}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              style={{ width: '100%', padding: 12, borderRadius: 8, border: '1px solid #ddd', marginTop: 4, fontSize: 16, background: '#fff', color: form.genero ? '#222' : '#bbb' }}
+            >
+              <option value="" style={{ color: '#bbb' }}>Selecciona tu género</option>
+              <option value="Hombre">Hombre</option>
+              <option value="Mujer">Mujer</option>
+            </select>
+            {tocado.genero && !form.genero && <span style={{ color: '#e53e3e', fontSize: 13 }}>Falta completar este campo</span>}
+          </label>
+
           <label className="form-label" style={{ width: '100%', marginBottom: 8 }}>
             Correo electrónico
             <input
@@ -88,6 +159,22 @@ export default function DonacionMensualForm() {
             />
             {tocado.correo && !form.correo && <span style={{ color: '#e53e3e', fontSize: 13 }}>Falta completar este campo</span>}
           </label>
+
+          <label className="form-label" style={{ width: '100%', marginBottom: 8 }}>
+            Dirección
+            <input
+              type="text"
+              name="direccion"
+              required
+              value={form.direccion}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              style={{ width: '100%', padding: 12, borderRadius: 8, border: '1px solid #ddd', marginTop: 4, fontSize: 16, color: '#222' }}
+              placeholder="Ej: Av. Principal 123 y Secundaria"
+            />
+            {tocado.direccion && !form.direccion && <span style={{ color: '#e53e3e', fontSize: 13 }}>Falta completar este campo</span>}
+          </label>
+
           <label className="form-label" style={{ width: '100%', marginBottom: 8 }}>
             Número de cuenta del donador
             <input
@@ -102,6 +189,7 @@ export default function DonacionMensualForm() {
             />
             {tocado.cuenta && !form.cuenta && <span style={{ color: '#e53e3e', fontSize: 13 }}>Falta completar este campo</span>}
           </label>
+
           <label className="form-label" style={{ width: '100%', marginBottom: 8 }}>
             Tipo de cuenta
             <select
@@ -118,6 +206,7 @@ export default function DonacionMensualForm() {
             </select>
             {tocado.tipoCuenta && !form.tipoCuenta && <span style={{ color: '#e53e3e', fontSize: 13 }}>Falta completar este campo</span>}
           </label>
+
           <label className="form-label" style={{ width: '100%', marginBottom: 8 }}>
             Banco o cooperativa
             <select
@@ -152,6 +241,24 @@ export default function DonacionMensualForm() {
             </select>
             {tocado.banco && !form.banco && <span style={{ color: '#e53e3e', fontSize: 13 }}>Falta completar este campo</span>}
           </label>
+
+          {form.banco === 'Otra' && (
+            <label className="form-label" style={{ width: '100%', marginBottom: 8 }}>
+              Especifica tu banco o cooperativa
+              <input
+                type="text"
+                name="otroBanco"
+                required
+                value={form.otroBanco}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                style={{ width: '100%', padding: 12, borderRadius: 8, border: '1px solid #ddd', marginTop: 4, fontSize: 16, color: '#222' }}
+                placeholder="Nombre de tu banco o cooperativa"
+              />
+              {tocado.otroBanco && form.banco === 'Otra' && !form.otroBanco && <span style={{ color: '#e53e3e', fontSize: 13 }}>Falta completar este campo</span>}
+            </label>
+          )}
+
           <label className="form-label" style={{ width: '100%', marginBottom: 8 }}>
             Monto a donar
             <input
@@ -162,6 +269,7 @@ export default function DonacionMensualForm() {
               style={{ width: '100%', padding: 12, borderRadius: 8, border: '1px solid #ddd', marginTop: 4, fontSize: 16, background: '#f3f3f3', color: '#2F3388', fontWeight: 700 }}
             />
           </label>
+          
           <div style={{ width: '100%', margin: '12px 0', background: '#f8fafc', borderRadius: 8, padding: 12, border: '1px solid #eee', color: '#2F3388', fontSize: 15 }}>
             <input
               type="checkbox"
@@ -177,6 +285,7 @@ export default function DonacionMensualForm() {
             </span>
             {tocado.acepta && !form.acepta && <span style={{ color: '#e53e3e', fontSize: 13, display: 'block', marginTop: 4 }}>Debes aceptar la cláusula</span>}
           </div>
+          
           <div style={{ width: '100%', margin: '12px 0', background: '#f8fafc', borderRadius: 8, padding: 12, border: '1px solid #eee', color: '#2F3388', fontSize: 15 }}>
             <input
               type="checkbox"
@@ -199,9 +308,10 @@ export default function DonacionMensualForm() {
               .
             </span>
           </div>
+          
           <button
             type="submit"
-            disabled={!(form.correo && form.cuenta && form.tipoCuenta && form.banco && form.acepta && termsChecked)}
+            disabled={!isFormValid()}
             style={{
               width: '100%',
               background: 'linear-gradient(90deg, #ff7300, #ffb347)',
@@ -213,13 +323,14 @@ export default function DonacionMensualForm() {
               padding: 14,
               marginTop: 8,
               boxShadow: '0 2px 8px #ff730033',
-              cursor: !(form.correo && form.cuenta && form.tipoCuenta && form.banco && form.acepta && termsChecked) ? 'not-allowed' : 'pointer',
-              opacity: !(form.correo && form.cuenta && form.tipoCuenta && form.banco && form.acepta && termsChecked) ? 0.5 : 1,
+              cursor: !isFormValid() ? 'not-allowed' : 'pointer',
+              opacity: !isFormValid() ? 0.5 : 1,
               transition: 'background 0.2s',
             }}
           >
             Generar contrato
           </button>
+          
           {enviado && (
             <div style={{
               position: 'fixed',

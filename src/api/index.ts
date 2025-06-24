@@ -9,6 +9,26 @@ const PORT = process.env.PORT || 8080;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// CORS configuration
+app.use((req, res, next) => {
+  const allowedOrigin = process.env.CORS_ALLOWED_ORIGIN;
+  
+  if (!allowedOrigin) {
+    console.error('❌ CORS_ALLOWED_ORIGIN no está configurada');
+    return res.status(500).json({ error: 'CORS no configurado' });
+  }
+  
+  res.header('Access-Control-Allow-Origin', allowedOrigin);
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  
+  if (req.method === 'OPTIONS') {
+    res.sendStatus(200);
+  } else {
+    next();
+  }
+});
+
 // Rutas
 app.use('/api', routes);
 
