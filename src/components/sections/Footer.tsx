@@ -6,8 +6,8 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gray-800 text-gray-300 py-12 md:py-16">
-      <div className="container mx-auto px-4 md:px-6">
+    <footer className="w-screen bg-gray-800 text-gray-300 py-12 md:py-16">
+      <div className="container mx-auto px-4 md:px-6 ">
         <div className="grid md:grid-cols-3 gap-8 mb-8">
           <div className='flex flex-col items-center'>
             <Link href="/" className="flex items-center gap-2 mb-4">
@@ -43,7 +43,7 @@ export default function Footer() {
           <div>
             <h4 className="text-lg font-semibold text-gray-100 mb-3">Síguenos</h4>
             <div className="flex space-x-4">
-              <Link href="https://www.tiktok.com/@baqalimentos?_t=8gdx9t0zONR&_r=1" aria-label="TikTok" className="text-gray-400 hover:text-primary transition-colors">
+              <Link href="https://www.facebook.com/baqalimentosquito/?locale=es_LA" aria-label="TikTok" className="text-gray-400 hover:text-primary transition-colors">
                 <Facebook className="w-6 h-6" />
               </Link>
               <Link href="https://www.instagram.com/bancoalimentosquito?utm_source=qr" aria-label="Instagram" className="text-gray-400 hover:text-primary transition-colors">
@@ -54,7 +54,7 @@ export default function Footer() {
         </div>
         <div className="border-t border-gray-700 pt-8 text-center text-sm">
           <p>&copy; {currentYear} Banco de Alimentos Quito. Todos los derechos reservados.</p>
-          <p className="mt-1">Diseñado con <HeartHandshake className="inline h-4 w-4 text-primary" /> para luchar contra el hambre.</p>
+          <p className="mt-1">Diseñado con <HeartHandshake className="inline h-4 w-4 text-primary " /> para luchar contra el hambre.</p>
         </div>
       </div>
     </footer>

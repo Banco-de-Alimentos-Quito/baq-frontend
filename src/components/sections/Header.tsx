@@ -34,22 +34,22 @@ export default function Header() {
   }, []);
   
   return (
-    <header className={`sticky top-0 z-50 w-full transition-all duration-300 ${isScrolled ? 'bg-background/95 shadow-md backdrop-blur-sm' : 'bg-transparent'}`}>
+    <header className={`sticky top-0 z-50 w-screen transition-all duration-300 ${isScrolled ? 'bg-background/95 shadow-md backdrop-blur-sm' : 'bg-transparent'}`}>
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
         <Link href="/" className="flex items-center gap-2">
           <Image
             src="/icono-logo-naranja.webp"
             alt="Logo BAQ"
-            width={50}
-            height={50}
+            width={100}
+            height={100}
             className="w-auto h-15"
           />
           <span className="font-bold text-xl text-orange-400">Banco de Alimentos Quito</span>
         </Link>
         <nav className="hidden md:flex items-center gap-6">
           <NavLinks />
-          <Button asChild size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground">
-            <ScrollLink href="#donate">Donar Ahora</ScrollLink>
+          <Button asChild size="sm" className="bg-primary text-[#ed6f1d] hover:bg-orange-400 text-primary-foreground">
+            <Link href="/donacion">Donar Ahora</Link>
           </Button>
         </nav>
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
