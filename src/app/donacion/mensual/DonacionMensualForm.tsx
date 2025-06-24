@@ -21,8 +21,9 @@ export default function DonacionMensualForm() {
     acepta: false,
   });
   const [enviado, setEnviado] = useState(false);
-  const [tocado, setTocado] = useState<{[k: string]: boolean}>({});
+  const [tocado, setTocado] = useState<{ [k: string]: boolean }>({});
   const [termsChecked, setTermsChecked] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const target = e.target;
@@ -39,40 +40,77 @@ export default function DonacionMensualForm() {
   };
 
   const isFormValid = () => {
-    const requiredFields = form.cedula && form.nombres && form.genero && form.correo && 
-                          form.direccion && form.cuenta && form.tipoCuenta && form.banco && 
-                          form.acepta && termsChecked;
-    
+    const requiredFields = form.cedula && form.nombres && form.genero && form.correo &&
+      form.direccion && form.cuenta && form.tipoCuenta && form.banco &&
+      form.acepta && termsChecked;
+
     // Si seleccionó "Otra" en banco, también debe llenar otroBanco
     if (form.banco === 'Otra') {
       return requiredFields && form.otroBanco;
     }
-    
+
     return requiredFields;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setTocado({ 
+    setTocado({
       cedula: true, nombres: true, genero: true, correo: true, direccion: true,
-      cuenta: true, tipoCuenta: true, banco: true, otroBanco: true, acepta: true 
+      cuenta: true, tipoCuenta: true, banco: true, otroBanco: true, acepta: true
     });
-    
+
     if (!isFormValid()) return;
-    
+
     setEnviado(true);
-    toast.success('¡Contrato generado!', {
-      description: 'Te hemos enviado el contrato generado a tu correo electrónico.',
-      duration: 2200,
-      action: {
-        label: '',
-        onClick: () => {},
-      },
-    });
-    setTimeout(() => {
+
+    try {
+      // Prepare the payload according to the API specification
+      const payload = {
+        cedula_ruc: form.cedula,
+        nombres_completos: form.nombres,
+        genero: form.genero === 'Hombre' ? 'Masculino' : 'Femenino',
+        correo_electronico: form.correo,
+        direccion: form.direccion,
+        numero_cuenta: form.cuenta,
+        tipo_cuenta: form.tipoCuenta,
+        banco_cooperativa: form.banco === 'Otra' ? form.otroBanco : form.banco,
+        monto_donar: monto,
+        acepta_aporte_voluntario: form.acepta,
+        acepta_tratamiento_datos: termsChecked
+      };
+
+      const response = await fetch('https://api.baq.ec/api/baq/donaciones-recurrentes/donador', {
+        method: 'POST',
+        headers: {
+          'accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+
+      // Show success modal instead of toast
       setEnviado(false);
-      router.push('/thank-you');
-    }, 2200);
+      setShowSuccessModal(true);
+
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      toast.error('Error al enviar el formulario', {
+        description: 'Hubo un problema al procesar tu solicitud. Por favor, intenta nuevamente.',
+        duration: 4000,
+      });
+      setEnviado(false);
+    }
+  };
+
+  const handleCloseSuccessModal = () => {
+    setShowSuccessModal(false);
+    router.push('/thank-you');
   };
 
   return (
@@ -97,7 +135,7 @@ export default function DonacionMensualForm() {
           <h1 style={{ color: '#2F3388', fontWeight: 900, fontSize: '1.5rem', marginBottom: 18, textAlign: 'center' }}>
             Donación mensual
           </h1>
-          
+
           <label className="form-label" style={{ width: '100%', marginBottom: 8 }}>
             Cédula/RUC
             <input
@@ -269,7 +307,7 @@ export default function DonacionMensualForm() {
               style={{ width: '100%', padding: 12, borderRadius: 8, border: '1px solid #ddd', marginTop: 4, fontSize: 16, background: '#f3f3f3', color: '#2F3388', fontWeight: 700 }}
             />
           </label>
-          
+
           <div style={{ width: '100%', margin: '12px 0', background: '#f8fafc', borderRadius: 8, padding: 12, border: '1px solid #eee', color: '#2F3388', fontSize: 15 }}>
             <input
               type="checkbox"
@@ -285,7 +323,7 @@ export default function DonacionMensualForm() {
             </span>
             {tocado.acepta && !form.acepta && <span style={{ color: '#e53e3e', fontSize: 13, display: 'block', marginTop: 4 }}>Debes aceptar la cláusula</span>}
           </div>
-          
+
           <div style={{ width: '100%', margin: '12px 0', background: '#f8fafc', borderRadius: 8, padding: 12, border: '1px solid #eee', color: '#2F3388', fontSize: 15 }}>
             <input
               type="checkbox"
@@ -297,8 +335,8 @@ export default function DonacionMensualForm() {
             />
             <span>
               Acepto que he leído previamente los{' '}
-              <Link 
-                href="/politicas" 
+              <Link
+                href="/politicas"
                 className="text-primary hover:underline"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -308,10 +346,10 @@ export default function DonacionMensualForm() {
               .
             </span>
           </div>
-          
+
           <button
             type="submit"
-            disabled={!isFormValid()}
+            disabled={!isFormValid() || enviado}
             style={{
               width: '100%',
               background: 'linear-gradient(90deg, #ff7300, #ffb347)',
@@ -323,14 +361,14 @@ export default function DonacionMensualForm() {
               padding: 14,
               marginTop: 8,
               boxShadow: '0 2px 8px #ff730033',
-              cursor: !isFormValid() ? 'not-allowed' : 'pointer',
-              opacity: !isFormValid() ? 0.5 : 1,
+              cursor: (!isFormValid() || enviado) ? 'not-allowed' : 'pointer',
+              opacity: (!isFormValid() || enviado) ? 0.5 : 1,
               transition: 'background 0.2s',
             }}
           >
-            Generar contrato
+            {enviado ? 'Enviando...' : 'Generar contrato'}
           </button>
-          
+
           {enviado && (
             <div style={{
               position: 'fixed',
@@ -352,17 +390,77 @@ export default function DonacionMensualForm() {
                 position: 'relative',
               }}>
                 <div style={{ fontSize: 22, fontWeight: 900, color: '#2F3388', marginBottom: 18 }}>
-                  Revisa tu correo y gracias por tu donación
+                  Enviando solicitud...
                 </div>
                 <div style={{ fontSize: 16, color: '#555', marginBottom: 18 }}>
-                  Te hemos enviado el contrato generado a tu correo electrónico.
+                  Por favor espera mientras procesamos tu información.
                 </div>
+                <div style={{
+                  width: 40,
+                  height: 40,
+                  border: '4px solid #f3f3f3',
+                  borderTop: '4px solid #ff7300',
+                  borderRadius: '50%',
+                  animation: 'spin 1s linear infinite',
+                  margin: '0 auto'
+                }}></div>
+              </div>
+            </div>
+          )}
+
+          {showSuccessModal && (
+            <div style={{
+              position: 'fixed',
+              inset: 0,
+              zIndex: 9999,
+              background: 'rgba(0,0,0,0.25)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+              <div style={{
+                background: '#fff',
+                borderRadius: 18,
+                boxShadow: '0 4px 24px #0002',
+                padding: '48px 32px',
+                minWidth: 320,
+                maxWidth: 380,
+                textAlign: 'center',
+                position: 'relative',
+              }}>
+                <div style={{ fontSize: 22, fontWeight: 900, color: '#2F3388', marginBottom: 18 }}>
+                  ¡Solicitud enviada exitosamente!
+                </div>
+                <div style={{ fontSize: 16, color: '#555', marginBottom: 18 }}>
+                  Revisa tu correo electrónico para acceder al portal y completar tu donación mensual.
+                </div>
+                <button
+                  onClick={handleCloseSuccessModal}
+                  style={{
+                    background: 'linear-gradient(90deg, #ff7300, #ffb347)',
+                    color: '#fff',
+                    fontWeight: 'bold',
+                    fontSize: 18,
+                    border: 'none',
+                    borderRadius: 8,
+                    padding: 14,
+                    marginTop: 8,
+                    boxShadow: '0 2px 8px #ff730033',
+                    cursor: 'pointer',
+                  }}
+                >
+                  Aceptar
+                </button>
               </div>
             </div>
           )}
         </form>
       </div>
       <style>{`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
         .navbar-tomate {
           width: 100vw;
           background: #ED6F1D;
@@ -390,7 +488,6 @@ export default function DonacionMensualForm() {
           .navbar-logo { width: 100px; }
         }
       `}</style>
-      <Toaster />
     </div>
   );
 }
