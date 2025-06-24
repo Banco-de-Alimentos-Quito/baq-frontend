@@ -4,6 +4,7 @@ import React from 'react';
 import { StreakData } from './DonationStreak';
 import { calculateProgressWidth } from './DonationStreakUtils';
 
+
 import './DonationStreakStyles.css';
 
 interface DonationStreakMinimizedProps {
