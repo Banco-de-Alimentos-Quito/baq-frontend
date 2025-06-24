@@ -21,7 +21,7 @@ function DonacionMensualForm() {
     acepta: false,
   });
   const [enviado, setEnviado] = useState(false);
-  const [tocado, setTocado] = useState<{[k: string]: boolean}>({});
+  const [tocado, setTocado] = useState<{ [k: string]: boolean }>({});
   const [termsChecked, setTermsChecked] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -39,80 +39,73 @@ function DonacionMensualForm() {
   };
 
   const isFormValid = () => {
-    const requiredFields = form.cedula && form.nombres && form.genero && form.correo && 
-                          form.direccion && form.cuenta && form.tipoCuenta && form.banco && 
-                          form.acepta && termsChecked;
-    
+    const requiredFields = form.cedula && form.nombres && form.genero && form.correo &&
+      form.direccion && form.cuenta && form.tipoCuenta && form.banco &&
+      form.acepta && termsChecked;
+
     // Si seleccionó "Otra" en banco, también debe llenar otroBanco
     if (form.banco === 'Otra') {
       return requiredFields && form.otroBanco;
     }
-    
+
     return requiredFields;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setTocado({ 
+    setTocado({
       cedula: true, nombres: true, genero: true, correo: true, direccion: true,
-      cuenta: true, tipoCuenta: true, banco: true, otroBanco: true, acepta: true 
+      cuenta: true, tipoCuenta: true, banco: true, otroBanco: true, acepta: true
     });
-    
+
     if (!isFormValid()) return;
-    
+
     setEnviado(true);
-    
+
     try {
-      // Preparar datos para enviar al API
-      const formData = {
-        cedula: form.cedula,
-        nombres: form.nombres,
-        genero: form.genero,
-        correo: form.correo,
+      // Prepare the payload according to the API specification
+      const payload = {
+        cedula_ruc: form.cedula,
+        nombres_completos: form.nombres,
+        genero: form.genero === 'Hombre' ? 'Masculino' : 'Femenino',
+        correo_electronico: form.correo,
         direccion: form.direccion,
-        cuenta: form.cuenta,
-        tipoCuenta: form.tipoCuenta,
-        banco: form.banco,
-        otroBanco: form.otroBanco,
-        monto: monto
+        numero_cuenta: form.cuenta,
+        tipo_cuenta: form.tipoCuenta,
+        banco_cooperativa: form.banco === 'Otra' ? form.otroBanco : form.banco,
+        monto_donar: monto,
+        acepta_aporte_voluntario: form.acepta,
+        acepta_tratamiento_datos: termsChecked
       };
 
-      console.log('📤 Enviando donación mensual:', formData);
+      console.log('📤 Enviando donación mensual:', payload);
 
-      // Enviar datos al endpoint de donación mensual (servidor Express)
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-      
-      if (!apiUrl) {
-        console.error('❌ NEXT_PUBLIC_API_URL no está configurada');
-        toast.error('Error de configuración', {
-          description: 'URL del API no configurada. Contacta al administrador.',
-          duration: 3000,
-        });
-        setEnviado(false);
-        return;
-      }
-
-      const response = await fetch(`${apiUrl}/api/donacion-mensual`, {
+      const response = await fetch('https://api.baq.ec/api/baq/donaciones-recurrentes/donador', {
         method: 'POST',
         headers: {
+          'accept': 'application/json',
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload)
       });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
       const result = await response.json();
 
-      if (response.ok && result.status === 'success') {
+      if (response.ok) {
         console.log('✅ Donación mensual procesada exitosamente:', result);
         toast.success('¡Donación mensual registrada!', {
           description: 'Tus datos han sido enviados exitosamente a nuestro sistema.',
           duration: 2200,
           action: {
             label: '',
-            onClick: () => {},
+            onClick: () => { },
           },
         });
-        
+
         setTimeout(() => {
           setEnviado(false);
           router.push('/thank-you');
@@ -157,7 +150,7 @@ function DonacionMensualForm() {
           <h1 style={{ color: '#2F3388', fontWeight: 900, fontSize: '1.5rem', marginBottom: 18, textAlign: 'center' }}>
             Donación mensual
           </h1>
-          
+
           <label className="form-label" style={{ width: '100%', marginBottom: 8 }}>
             Cédula/RUC
             <input
@@ -329,7 +322,7 @@ function DonacionMensualForm() {
               style={{ width: '100%', padding: 12, borderRadius: 8, border: '1px solid #ddd', marginTop: 4, fontSize: 16, background: '#f3f3f3', color: '#2F3388', fontWeight: 700 }}
             />
           </label>
-          
+
           <div style={{ width: '100%', margin: '12px 0', background: '#f8fafc', borderRadius: 8, padding: 12, border: '1px solid #eee', color: '#2F3388', fontSize: 15 }}>
             <input
               type="checkbox"
@@ -345,7 +338,7 @@ function DonacionMensualForm() {
             </span>
             {tocado.acepta && !form.acepta && <span style={{ color: '#e53e3e', fontSize: 13, display: 'block', marginTop: 4 }}>Debes aceptar la cláusula</span>}
           </div>
-          
+
           <div style={{ width: '100%', margin: '12px 0', background: '#f8fafc', borderRadius: 8, padding: 12, border: '1px solid #eee', color: '#2F3388', fontSize: 15 }}>
             <input
               type="checkbox"
@@ -357,8 +350,8 @@ function DonacionMensualForm() {
             />
             <span>
               Acepto que he leído previamente los{' '}
-              <Link 
-                href="/politicas" 
+              <Link
+                href="/politicas"
                 className="text-primary hover:underline"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -368,7 +361,7 @@ function DonacionMensualForm() {
               .
             </span>
           </div>
-          
+
           <button
             type="submit"
             disabled={!isFormValid()}
@@ -390,7 +383,7 @@ function DonacionMensualForm() {
           >
             Generar contrato
           </button>
-          
+
           {enviado && (
             <div style={{
               position: 'fixed',
@@ -456,8 +449,8 @@ function DonacionMensualForm() {
 
 function LoadingForm() {
   return (
-    <div style={{ 
-      minHeight: '100vh', 
+    <div style={{
+      minHeight: '100vh',
       background: '#f8fafc',
       display: 'flex',
       alignItems: 'center',
