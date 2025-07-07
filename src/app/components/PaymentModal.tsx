@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import Paypal from "../components/Paypal";
 import PayphoneButton from "./PayPhone";
 import PluxModal from "./PluxModal";
-import { data } from "../configuration/ppx.data";
+import { data, generatePayboxData } from "../configuration/ppx.data";
 import PpxButton from "./PluxButton";
 
 interface DeunaForm {
@@ -84,6 +84,10 @@ export default function PaymentModal({
   //   <span className="text-xl">💳</span>
   //   Pagar con tarjeta
   // </button>;
+
+  const dynamicPayboxData = generatePayboxData(cantidad);
+
+
   return (
     <>
       <div
@@ -122,7 +126,7 @@ export default function PaymentModal({
               Pagar con PagoPlux
             </button>
 
-            <PpxButton data={data}/>
+            <PpxButton data={dynamicPayboxData}/>
 
             {/* Payphone */}
             <button
