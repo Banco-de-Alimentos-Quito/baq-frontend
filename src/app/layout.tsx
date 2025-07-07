@@ -1,20 +1,21 @@
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-import './globals.css';
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
-import Header from '@/components/sections/Header';
-import Footer from '@/components/sections/Footer';
-import LoadingWrapper from '@/components/ui/LoadingWrapper';
-
+import Header from "@/components/sections/Header";
+import Footer from "@/components/sections/Footer";
+import LoadingWrapper from "@/components/ui/LoadingWrapper";
+import Script from "next/script";
 
 const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
+  subsets: ["latin"],
+  variable: "--font-inter",
 });
 
 export const metadata: Metadata = {
-  title: 'Banco de Alimentos de Quito',
-  description: 'Con tu ayuda, llevamos alimento a quienes más lo necesitan en Quito. Dona alimentos o dinero y sé parte del cambio.',
+  title: "Banco de Alimentos de Quito",
+  description:
+    "Con tu ayuda, llevamos alimento a quienes más lo necesitan en Quito. Dona alimentos o dinero y sé parte del cambio.",
 };
 
 export default function RootLayout({
@@ -24,6 +25,24 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
+      <head>
+        <Script
+          src="https://code.jquery.com/jquery-3.4.1.min.js"
+          strategy="beforeInteractive"
+        />
+        {/* Usar la versión de sandbox o producción según corresponda */}
+        <Script
+          src="https://sandbox-paybox.pagoplux.com/paybox/index_angular.js"
+          strategy="beforeInteractive"
+        />
+        {/* Para producción, descomenta esta línea y comenta la anterior
+        <Script
+          src="https://paybox.pagoplux.com/paybox/index_angular.js"
+          strategy="beforeInteractive"
+        />
+        */}
+      </head>
+
       <body className={`${inter.variable} font-sans antialiased`}>
         <LoadingWrapper>
           <Header />

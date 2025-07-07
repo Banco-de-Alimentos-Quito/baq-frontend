@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import Paypal from "../components/Paypal";
 import PayphoneButton from "./PayPhone";
 import PluxModal from "./PluxModal";
+import { data } from "../configuration/ppx.data";
+import PpxButton from "./PluxButton";
 
 interface DeunaForm {
   nombre: string;
@@ -119,6 +121,8 @@ export default function PaymentModal({
               <img src="pagos-plux.png" alt="pagosplux" className="w-30"/>
               Pagar con PagoPlux
             </button>
+
+            <PpxButton data={data}/>
 
             {/* Payphone */}
             <button

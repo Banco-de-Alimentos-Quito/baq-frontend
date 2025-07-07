@@ -42,7 +42,6 @@ export default function PayphoneButton({
         );
         if (existingLink) {
           cssLoaded = true;
-          console.log("CSS de Payphone ya está cargado");
           resolve();
           return;
         }
@@ -53,11 +52,9 @@ export default function PayphoneButton({
         link.rel = "stylesheet";
         link.onload = () => {
           cssLoaded = true;
-          console.log("CSS de Payphone cargado correctamente");
           resolve();
         };
         link.onerror = () => {
-          console.error("Error al cargar CSS de Payphone");
           resolve();
         };
         document.head.appendChild(link);
@@ -69,7 +66,6 @@ export default function PayphoneButton({
       return new Promise<void>((resolve, reject) => {
         if (window.PPaymentButtonBox) {
           jsLoaded = true;
-          console.log("JavaScript de Payphone ya está cargado");
           resolve();
           return;
         }
@@ -82,7 +78,6 @@ export default function PayphoneButton({
           setTimeout(() => {
             if (window.PPaymentButtonBox) {
               jsLoaded = true;
-              console.log("JavaScript de Payphone cargado correctamente");
               resolve();
             } else {
               reject(
@@ -161,7 +156,7 @@ export default function PayphoneButton({
           amountWithoutTax: amountInCentavos,
           currency: process.env.NEXT_PUBLIC_PAYPHONE_CURRENCY,
           storeId: process.env.NEXT_PUBLIC_PAYPHONE_STORE_ID,
-          reference: "ssdsdfggd",
+          reference: "Donacion a la fundación Banco de Alimentos",
         });
 
         // Configurar callbacks si se proporcionan
@@ -173,10 +168,8 @@ export default function PayphoneButton({
         }
 
         // Renderizar el botón usando el ID del contenedor (NO el elemento DOM)
-        console.log("Renderizando en el contenedor ID:", containerId.current);
         payphoneInstance.current.render(containerId.current);
 
-        console.log("Botón de Payphone inicializado correctamente");
         setIsLoading(false);
       } catch (err) {
         console.error("Error al inicializar Payphone:", err);
@@ -192,11 +185,9 @@ export default function PayphoneButton({
     // Función principal que orquesta la carga e inicialización
     const setupPayphone = async () => {
       try {
-        console.log("Iniciando carga de recursos de Payphone...");
         await Promise.all([loadCSS(), loadJS()]);
 
         if (jsLoaded) {
-          console.log("Recursos cargados, inicializando Payphone...");
           // Pequeña demora adicional para asegurar que el DOM esté listo
           setTimeout(() => {
             initializePayphone();
@@ -207,7 +198,6 @@ export default function PayphoneButton({
           );
         }
       } catch (err) {
-        console.error("Error en la configuración de Payphone:", err);
         setError(
           `Error al configurar el botón de pago: ${
             err instanceof Error ? err.message : "Desconocido"
