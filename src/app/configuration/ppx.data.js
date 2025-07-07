@@ -1,3 +1,5 @@
+import { PaymentService } from "../services/paymentService";
+
 const generatePayboxData = (amount) => {
   return {
     /* Requerido. Email de la cuenta PagoPlux del Establecimiento */
@@ -87,15 +89,28 @@ false -> no se realizará ningún cobro de prueba
     PayboxCobroPrueba: false,
     onAuthorize: (response) => {
       try {
-        alert("Pago exitoso, procesando respuesta...");
 
+        
         if (response.status === "succeeded") {
+          
+          const confirmResponse = PaymentService.confirmPagoPluxTransaction(response); 
+
+
           window.jQuery(".container-unpayed").hide();
-          
-          
+          const alertMessage = `
+            Proceso completado con éxito
+            clienteId: ${response.detail.clientID}
+            Nombre Cliente: ${response.detail.clientName}
+            Correo Cliente: ${response.detail.clientEmail}
+            Telefono Cliente: ${response.detail.clientPhone}
+            Monto: ${response.detail.amount}
+            ID transacción: ${response.detail.id_transaccion}
+          `;
+
+          alert(alertMessage);
         }
       } catch (error) {
-
+        alert("Ocurrió un error al procesar el pago. Por favor, inténtelo de nuevo.");
       }
     },
   };
