@@ -10,8 +10,6 @@ function PayphonePageContent() {
   const [monto, setMonto] = useState<number>(0);
   const [reference, setReference] = useState<string>("");
 
-
-  const TAX_RATE = 15;
   useEffect(() => {
     const montoParam = searchParams.get("monto");
     const referenceParam = searchParams.get("reference");
@@ -39,17 +37,6 @@ function PayphonePageContent() {
   const goBack = () => {
     router.back();
   };
-
-  const calculatePaymentAmounts = () => {
-    return {
-      amountWithoutTax: monto *100,
-      amountWithTax: 100,
-      tax: TAX_RATE,
-      amount: monto *100 + 100 + TAX_RATE
-    };
-  };
-
-
 
   if (monto <= 0) {
     return (
@@ -125,20 +112,7 @@ function PayphonePageContent() {
           <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">
             Procesar Pago
           </h2>
-          <PayphoneButton
-            token={process.env.NEXT_PUBLIC_PAYPHONE_TOKEN || ""}
-            amount={calculatePaymentAmounts().amount}
-            amountWithoutTax={calculatePaymentAmounts().amountWithoutTax}
-            amountWithTax={calculatePaymentAmounts().amountWithTax}
-            tax={TAX_RATE}
-            currency="USD"
-            ClientTransactionId={
-              process.env.NEXT_PUBLIC_PAYPHONE_CLIENT_TRANSACTION_ID || ""
-            }
-            reference={`Donación BAQ - ${monto} USD - ${Date.now()}`}
-            onSuccess={handleSuccess}
-            onError={handleError}
-          />
+          <PayphoneButton amount={monto} onSucess={handleSuccess} onError={handleError}/>
         </div>
 
         {/* Información adicional */}
