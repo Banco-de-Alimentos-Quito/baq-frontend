@@ -180,6 +180,7 @@ export default function ThankYou() {
         {/* Botones para compartir en redes sociales */}
         <div className="flex flex-wrap justify-center gap-4 mb-6">
           {/* Facebook */}
+          {/* TODO: Error en esta linea de codigo */}
           <a
             href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
               shareUrl
