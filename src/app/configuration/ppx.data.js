@@ -5,7 +5,7 @@ const generatePayboxData = (amount, userEmail, userPhone) => {
     /* Requerido. Email de la cuenta PagoPlux del Establecimiento */
     PayboxRemail: "direccion@baq.ec",
     /* Requerido. Email del usuario que realiza el pago */
-    //userEmail || 
+    //userEmail ||
     PayboxSendmail: userEmail,
     /* Requerido. Nombre del establecimiento en PagoPlux */
     PayboxRename: "BANCO DE ALIMENTOS QUITO",
@@ -91,12 +91,12 @@ false -> no se realizará ningún cobro de prueba
     PayboxCobroPrueba: false,
     onAuthorize: (response) => {
       try {
-
-        
         if (response.status === "succeeded") {
-          
-          const confirmResponse = PaymentService.confirmPagoPluxTransaction(response, userEmail, userPhone); 
-
+          const confirmResponse = PaymentService.confirmPagoPluxTransaction(
+            response,
+            userEmail,
+            userPhone
+          );
 
           window.jQuery(".container-unpayed").hide();
           const alertMessage = `
@@ -110,9 +110,15 @@ false -> no se realizará ningún cobro de prueba
           `;
 
           alert(alertMessage);
+          setTimeout(() => {
+            window.location.href = `/thank-you`;
+          }, 2000);
+
         }
       } catch (error) {
-        alert("Ocurrió un error al procesar el pago. Por favor, inténtelo de nuevo.");
+        alert(
+          "Ocurrió un error al procesar el pago. Por favor, inténtelo de nuevo."
+        );
       }
     },
   };

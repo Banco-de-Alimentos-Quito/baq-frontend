@@ -79,7 +79,7 @@ export class PaymentService {
         clientEmail: email || "",
         clientPhone: phone || "",
         state: response.detail?.state || "unknown",
-        fecha: response.detail?.fecha || new Date().toISOString(),
+        date: response.detail?.fecha,
         descripcion: response.detail?.description || "",
       };
 
