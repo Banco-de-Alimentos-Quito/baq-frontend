@@ -4,7 +4,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Paypal from "../components/Paypal";
-import PayphoneButton from "./PayPhone";
+import { z } from "zod";
 import PluxModal from "./PluxModal";
 
 interface DeunaForm {
@@ -14,6 +14,14 @@ interface DeunaForm {
   telefono: string;
   documento: string;
 }
+
+// Esquema de validación para los datos del modal
+const PpxUserSchema = z.object({
+  email: z.email({ message: "Por favor, ingresa un correo válido." }),
+  phone: z
+    .string()
+    .regex(/^\d{10}$/, { message: "El teléfono debe tener 10 dígitos." }),
+});
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -45,6 +53,12 @@ export default function PaymentModal({
   const [isPluxModalOpen, setIsPluxModalOpen] = useState(false);
   const [isPpxFormOpen, setIsPpxFormOpen] = useState(false);
   const [ppxUserData, setPpxUserData] = useState({
+    email: "",
+    phone: "",
+  });
+
+  // 2. Añadir estado para los errores de validación
+  const [validationErrors, setValidationErrors] = useState({
     email: "",
     phone: "",
   });
@@ -87,20 +101,36 @@ export default function PaymentModal({
 
   const handlePpxFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!ppxUserData.email || !ppxUserData.phone) {
       alert("Por favor, completa todos los campos");
       return;
     }
+    // 3. Validar los datos con el esquema de Zod
+    const result = PpxUserSchema.safeParse(ppxUserData);
+
+    if (!result.success) {
+      // Si la validación falla, actualiza el estado de errores
+      const errors = result.error.flatten().fieldErrors;
+      setValidationErrors({
+        email: errors.email?.[0] || "",
+        phone: errors.phone?.[0] || "",
+      });
+      return;
+    }
+
+    // Si la validación es exitosa, limpia los errores
+    setValidationErrors({ email: "", phone: "" });
 
     // Cerrar modales
     setIsPpxFormOpen(false);
     onClose();
 
-    // Redirigir a la página de PagoPlux con los datos como parámetros
+    // Redirigir a la página de PagoPlux con los datos validados
     const params = new URLSearchParams({
       monto: cantidad.toString(),
-      email: ppxUserData.email,
-      phone: ppxUserData.phone,
+      email: result.data.email,
+      phone: result.data.phone,
     });
     router.push(`/donacion/pagoplux?${params.toString()}`);
   };
@@ -117,7 +147,6 @@ export default function PaymentModal({
   //   <span className="text-xl">💳</span>
   //   Pagar con tarjeta
   // </button>;
-
 
   return (
     <>
@@ -228,15 +257,29 @@ export default function PaymentModal({
                   type="email"
                   placeholder="tu@email.com"
                   value={ppxUserData.email}
-                  onChange={(e) =>
+                  onChange={(e) => {
                     setPpxUserData((prev) => ({
                       ...prev,
                       email: e.target.value,
-                    }))
-                  }
-                  className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                    }));
+                    // Limpiar el error al escribir
+                    if (validationErrors.email) {
+                      setValidationErrors((prev) => ({ ...prev, email: "" }));
+                    }
+                  }}
+                  className={`p-3 border rounded-lg focus:outline-none ${
+                    validationErrors.email
+                      ? "border-red-500 focus:border-red-500"
+                      : "border-gray-300 focus:border-blue-500"
+                  }`}
                   required
                 />
+                {/* 4. Mostrar el mensaje de error */}
+                {validationErrors.email && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {validationErrors.email}
+                  </p>
+                )}
               </div>
 
               <div className="flex flex-col">
@@ -247,15 +290,29 @@ export default function PaymentModal({
                   type="tel"
                   placeholder="0987654321"
                   value={ppxUserData.phone}
-                  onChange={(e) =>
+                  onChange={(e) => {
                     setPpxUserData((prev) => ({
                       ...prev,
                       phone: e.target.value,
-                    }))
-                  }
-                  className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                    }));
+                    // Limpiar el error al escribir
+                    if (validationErrors.phone) {
+                      setValidationErrors((prev) => ({ ...prev, phone: "" }));
+                    }
+                  }}
+                  className={`p-3 border rounded-lg focus:outline-none ${
+                    validationErrors.phone
+                      ? "border-red-500 focus:border-red-500"
+                      : "border-gray-300 focus:border-blue-500"
+                  }`}
                   required
                 />
+                {/* 4. Mostrar el mensaje de error */}
+                {validationErrors.phone && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {validationErrors.phone}
+                  </p>
+                )}
               </div>
 
               <button

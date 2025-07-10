@@ -12,23 +12,28 @@ export default function FloatingDonationButton() {
   }, []);
 
   if (!mounted) {
-    return null;
+    return (
+      <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-20 h-20 sm:w-20 sm:h-20 rounded-full bg-gray-200" />
+    );
   }
 
   return (
     <>
       <Link
         href="/donacion"
-        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 bg-gradient-to-r from-[#ff7300] to-[#ffb347] text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 flex flex-col items-center justify-center font-bold animate-pulse w-20 h-20 sm:w-20 sm:h-20"
+        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 bg-gradient-to-r from-[#ff7300] to-[#ffb347] text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 flex flex-col items-center justify-center font-bold animate-pulse w-24 h-24 sm:w-24 sm:h-24"
       >
-        <div className="w-12 h-12 flex items-center justify-center">
+        <div className="w-20 h-16 flex items-center justify-center">
           <DotLottieReact
-            src="/donation_animation.lottie"
-            width={40}
-            height={40}
+            src="/gesture_animation.lottie"
             loop
             autoplay
-            className="max-w-none"
+            // translateZ(0) para forzar la aceleración por GPU y mejorar la nitidez
+            style={{
+              transform: 'scale(1.6) translateZ(0)',
+              backfaceVisibility: 'hidden',
+              imageRendering: '-webkit-optimize-contrast' // Ayuda en navegadores WebKit
+            }}
           />
         </div>
         <span className="text-xs leading-none mt-1">Donar</span>

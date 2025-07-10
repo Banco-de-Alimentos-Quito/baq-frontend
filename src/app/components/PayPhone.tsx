@@ -120,27 +120,11 @@ export default function PayphoneButton({
 
         // Existe un problema con el generador del ID- cambiar el algoritmo  
         function generateClientTransactionID(): string {
-          const now = new Date();
-
-          // Formatear fecha como "ymd-Hi-s"
-          const ymd =
-            now.getFullYear().toString().slice(2) +
-            String(now.getMonth() + 1).padStart(2, "0") +
-            String(now.getDate()).padStart(2, "0");
-          const Hi =
-            String(now.getHours()).padStart(2, "0") +
-            String(now.getMinutes()).padStart(2, "0");
-          const s = String(now.getSeconds()).padStart(2, "0");
-
-          // Obtener microsegundos simulados usando performance.now
-          const micro = String(Math.floor(performance.now() * 1000)).padStart(
-            6,
-            "0"
-          );
-
-          const rawID = `${ymd}-${Hi}-${s}${micro}`;
-          return rawID.slice(0, 15);
+          // Genera un ID único y más robusto usando la API de Crypto
+          const randomPart = window.crypto.getRandomValues(new Uint32Array(1))[0];
+          return `${Date.now()}-${randomPart}`;
         }
+
 
         const validateAndConvertAmount = (amount: number): number => {
           return Math.round(amount * 100);
@@ -216,7 +200,7 @@ export default function PayphoneButton({
         payphoneInstance.current = null;
       }
     };
-  });
+  }, []);
 
   return (
     <div className="w-full max-w-md p-6 border rounded-lg shadow-sm">
