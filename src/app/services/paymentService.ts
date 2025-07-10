@@ -63,7 +63,9 @@ export class PaymentService {
    * @param response - Respuesta completa de PagoPlux
    */
   static async confirmPagoPluxTransaction(
-    response: any
+    response: any,
+    email: any,
+    phone: any
   ): Promise<PaymentConfirmResponse> {
     try {
       console.log("📤 Procesando respuesta PagoPlux:", response);
@@ -74,7 +76,8 @@ export class PaymentService {
         amount: response.detail?.amount || 0,
         clientId: response.detail?.clientID || "",
         clientName: response.detail?.clientName || "",
-        clientPhone: response.detail?.clientPhone || "",
+        clientEmail: email || "",
+        clientPhone: phone || "",
         state: response.detail?.state || "unknown",
         fecha: response.detail?.fecha || new Date().toISOString(),
         descripcion: response.detail?.description || "",
