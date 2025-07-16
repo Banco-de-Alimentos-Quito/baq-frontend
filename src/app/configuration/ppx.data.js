@@ -92,24 +92,11 @@ false -> no se realizará ningún cobro de prueba
     onAuthorize: (response) => {
       try {
         if (response.status === "succeeded") {
-          const confirmResponse = PaymentService.confirmPagoPluxTransaction(
-            response,
+           PaymentService.confirmPagoPluxTransaction(
             userEmail,
             userPhone
           );
 
-          window.jQuery(".container-unpayed").hide();
-          const alertMessage = `
-            Proceso completado con éxito
-            clienteId: ${response.detail.clientID}
-            Nombre Cliente: ${response.detail.clientName}
-            Correo Cliente: ${userEmail}
-            Telefono Cliente: ${userPhone}
-            Monto: ${response.detail.amount}
-            ID transacción: ${response.detail.id_transaccion}
-          `;
-
-          alert(alertMessage);
           setTimeout(() => {
             window.location.href = `/thank-you`;
           }, 2000);
