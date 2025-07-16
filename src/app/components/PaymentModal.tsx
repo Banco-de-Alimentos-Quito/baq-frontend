@@ -4,10 +4,8 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Paypal from "../components/Paypal";
-import PayphoneButton from "./PayPhone";
+import { z } from "zod";
 import PluxModal from "./PluxModal";
-import { data, generatePayboxData } from "../configuration/ppx.data";
-import PpxButton from "./PluxButton";
 
 interface DeunaForm {
   nombre: string;
@@ -16,6 +14,14 @@ interface DeunaForm {
   telefono: string;
   documento: string;
 }
+
+// Esquema de validación para los datos del modal
+const PpxUserSchema = z.object({
+  email: z.email({ message: "Por favor, ingresa un correo válido." }),
+  phone: z
+    .string()
+    .regex(/^\d{10}$/, { message: "El teléfono debe tener 10 dígitos." }),
+});
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -45,6 +51,18 @@ export default function PaymentModal({
   const router = useRouter();
 
   const [isPluxModalOpen, setIsPluxModalOpen] = useState(false);
+  const [isPpxFormOpen, setIsPpxFormOpen] = useState(false);
+  const [ppxUserData, setPpxUserData] = useState({
+    email: "",
+    phone: "",
+  });
+
+  // 2. Añadir estado para los errores de validación
+  const [validationErrors, setValidationErrors] = useState({
+    email: "",
+    phone: "",
+  });
+
   if (!isOpen) return null;
   const goToDeuna = () => {
     onClose();
@@ -77,6 +95,51 @@ export default function PaymentModal({
     setIsPluxModalOpen(false);
   };
 
+  const handlePpxClick = () => {
+    setIsPpxFormOpen(true);
+  };
+
+  const handlePpxFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!ppxUserData.email || !ppxUserData.phone) {
+      alert("Por favor, completa todos los campos");
+      return;
+    }
+    // 3. Validar los datos con el esquema de Zod
+    const result = PpxUserSchema.safeParse(ppxUserData);
+
+    if (!result.success) {
+      // Si la validación falla, actualiza el estado de errores
+      const errors = result.error.flatten().fieldErrors;
+      setValidationErrors({
+        email: errors.email?.[0] || "",
+        phone: errors.phone?.[0] || "",
+      });
+      return;
+    }
+
+    // Si la validación es exitosa, limpia los errores
+    setValidationErrors({ email: "", phone: "" });
+
+    // Cerrar modales
+    setIsPpxFormOpen(false);
+    onClose();
+
+    // Redirigir a la página de PagoPlux con los datos validados
+    const params = new URLSearchParams({
+      monto: cantidad.toString(),
+      email: result.data.email,
+      phone: result.data.phone,
+    });
+    router.push(`/donacion/pagoplux?${params.toString()}`);
+  };
+
+  const handleClosePpxForm = () => {
+    setIsPpxFormOpen(false);
+    setPpxUserData({ email: "", phone: "" });
+  };
+
   // const newLocal = <button
   //   className="flex items-center justify-center gap-2 py-3 rounded-lg border-2 border-[#0070ba] text-[#0070ba] font-semibold hover:bg-[#0070ba] hover:text-white transition"
   //   onClick={() => { } }
@@ -84,9 +147,6 @@ export default function PaymentModal({
   //   <span className="text-xl">💳</span>
   //   Pagar con tarjeta
   // </button>;
-
-  const dynamicPayboxData = generatePayboxData(cantidad);
-
 
   return (
     <>
@@ -117,23 +177,26 @@ export default function PaymentModal({
               />
             )}
 
-            {/* <PluxButton /> */}
-            <button
-              className="flex items-center justify-center gap-2 py-1 rounded-lg bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold hover:from-purple-700 hover:to-blue-700 transition"
-              onClick={handlePluxClick}
-            >
-              <img src="pagos-plux.png" alt="pagosplux" className="w-30"/>
-              Pagar con PagoPlux
-            </button>
+            {/* <PpxButton data={dynamicPayboxData} /> */}
 
-            <PpxButton data={dynamicPayboxData}/>
+            <button
+              className="flex items-center justify-center gap-2 py-3 rounded-lg bg-gradient-to-r from-green-600 to-green-400 text-white font-semibold hover:from-green-700 hover:to-green-500 transition"
+              onClick={handlePpxClick}
+            >
+              <span className="text-xl">💳</span>
+              Pagar con Tarjeta (PagoPlux)
+            </button>
 
             {/* Payphone */}
             <button
               className="flex items-center justify-center gap-2 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-blue-400 text-white font-semibold hover:from-blue-700 hover:to-blue-500 transition"
               onClick={goToPayphone}
             >
-              <img src="https://oneclic.app/tutoriales/payphone/assets/img/payphone.png" alt="" className="w-10"/>
+              <img
+                src="https://oneclic.app/tutoriales/payphone/assets/img/payphone.png"
+                alt=""
+                className="w-10"
+              />
               Pagar con Payphone
             </button>
 
@@ -162,6 +225,106 @@ export default function PaymentModal({
         onClose={handleClosePluxModal}
         amount={cantidad}
       />
+
+      {/* Modal para capturar datos de usuario PagoPlux */}
+      {isPpxFormOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-60 flex items-center justify-center"
+          onClick={handleClosePpxForm}
+        >
+          <div
+            className="bg-white rounded-xl p-8 w-full max-w-md shadow-xl relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className="absolute top-4 right-4 text-2xl text-orange-400 hover:text-orange-600 transition"
+              onClick={handleClosePpxForm}
+            >
+              &times;
+            </button>
+            <h2 className="text-center text-2xl font-extrabold text-[#2F3388] mb-6">
+              Información de Contacto
+            </h2>
+            <form
+              onSubmit={handlePpxFormSubmit}
+              className="flex flex-col gap-4"
+            >
+              <div className="flex flex-col">
+                <label className="text-sm font-semibold text-gray-600 mb-1">
+                  Correo Electrónico *
+                </label>
+                <input
+                  type="email"
+                  placeholder="tu@email.com"
+                  value={ppxUserData.email}
+                  onChange={(e) => {
+                    setPpxUserData((prev) => ({
+                      ...prev,
+                      email: e.target.value,
+                    }));
+                    // Limpiar el error al escribir
+                    if (validationErrors.email) {
+                      setValidationErrors((prev) => ({ ...prev, email: "" }));
+                    }
+                  }}
+                  className={`p-3 border rounded-lg focus:outline-none ${
+                    validationErrors.email
+                      ? "border-red-500 focus:border-red-500"
+                      : "border-gray-300 focus:border-blue-500"
+                  }`}
+                  required
+                />
+                {/* 4. Mostrar el mensaje de error */}
+                {validationErrors.email && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {validationErrors.email}
+                  </p>
+                )}
+              </div>
+
+              <div className="flex flex-col">
+                <label className="text-sm font-semibold text-gray-600 mb-1">
+                  Número de Teléfono *
+                </label>
+                <input
+                  type="tel"
+                  placeholder="0987654321"
+                  value={ppxUserData.phone}
+                  onChange={(e) => {
+                    setPpxUserData((prev) => ({
+                      ...prev,
+                      phone: e.target.value,
+                    }));
+                    // Limpiar el error al escribir
+                    if (validationErrors.phone) {
+                      setValidationErrors((prev) => ({ ...prev, phone: "" }));
+                    }
+                  }}
+                  className={`p-3 border rounded-lg focus:outline-none ${
+                    validationErrors.phone
+                      ? "border-red-500 focus:border-red-500"
+                      : "border-gray-300 focus:border-blue-500"
+                  }`}
+                  required
+                />
+                {/* 4. Mostrar el mensaje de error */}
+                {validationErrors.phone && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {validationErrors.phone}
+                  </p>
+                )}
+              </div>
+
+              <button
+                type="submit"
+                className="w-full bg-gradient-to-r from-green-600 to-green-400 text-white py-3 rounded-lg font-bold hover:from-green-700 hover:to-green-500 transition"
+              >
+                Continuar con el Pago
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </>
   );
 }
