@@ -5,9 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "concurrently \"next start\" \"ts-node src/api/index.ts\"",
-    "lint": "next lint",
-    "api": "ts-node src/api/index.ts"
+    "start": "concurrently \"next start\"",
+    "lint": "next lint"
   },
   "dependencies": {
     "@lottiefiles/dotlottie-react": "^0.14.0",

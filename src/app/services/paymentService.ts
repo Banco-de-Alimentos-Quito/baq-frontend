@@ -26,11 +26,6 @@ export class PaymentService {
     clientTransactionId: string
   ): Promise<PaymentConfirmResponse> {
     try {
-      console.log("📤 Enviando confirmación al backend:", {
-        id,
-        clientTransactionId,
-      });
-
       const response = await fetch(`${this.baseUrl}payphone/confirm`, {
         method: "POST",
         headers: {
@@ -52,7 +47,6 @@ export class PaymentService {
       //Error: Failed to execute 'json' on 'Response': Unexpected end of JSON input
       //try
       const data = await response.json();
-      console.log("✅ Respuesta del backend:", data);
 
       return data;
     } catch (error) {

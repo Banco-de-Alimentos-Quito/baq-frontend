@@ -112,7 +112,7 @@ function PayphonePageContent() {
           <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">
             Procesar Pago
           </h2>
-          <PayphoneButton amount={monto} onSucess={handleSuccess} onError={handleError}/>
+          <PayphoneButton amount={monto} onSuccess={handleSuccess} onError={handleError}/>
         </div>
 
         {/* Información adicional */}
