@@ -183,7 +183,7 @@ export default function PaymentModal({
               className="flex items-center justify-center gap-2 py-3 rounded-lg bg-gradient-to-r from-green-600 to-green-400 text-white font-semibold hover:from-green-700 hover:to-green-500 transition"
               onClick={handlePpxClick}
             >
-              <span className="text-xl">💳</span>
+              <img src="pagos-plux.png" className="w-20" />
               Pagar con Tarjeta (PagoPlux)
             </button>
 
