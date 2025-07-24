@@ -5,7 +5,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import PaymentModal from "../components/PaymentModal";
 import Image from "next/image";
-import { useRouteLoading } from '@/hooks/useRouteLoading';
+import { useRouteLoading } from "@/hooks/useRouteLoading";
+import ModalInversionSocial from "./components/ModalInversionSocial";
 
 function calcularNinios(monto: number) {
   return Math.max(1, Math.floor(monto / 12));
@@ -82,7 +83,6 @@ function getPuzzlePiecesMensual2(monto: number) {
 const MONTOS_DONACION = [2, 10, 30, 50];
 
 export default function DonacionPage() {
-  const router = useRouter();
   const [tipo, setTipo] = useState<"unica" | "mensual">("mensual");
   const [cantidad, setCantidad] = useState(0);
   const [otro, setOtro] = useState("");
@@ -95,6 +95,8 @@ export default function DonacionPage() {
 
   const [showPagoModal, setShowPagoModal] = useState(false);
   const [showDeunaModal, setShowDeunaModal] = useState(false);
+  const [showTipoButtons, setShowTipoButtons] = useState(false);
+  const [showInversionModal, setShowInversionModal] = useState(false);
 
   const [deunaForm, setDeunaForm] = useState({
     nombre: "",
@@ -106,9 +108,9 @@ export default function DonacionPage() {
   const [consentChecked, setConsentChecked] = useState(false);
   const [comindadesChecked, setComindadesChecked] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
-  
+
   const { navigateWithLoading } = useRouteLoading();
-  
+
   const canSubmitDeuna =
     consentChecked ||
     (!deunaForm.nombre &&
@@ -117,7 +119,7 @@ export default function DonacionPage() {
       !deunaForm.telefono &&
       !deunaForm.documento);
 
-  // Carga 
+  // Carga
 
   // Animación de conteo de niños
   useEffect(() => {
@@ -148,20 +150,20 @@ export default function DonacionPage() {
 
   // Función para obtener las piezas y configuración según el tipo y variante
   const getPuzzleConfig = () => {
-    if (tipo === 'unica') {
+    if (tipo === "unica") {
       if (puzzleVariant === 1) {
         return {
           pieces: PUZZLE_PIECES_UNICA_1,
           activePieces: getPuzzlePiecesUnica1(cantidad),
           backgroundImage: "/puzzle/unica-opcion1.png",
-          alt: "Puzzle donación única opción 1"
+          alt: "Puzzle donación única opción 1",
         };
       } else {
         return {
           pieces: PUZZLE_PIECES_UNICA_2,
           activePieces: getPuzzlePiecesUnica2(cantidad),
           backgroundImage: "/puzzle/unica-opcion2.png",
-          alt: "Puzzle donación única opción 2"
+          alt: "Puzzle donación única opción 2",
         };
       }
     } else {
@@ -170,14 +172,14 @@ export default function DonacionPage() {
           pieces: PUZZLE_PIECES_MENSUAL_1,
           activePieces: getPuzzlePiecesMensual1(cantidad),
           backgroundImage: "/puzzle/mensual-opcion1.png",
-          alt: "Puzzle donación mensual opción 1"
+          alt: "Puzzle donación mensual opción 1",
         };
       } else {
         return {
           pieces: PUZZLE_PIECES_MENSUAL_2,
           activePieces: getPuzzlePiecesMensual2(cantidad),
           backgroundImage: "/puzzle/mensual-opcion2.png",
-          alt: "Puzzle donación mensual opción 2"
+          alt: "Puzzle donación mensual opción 2",
         };
       }
     }
@@ -215,7 +217,7 @@ export default function DonacionPage() {
   return (
     <div className="bg-white min-h-screen">
       {/* Espacio para header fijo (si existe) */}
-      
+
       {/* Puedes agregar logo o mensaje de bienvenida aquí */}
       {/* <div className="w-screen flex flex-col items-center justify-center mb-8 pt-32 pb-2">
         
@@ -225,7 +227,8 @@ export default function DonacionPage() {
       <div
         className="w-screen flex flex-col lg:flex-row justify-center items-start gap-12 px-4 lg:px-0 relative"
         style={{
-          backgroundImage: "linear-gradient(rgba(255, 255, 255, 0.90), rgba(255, 255, 255, 0.90)), url('background.png')",
+          backgroundImage:
+            "linear-gradient(rgba(255, 255, 255, 0.90), rgba(255, 255, 255, 0.90)), url('background.png')",
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
@@ -247,126 +250,147 @@ export default function DonacionPage() {
             </p>
 
             {/* Tipo de donación */}
-            <div className="flex justify-center gap-4 mb-6">
-              <button
-                className={`flex items-center gap-2 px-6 py-2 rounded-full font-bold text-lg transition-transform ${
-                  tipo === "unica"
-                    ? "bg-gradient-to-r from-[#2F3388] to-[#1D2394] text-white shadow-lg scale-105"
-                    : "bg-gray-200 text-gray-700 shadow-md hover:bg-[#2F3388] hover:text-white"
-                }`}
-                onClick={() => setTipo("unica")}
-              >
-                {/* Ícono corazón */}
-                <svg
-                  width="32"
-                  height="32"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  className="mr-2"
+            <div className="flex flex-col items-center w-full mb-6">
+              {!showTipoButtons ? (
+                <button
+                  className="w-full flex items-center justify-center gap-3 bg-[#c0392b] hover:bg-[#a93226] text-white rounded-2xl py-5 px-6 font-extrabold text-base shadow-xl mb-4 transition-transform hover:scale-105"
+                  onClick={() => setShowInversionModal(true)}
                 >
-                  <path
-                    d="M17.5 8.5c-1.2-1.1-2.7-1.2-3.5-1.2-.8 0-2.3.1-3.5 1.2C8.1
-                       9.7 7 11.5 7 13.7c0 2.2 1.2 4.3 3.1 5.1.7.3
-                       1.4.4 2.1.4.7 0 1.4-.1 2.1-.4 1.9-.8
-                       3.1-2.9 3.1-5.1 0-2.2-1.1-4-2.9-5.2z"
-                    fill={tipo === "unica" ? "#fff" : "#ff7300"}
+                  {/* SVG de casa */}
+                  <img
+                    src="home.svg"
+                    className="w-6 h-6"
+                    alt="Casa"
+                    style={{ filter: "invert(1)" }}
                   />
-                  <path
-                    d="M12.5 6.5c.6-.7 1.2-1.7 1.2-2.7
-                       0-.2-.2-.3-.3-.3-.7 0-1.6.5-2.1 1.1-.5.6-.9
-                       1.4-.9 2.2 0 .2.2.3.3.3.7 0 1.5-.4 2-1.1z"
-                    fill={tipo === "unica" ? "#fff" : "#ff7300"}
-                  />
-                </svg>
-                Única vez
-              </button>
+                  Esto también es una inversión social
+                </button>
+              ) : (
+                <div className="flex justify-center gap-4 w-full">
+                  <button
+                    className={`flex items-center gap-2 px-6 py-2 rounded-full font-bold text-lg transition-transform ${
+                      tipo === "unica"
+                        ? "bg-gradient-to-r from-[#2F3388] to-[#1D2394] text-white shadow-lg scale-105"
+                        : "bg-gray-200 text-gray-700 shadow-md hover:bg-[#2F3388] hover:text-white"
+                    }`}
+                    onClick={() => setTipo("unica")}
+                  >
+                    {/* Ícono corazón */}
+                    <svg
+                      width="32"
+                      height="32"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      className="mr-2"
+                    >
+                      <path
+                        d="M17.5 8.5c-1.2-1.1-2.7-1.2-3.5-1.2-.8 0-2.3.1-3.5 1.2C8.1
+               9.7 7 11.5 7 13.7c0 2.2 1.2 4.3 3.1 5.1.7.3
+               1.4.4 2.1.4.7 0 1.4-.1 2.1-.4 1.9-.8
+               3.1-2.9 3.1-5.1 0-2.2-1.1-4-2.9-5.2z"
+                        fill={tipo === "unica" ? "#fff" : "#ff7300"}
+                      />
+                      <path
+                        d="M12.5 6.5c.6-.7 1.2-1.7 1.2-2.7
+               0-.2-.2-.3-.3-.3-.7 0-1.6.5-2.1 1.1-.5.6-.9
+               1.4-.9 2.2 0 .2.2.3.3.3.7 0 1.5-.4 2-1.1z"
+                        fill={tipo === "unica" ? "#fff" : "#ff7300"}
+                      />
+                    </svg>
+                    Única vez
+                  </button>
 
-              <button
-                className={`flex items-center gap-2 px-6 py-2 rounded-full font-bold text-lg transition-transform ${
-                  tipo === "mensual"
-                    ? "bg-gradient-to-r from-[#2F3388] to-[#1D2394] text-white shadow-lg scale-105"
-                    : "bg-gray-200 text-gray-700 shadow-md hover:bg-[#2F3388] hover:text-white"
-                }`}
-                onClick={() => setTipo("mensual")}
-              >
-                {/* Ícono calendario */}
-                <svg
-                  width="22"
-                  height="22"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  className="mr-1"
-                >
-                  <rect
-                    x="3"
-                    y="4"
-                    width="18"
-                    height="17"
-                    rx="3"
-                    fill={tipo === "mensual" ? "#fff" : "#ff7300"}
-                    fillOpacity="0.15"
-                  />
-                  <rect
-                    x="3"
-                    y="8"
-                    width="18"
-                    height="13"
-                    rx="2"
-                    fill={tipo === "mensual" ? "#fff" : "#ff7300"}
-                  />
-                  <rect
-                    x="7"
-                    y="2"
-                    width="2"
-                    height="4"
-                    rx="1"
-                    fill={tipo === "mensual" ? "#fff" : "#ff7300"}
-                  />
-                  <rect
-                    x="15"
-                    y="2"
-                    width="2"
-                    height="4"
-                    rx="1"
-                    fill={tipo === "mensual" ? "#fff" : "#ff7300"}
-                  />
-                </svg>
-                Mensual
-              </button>
+                  <button
+                    className={`flex items-center gap-2 px-6 py-2 rounded-full font-bold text-lg transition-transform ${
+                      tipo === "mensual"
+                        ? "bg-gradient-to-r from-[#2F3388] to-[#1D2394] text-white shadow-lg scale-105"
+                        : "bg-gray-200 text-gray-700 shadow-md hover:bg-[#2F3388] hover:text-white"
+                    }`}
+                    onClick={() => setTipo("mensual")}
+                  >
+                    {/* Ícono calendario */}
+                    <svg
+                      width="22"
+                      height="22"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      className="mr-1"
+                    >
+                      <rect
+                        x="3"
+                        y="4"
+                        width="18"
+                        height="17"
+                        rx="3"
+                        fill={tipo === "mensual" ? "#fff" : "#ff7300"}
+                        fillOpacity="0.15"
+                      />
+                      <rect
+                        x="3"
+                        y="8"
+                        width="18"
+                        height="13"
+                        rx="2"
+                        fill={tipo === "mensual" ? "#fff" : "#ff7300"}
+                      />
+                      <rect
+                        x="7"
+                        y="2"
+                        width="2"
+                        height="4"
+                        rx="1"
+                        fill={tipo === "mensual" ? "#fff" : "#ff7300"}
+                      />
+                      <rect
+                        x="15"
+                        y="2"
+                        width="2"
+                        height="4"
+                        rx="1"
+                        fill={tipo === "mensual" ? "#fff" : "#ff7300"}
+                      />
+                    </svg>
+                    Mensual
+                  </button>
+                </div>
+              )}
             </div>
 
-            {/* Montos predefinidos */}
-            <div className="grid grid-cols-2 gap-4 mb-6 w-full">
-              {MONTOS_DONACION.map((m) => (
+            {/* Mostrar montos y botón solo si showTipoButtons está activo */}
+            {showTipoButtons && (
+              <>
+              {/* Montos predefinidos */}
+              <div className="grid grid-cols-2 gap-4 mb-6 w-full">
+                {MONTOS_DONACION.map((m) => (
                 <button
                   key={m}
                   className={`flex flex-col items-center rounded-lg px-7 py-4 font-bold text-lg shadow-md transition-transform ${
-                    cantidad === m && !otroActivo
-                      ? "bg-gradient-to-r from-orange-400 to-orange-500 text-white shadow-lg scale-105 filter brightness-95 contrast-125"
-                      : "bg-white text-orange-600 opacity-95 hover:brightness-110"
+                  cantidad === m && !otroActivo
+                    ? "bg-gradient-to-r from-orange-400 to-orange-500 text-white shadow-lg scale-105 filter brightness-95 contrast-125"
+                    : "bg-white text-orange-600 opacity-95 hover:brightness-110"
                   }`}
                   onClick={() => handleCantidad(m)}
                 >
                   <span className="text-sm">USD</span>
                   <span className="text-xl">{m}</span>
                 </button>
-              ))}
-            </div>
+                ))}
+              </div>
 
-            {/* Otro monto manual */}
-            <div className="flex w-full mb-6">
-              <button
+              {/* Otro monto manual */}
+              <div className="flex w-full mb-6">
+                <button
                 className={`rounded-l-lg px-6 py-4 font-bold text-lg shadow-md transition-transform ${
                   otroActivo
-                    ? "bg-gradient-to-r from-orange-500 to-orange-300 text-white shadow-lg scale-105"
-                    : "bg-gradient-to-r from-orange-500 to-orange-300 text-white shadow-md"
+                  ? "bg-gradient-to-r from-orange-500 to-orange-300 text-white shadow-lg scale-105"
+                  : "bg-gradient-to-r from-orange-500 to-orange-300 text-white shadow-md"
                 }`}
                 onClick={handleOtroFocus}
                 type="button"
-              >
+                >
                 Otro
-              </button>
-              <input
+                </button>
+                <input
                 type="number"
                 placeholder="Ingresa el monto"
                 value={otroActivo ? otro : ""}
@@ -375,33 +399,35 @@ export default function DonacionPage() {
                   // Validar que el valor sea un número positivo y sin decimales mayor a 2
                   const value = parseFloat(e.target.value);
                   if (value >= 2 && Number.isInteger(value)) {
-                    setCantidad(value);
-                    setOtro(value.toString());
+                  setCantidad(value);
+                  setOtro(value.toString());
                   } else {
-                    setCantidad(0);
-                    setOtro("");
+                  setCantidad(0);
+                  setOtro("");
                   }
                 }}
                 inputMode="numeric"
                 pattern="[0-9]*"
                 min={otroActivo ? 3 : undefined}
                 className="flex-1 rounded-r-lg p-2 sm:p-3 md:p-4 font-bold text-sm sm:text-base md:text-lg bg-white shadow-md focus:outline-none"
-              />
-            </div>
+                />
+              </div>
 
-            {cantidad < 2 && (
-              <p className="text-center text-lg font-bold text-orange-400 mb-3">
+              {cantidad < 2 && (
+                <p className="text-center text-lg font-bold text-orange-400 mb-3">
                 El monto mínimo permitido es USD 2
-              </p>
-            )}
+                </p>
+              )}
 
-            <button
-              className="w-full bg-[#ED6F1D] text-white rounded-full py-3 font-black text-xl shadow-lg transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled={cantidad < 2}
-              onClick={handleDonarAhora}
-            >
-              Donar ahora
-            </button>
+              <button
+                className="w-full bg-[#ED6F1D] text-white rounded-full py-3 font-black text-xl shadow-lg transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={cantidad < 2}
+                onClick={handleDonarAhora}
+              >
+                Donar ahora
+              </button>
+              </>
+            )}
           </div>
         </div>
 
@@ -423,7 +449,7 @@ export default function DonacionPage() {
               />
 
               {/* Piezas del puzzle - renderiza según el tipo */}
-              {puzzleConfig.pieces.map(piece => {
+              {puzzleConfig.pieces.map((piece) => {
                 const show = puzzleConfig.activePieces.includes(piece.key);
                 return (
                   <Image
@@ -431,15 +457,15 @@ export default function DonacionPage() {
                     src={piece.src}
                     alt={piece.key}
                     className={`absolute w-full h-full object-contain transition-opacity duration-700 ${
-                      show ? 'opacity-100' : 'opacity-0'
+                      show ? "opacity-100" : "opacity-0"
                     }`}
                     width={400}
                     height={400}
                     style={{
-                      top: piece.style.top ?? 'auto',
-                      bottom: piece.style.bottom ?? 'auto',
-                      left: piece.style.left ?? 'auto',
-                      right: piece.style.right ?? 'auto',
+                      top: piece.style.top ?? "auto",
+                      bottom: piece.style.bottom ?? "auto",
+                      left: piece.style.left ?? "auto",
+                      right: piece.style.right ?? "auto",
                     }}
                   />
                 );
@@ -450,9 +476,9 @@ export default function DonacionPage() {
         </div>
       </div>
 
-     {/* Linea de separacion*/}
+      {/* Linea de separacion*/}
       <div className="w-full h-8 bg-white"></div>
-      
+
       {/* Sección Informativa Horizontal */}
       <section
         className="relative w-screen bg-cover bg-center mb-8 px-4 py-12"
@@ -651,6 +677,15 @@ export default function DonacionPage() {
           </div>
         </div>
       )}
+
+      {/* Modal de inversión social */}
+      <ModalInversionSocial
+        isOpen={showInversionModal}
+        onClose={() => {
+          setShowInversionModal(false);
+          setShowTipoButtons(true);
+        }}
+      />
     </div>
   );
 }
