@@ -10,17 +10,55 @@ import {
 import DonationStreakPopup from "./DonationStreakPopup";
 import DonationStreakMinimized from "./DonationStreakMinimized";
 import Image from "next/image";
+import { useSupabaseQuery } from "@/hooks/useSupabase";
+import { useSearchParams } from "next/navigation";
 
 export default function ThankYou() {
-  // Estados para el manejo de la racha de donaciones
-  const [streakData, setStreakData] = useState<StreakData>({
-    currentStreak: 0,
-    lastDonationDate: null,
-    longestStreak: 0,
-    totalDonations: 0,
-    donationHistory: [],
+  const params = useSearchParams();
+  const email = params.get("email");
+
+  // Buscar donador por email
+  const { data: donadores, loading: loadingDonador } = useSupabaseQuery("donadores_simples", {
+    filters: email ? [{ column: "correo_electronico", operator: "eq", value: email }] : [],
+    limit: 1,
+  });
+  const donador = donadores?.[0];
+
+  // Buscar racha por donador_id
+  const { data: rachas, loading: loadingRacha } = useSupabaseQuery("rachas", {
+    filters: donador ? [{ column: "donador_id", operator: "eq", value: donador.id }] : [],
+    limit: 1,
+  });
+  const racha = rachas?.[0];
+
+  // Buscar donaciones por donador_simple_id
+  const { data: donaciones, loading: loadingDonaciones } = useSupabaseQuery("donaciones", {
+    filters: donador ? [{ column: "donador_simple_id", operator: "eq", value: donador.id }] : [],
+    orderBy: { column: "fecha_donacion", ascending: true },
+    limit: 20,
   });
 
+  // Mapear los datos a StreakData
+  const supabaseStreakData = racha
+    ? {
+        currentStreak: racha.cantidad_donaciones,
+        lastDonationDate: racha.fecha_ultimo_pago,
+        longestStreak: racha.mejor_racha,
+        totalDonations: racha.cantidad_donaciones,
+        donationHistory: donaciones?.map((d) => ({
+          date: d.fecha_donacion,
+          amount: d.monto_usd,
+        })) || [],
+      }
+    : {
+        currentStreak: 0,
+        lastDonationDate: null,
+        longestStreak: 0,
+        totalDonations: 0,
+        donationHistory: [],
+      };
+
+  // Estados para el manejo de la racha de donaciones
   const [popupPhase, setPopupPhase] = useState<
     "loading" | "complete" | "minimized"
   >("loading");
@@ -80,11 +118,6 @@ export default function ThankYou() {
         if (progress >= 100) {
           clearInterval(progressInterval);
 
-          // Calcular nueva racha
-          const newStreakData = handleStreakCalculation();
-          setStreakData(newStreakData);
-          setDonationHistory(newStreakData.donationHistory);
-
           // Cambiar a fase completa
           setPopupPhase("complete");
 
@@ -99,11 +132,7 @@ export default function ThankYou() {
           }
         }
       }, 30);
-
-      return () => {
-        clearInterval(progressInterval);
-      };
-    }, []);
+    }, 1000); // 1 segundo de delay
 
     return () => {
       clearTimeout(popupTimer);
@@ -131,13 +160,6 @@ export default function ThankYou() {
     ) {
       if (typeof window !== "undefined") {
         localStorage.removeItem("donationStreak");
-        setStreakData({
-          currentStreak: 0,
-          lastDonationDate: null,
-          longestStreak: 0,
-          totalDonations: 0,
-          donationHistory: [],
-        });
         setDonationHistory([]);
 
         // Opcional: mostrar mensaje de éxito
@@ -148,7 +170,7 @@ export default function ThankYou() {
 
   // Obtener mensaje de celebración basado en la racha
   const getCelebrationMessage = () => {
-    const streak = streakData.currentStreak;
+    const streak = supabaseStreakData.currentStreak;
     if (streak === 1) return "¡Has iniciado tu racha de donaciones!";
     else if (streak >= 10)
       return "¡Increíble! Tu generosidad es extraordinaria.";
@@ -262,7 +284,7 @@ export default function ThankYou() {
       {/* Popup de racha de donaciones */}
       {showPopup && (
         <DonationStreakPopup
-          streakData={streakData}
+          streakData={supabaseStreakData}
           popupPhase={popupPhase}
           loadingProgress={loadingProgress}
           handleClosePopup={handleClosePopup}
@@ -270,7 +292,7 @@ export default function ThankYou() {
           showConfetti={showConfetti}
           streakAnimating={streakAnimating}
           confettiRef={confettiRef}
-          donationHistory={donationHistory}
+          donationHistory={supabaseStreakData.donationHistory}
           getCelebrationMessage={getCelebrationMessage}
         />
       )}
@@ -278,7 +300,7 @@ export default function ThankYou() {
       {/* Versión minimizada del popup */}
       {popupPhase === "minimized" && (
         <DonationStreakMinimized
-          streakData={streakData}
+          streakData={supabaseStreakData}
           handleTogglePopup={handleTogglePopup}
         />
       )}
