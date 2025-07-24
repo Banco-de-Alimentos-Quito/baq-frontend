@@ -11,7 +11,7 @@ function DonacionMensualForm() {
   const [form, setForm] = useState({
     cedula: '',
     nombres: '',
-    genero: '',
+    numero: '',
     correo: '',
     direccion: '',
     cuenta: '',
@@ -39,7 +39,7 @@ function DonacionMensualForm() {
   };
 
   const isFormValid = () => {
-    const requiredFields = form.cedula && form.nombres && form.genero && form.correo &&
+    const requiredFields = form.cedula && form.nombres && form.numero && form.correo &&
       form.direccion && form.cuenta && form.tipoCuenta && form.banco &&
       form.acepta && termsChecked;
 
@@ -54,7 +54,7 @@ function DonacionMensualForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setTocado({
-      cedula: true, nombres: true, genero: true, correo: true, direccion: true,
+      cedula: true, nombres: true, numero: true, correo: true, direccion: true,
       cuenta: true, tipoCuenta: true, banco: true, otroBanco: true, acepta: true
     });
 
@@ -67,7 +67,7 @@ function DonacionMensualForm() {
       const payload = {
         cedula_ruc: form.cedula,
         nombres_completos: form.nombres,
-        genero: form.genero === 'Hombre' ? 'Masculino' : 'Femenino',
+        numero_telefono: form.numero,
         correo_electronico: form.correo,
         direccion: form.direccion,
         numero_cuenta: form.cuenta,
@@ -182,20 +182,18 @@ function DonacionMensualForm() {
           </label>
 
           <label className="form-label" style={{ width: '100%', marginBottom: 8 }}>
-            Género
-            <select
-              name="genero"
+            Número de teléfono
+            <input
+              type="tel"
+              name="numero"
               required
-              value={form.genero}
+              value={form.numero}
               onChange={handleChange}
               onBlur={handleBlur}
-              style={{ width: '100%', padding: 12, borderRadius: 8, border: '1px solid #ddd', marginTop: 4, fontSize: 16, background: '#fff', color: form.genero ? '#222' : '#bbb' }}
-            >
-              <option value="" style={{ color: '#bbb' }}>Selecciona tu género</option>
-              <option value="Hombre">Hombre</option>
-              <option value="Mujer">Mujer</option>
-            </select>
-            {tocado.genero && !form.genero && <span style={{ color: '#e53e3e', fontSize: 13 }}>Falta completar este campo</span>}
+              style={{ width: '100%', padding: 12, borderRadius: 8, border: '1px solid #ddd', marginTop: 4, fontSize: 16, color: '#222' }}
+              placeholder="Ej: 0991234567"
+            />
+            {tocado.numero && !form.numero && <span style={{ color: '#e53e3e', fontSize: 13 }}>Falta completar este campo</span>}
           </label>
 
           <label className="form-label" style={{ width: '100%', marginBottom: 8 }}>
