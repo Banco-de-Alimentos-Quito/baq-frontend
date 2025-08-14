@@ -16,8 +16,6 @@ interface PaymentConfirmResponse {
 
 export class PaymentService {
   private static baseUrl = process.env.NEXT_PUBLIC_API_URL;
-  private static encryptionKey = process.env.NEXT_PUBLIC_ENCRYPTION_KEY;
-
   /**
    * Confirma una transacción de PayPhone enviando los datos al backend
    */

@@ -27,13 +27,13 @@ const generatePayboxData = (amount, userEmail, userPhone) => {
     * Production: false (Modo Prueba, se realizarán cobros de prueba y no   
     se guardará ni afectará al sistema) 
     */
-    PayboxProduction: false,
+    PayboxProduction: true,
     /* Requerido Ambiente de ejecución 
     * prod: Modo Producción, Se procesarán cobros y se cargarán al sistema,   
     afectará a la tdc. 
     * sandbox: Modo Prueba, se realizarán cobros de prueba 
     */
-    PayboxEnvironment: "sandbox",
+    PayboxEnvironment: "prod",
     /* Requerido. Lenguaje del Paybox
      * Español: es | (string) (Paybox en español)
      */
