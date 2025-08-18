@@ -1,8 +1,9 @@
-import CryptoJS from 'crypto-js';
+import CryptoJS from "crypto-js";
 
 interface PaymentConfirmRequest {
   id: string;
   clientTransactionId: string;
+  userId: string;
 }
 
 interface PaymentConfirmResponse {
@@ -21,9 +22,16 @@ export class PaymentService {
    */
   static async confirmPayPhoneTransaction(
     id: string,
-    clientTransactionId: string
+    clientTransactionId: string,
+    userId: string
   ): Promise<PaymentConfirmResponse> {
     try {
+      console.log("📤 Enviando datos a PayPhone:", {
+        id,
+        clientTransactionId,
+        userId,
+      });
+
       const response = await fetch(`${this.baseUrl}payphone/confirm`, {
         method: "POST",
         headers: {
@@ -33,6 +41,7 @@ export class PaymentService {
         body: JSON.stringify({
           id,
           clientTransactionId,
+          userId,
         } as PaymentConfirmRequest),
       });
 
@@ -98,12 +107,11 @@ export class PaymentService {
       // if (contentType && contentType.includes("application/json")) {
       //   const data = await reponse.json();
       //   return data;
-      // } 
+      // }
       return {
         success: true,
-        message: "Transaccion confirmada"
-      }
-
+        message: "Transaccion confirmada",
+      };
     } catch (error) {
       console.error("❌ Error confirmando transacción PagoPlux:", error);
       throw error;

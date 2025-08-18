@@ -3,6 +3,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { PaymentService } from "../services/paymentService";
+import { getOrCreateUserId } from "../utils/utils";
 
 export default function PaymentConfirmationContent() {
   const searchParams = useSearchParams();
@@ -17,6 +18,8 @@ export default function PaymentConfirmationContent() {
       // Capturar parámetros de PayPhone
       const id = searchParams.get("id");
       const clientTransactionId = searchParams.get("clientTransactionId");
+      const userId = getOrCreateUserId();
+      console.log("El userId para enviar al backend es", userId)
 
       // Si faltan parámetros, igual redirige
       if (!id || !clientTransactionId) {
@@ -30,7 +33,8 @@ export default function PaymentConfirmationContent() {
       try {
         await PaymentService.confirmPayPhoneTransaction(
           id,
-          clientTransactionId
+          clientTransactionId,
+          userId
         );
       } catch (error) {
         //Mandar al servidor
