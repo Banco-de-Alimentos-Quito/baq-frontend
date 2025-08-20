@@ -18,6 +18,9 @@ const NavLinks = ({ onClick }: { onClick?: () => void }) => (
     <ScrollLink href="/#testimonials" className="text-sm font-medium hover:text-primary transition-colors" onClick={onClick}>
       Testimonios
     </ScrollLink>
+    <Link href="/blog" className="text-sm font-medium hover:text-primary transition-colors" onClick={onClick}>
+      Blog
+    </Link>
   </>
 );
 
@@ -32,7 +35,7 @@ export default function Header() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-  
+
   return (
     <header className={`sticky top-0 z-50 w-screen transition-all duration-300 ${isScrolled ? 'bg-background/95 shadow-md backdrop-blur-sm' : 'bg-transparent'}`}>
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
@@ -62,12 +65,12 @@ export default function Header() {
           <SheetContent side="right">
             <div className="flex flex-col items-start gap-6 p-6">
               <Link href="/" className="flex items-center gap-2 mb-4" onClick={() => setIsSheetOpen(false)}>
-                
+
                 <span className="font-bold text-xl text-primary">Banco de Alimentos Quito</span>
               </Link>
               <NavLinks onClick={() => setIsSheetOpen(false)} />
               <Button asChild size="sm" className="w-full mt-4 bg-primary hover:bg-primary/90 text-primary-foreground" onClick={() => setIsSheetOpen(false)}>
-                 <ScrollLink href="#donate">Donar Ahora</ScrollLink>
+                <ScrollLink href="#donate">Donar Ahora</ScrollLink>
               </Button>
             </div>
           </SheetContent>
