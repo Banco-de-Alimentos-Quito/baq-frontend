@@ -22,15 +22,6 @@ export default function PayPalButton({
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Generar y almacenar user_id si no existe
-    if (typeof window !== 'undefined') {
-      let userId = localStorage.getItem('user_id');
-      if (!userId) {
-        userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-        localStorage.setItem('user_id', userId);
-      }
-    }
-
     // Función para inicializar los botones de PayPal
     const initPayPalButton = () => {
       if (window.paypal && containerRef.current && !buttonsRendered.current) {

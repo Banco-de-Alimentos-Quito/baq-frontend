@@ -31,14 +31,6 @@ export default function PayphoneButton({
   );
 
   useEffect(() => {
-    // Generar y almacenar user_id si no existe
-    if (typeof window !== 'undefined') {
-      let userId = localStorage.getItem('user_id');
-      if (!userId) {
-        userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-        localStorage.setItem('user_id', userId);
-      }
-    }
 
     let cssLoaded = false;
     let jsLoaded = false;
