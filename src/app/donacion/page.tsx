@@ -430,7 +430,7 @@ export default function DonacionPage() {
             </div>
             <button
               className="w-full bg-[#ED6F1D] text-white rounded-full py-3 font-black text-xl shadow-lg transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled={cantidad < 0}
+              disabled={cantidad < 0.01 || (otroActivo && (!otro || otro === ''))}
               onClick={handleDonarAhora}
             >
               Donar ahora
