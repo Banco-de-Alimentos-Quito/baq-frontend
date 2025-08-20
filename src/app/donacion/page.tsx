@@ -7,9 +7,11 @@ import Image from "next/image";
 import { useRouteLoading } from "@/hooks/useRouteLoading";
 
 function calcularNinios(monto: number) {
-  return Math.max(1, Math.floor(monto / 12));
+  // Si el monto es menor al mínimo permitido, devolver 0
+  if (monto < 2) return 0;
+  // Ahora 1 persona por cada 2 USD
+  return Math.floor(monto / 2);
 }
-
 // Imágenes para donación única - opción 1
 const PUZZLE_PIECES_UNICA_1 = [
   { key: "A1", src: "/puzzle/A1.png", style: { top: 0, left: 0 } },
@@ -186,7 +188,7 @@ export default function DonacionPage() {
   const puzzleConfig = getPuzzleConfig();
 
   const handleCantidad = (valor: number) => {
-    setCantidad(valor);
+    setCantidad(Number(valor.toFixed(2)));
     setOtroActivo(false);
     setOtro("");
   };
@@ -335,8 +337,7 @@ export default function DonacionPage() {
               </button>
             </div>
 
-            <div className="mt-6 w-full flex justify-start">
-            </div>
+            <div className="mt-6 w-full flex justify-start"></div>
 
             {/* Montos predefinidos */}
             <div className="grid grid-cols-2 gap-4 mb-6 w-full">
@@ -370,34 +371,63 @@ export default function DonacionPage() {
                 Otro
               </button>
               <input
-                type="number"
-                placeholder="Ingresa el monto"
+                type="text" // permitir edición libre (evita problemas de cursor)
+                inputMode="decimal"
+                pattern="^\d+(\.\d{0,2})?$"
+                placeholder="Ingresa el monto (ej. 2.50)"
                 value={otroActivo ? otro : ""}
                 onFocus={handleOtroFocus}
                 onChange={(e) => {
-                  // Validar que el valor sea un número positivo y sin decimales mayor a 2
-                  const value = parseFloat(e.target.value);
-                  if (value >= 2 && Number.isInteger(value)) {
-                    setCantidad(value);
-                    setOtro(value.toString());
-                  } else {
+                  const raw = e.target.value;
+                  // permitir vacío mientras escribe
+                  if (raw === "") {
+                    setOtro(raw);
                     setCantidad(0);
-                    setOtro("");
+                    return;
+                  }
+                  // permitir "-" temporalmente si lo necesitas (opcional)
+                  if (raw === "-") {
+                    setOtro(raw);
+                    setCantidad(0);
+                    return;
+                  }
+                  // permitir solo números y hasta 2 decimales
+                  if (!/^\d*\.?\d{0,2}$/.test(raw)) {
+                    // ignorar caracteres inválidos sin romper el input
+                    return;
+                  }
+                  setOtro(raw);
+                  // actualizar cantidad en segundo plano (no formatear el input)
+                  const parsed = parseFloat(raw);
+                  if (isNaN(parsed) || parsed < 0) {
+                    setCantidad(0);
+                  } else {
+                    setCantidad(Math.floor(parsed * 100) / 100);
                   }
                 }}
-                inputMode="numeric"
-                pattern="[0-9]*"
-                min={otroActivo ? 3 : undefined}
+                onBlur={() => {
+                  // Normalizar al perder el foco: truncar a 2 decimales y mostrar formato
+                  if (otro === "" || otro === "-") {
+                    setOtro("");
+                    setCantidad(0);
+                    return;
+                  }
+                  const parsed = parseFloat(otro);
+                  if (isNaN(parsed) || parsed < 0) {
+                    setOtro("");
+                    setCantidad(0);
+                    return;
+                  }
+                  const rounded = Math.floor(parsed * 100) / 100;
+                  setCantidad(Number(rounded.toFixed(2)));
+                  setOtro(
+                    rounded % 1 === 0 ? rounded.toFixed(0) : rounded.toFixed(2)
+                  );
+                }}
+                step="0.01"
                 className="flex-1 rounded-r-lg p-2 sm:p-3 md:p-4 font-bold text-sm sm:text-base md:text-lg bg-white shadow-md focus:outline-none"
               />
             </div>
-
-            {cantidad < 2 && (
-              <p className="text-center text-lg font-bold text-orange-400 mb-3">
-                El monto mínimo permitido es USD 2
-              </p>
-            )}
-
             <button
               className="w-full bg-[#ED6F1D] text-white rounded-full py-3 font-black text-xl shadow-lg transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={cantidad < 2}
@@ -666,10 +696,13 @@ function PersonasAlimentadas({
   cantidad: number;
   tipo: string;
 }) {
-  const [personas, setPersonas] = useState(cantidad);
+  // calcular cuántas personas alimenta el monto (usa la misma lógica que calcularNinios)
+  const targetPeople = calcularNinios(cantidad);
+
+  const [personas, setPersonas] = useState<number>(targetPeople);
 
   useEffect(() => {
-    const end = cantidad;
+    const end = calcularNinios(cantidad);
     if (personas === end) return;
     const step = personas < end ? 1 : -1;
     const iv = setInterval(() => {

@@ -45,11 +45,16 @@ export default function ThankYou() {
 
       // Asegurar formato
       const normalized = {
-        currentStreak: typeof data.currentStreak === "number" ? data.currentStreak : 0,
+        currentStreak:
+          typeof data.currentStreak === "number" ? data.currentStreak : 0,
         lastDonationDate: data.lastDonationDate ?? null,
-        longestStreak: typeof data.longestStreak === "number" ? data.longestStreak : 0,
-        totalDonations: typeof data.totalDonations === "number" ? data.totalDonations : 0,
-        donationHistory: Array.isArray(data.donationHistory) ? data.donationHistory : [],
+        longestStreak:
+          typeof data.longestStreak === "number" ? data.longestStreak : 0,
+        totalDonations:
+          typeof data.totalDonations === "number" ? data.totalDonations : 0,
+        donationHistory: Array.isArray(data.donationHistory)
+          ? data.donationHistory
+          : [],
       };
 
       setStreakData(normalized);
@@ -65,10 +70,15 @@ export default function ThankYou() {
   // Lógica para compartir en redes sociales
   const shareText =
     "¡Acabo de hacer una donación al Banco de Alimentos Quito! Súmate tú también y ayuda a combatir el hambre en Ecuador.";
-  const shareUrl =
-    typeof window !== "undefined"
-      ? window.location.href
-      : "https://baq-front.onrender.com";
+  // Evitar mismatch SSR vs cliente: usar un fallback en SSR y actualizar en mount
+  const [shareUrl, setShareUrl] = useState<string>(
+    "https://baq-front.onrender.com"
+  );
+  useEffect(() => {
+    // actualizar solo en cliente después del mount
+    setShareUrl(window.location.href);
+  }, []);
+
   const shareImage = "/thanks-image.jpeg";
 
   // Web Share API para compartir en móvil (incluyendo imagen si es posible)

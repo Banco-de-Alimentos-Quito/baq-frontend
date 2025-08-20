@@ -4,6 +4,7 @@ import React, { Suspense, useState, useEffect } from "react";
 import { useSearchParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { toast, Toaster } from 'sonner';
+import { getOrCreateUserId } from "@/app/utils/utils";
 
 // Componente interno que usa useSearchParams
 function QRContent() {
@@ -12,12 +13,13 @@ function QRContent() {
   const nombre = params.get('nombre') || '';
   const apellido = params.get('apellido') || '';
   const correo = params.get('correo') || '';
+  const user_id = getOrCreateUserId();
   const telefono = params.get('telefono') || '';
   const documento = params.get('documento') || '';
   const comunidad = params.get('comunidad') || '0';
 
   const router = useRouter();
-  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [showConfirmationModal, setShowConfirmationModal] = useState(true);
   const [showLoadingModal, setShowLoadingModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
@@ -147,7 +149,7 @@ function QRContent() {
       const result = await response.json();
       console.log('📊 Resultado del status:', result);
 
-      setShowLoadingModal(false);
+      setShowLoadingModal(true);
 
       if (result.status === 'PENDING') {
         // Mostrar mensaje de pago pendiente
@@ -197,7 +199,8 @@ function QRContent() {
     try {
       const payload = {
         correo_electronico: correoModal || correo || 'anonimo@baq.ec', // Email opcional, usar valor por defecto si no se proporciona
-        monto_donar: cantidad
+        monto_donar: cantidad,
+        user_id: user_id,
       };
 
       const response = await fetch('https://api.baq.ec/api/baq/donaciones/donador-simple', {
