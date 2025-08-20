@@ -86,33 +86,15 @@ function PayphonePageContent() {
           </div>
         </div>
 
-        {/* Información del pago */}
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">
-            Detalles del pago
-          </h2>
-          <div className="space-y-2 text-sm">
-            <div className="flex justify-between">
-              <span className="text-gray-500">Concepto:</span>
-              <span className="font-medium">{reference}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-500">Monto:</span>
-              <span className="font-medium">${monto} USD</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-500">Beneficiario:</span>
-              <span className="font-medium">Banco de Alimentos de Quito</span>
-            </div>
-          </div>
-        </div>
-
         {/* Componente de Payphone */}
-        <div className="bg-white rounded-xl shadow-lg p-6">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">
-            Procesar Pago
-          </h2>
-          <PayphoneButton amount={monto} onSuccess={handleSuccess} onError={handleError}/>
+        <div className="bg-white rounded-xl shadow-lg p-6 flex flex-col items-center">
+          <div className="w-full flex justify-center">
+            <PayphoneButton
+              amount={monto}
+              onSuccess={handleSuccess}
+              onError={handleError}
+            />
+          </div>
         </div>
 
         {/* Información adicional */}

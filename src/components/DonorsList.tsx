@@ -74,7 +74,7 @@ export default function DonorsList() {
                 <td className="py-2 px-4">{donor.email}</td>
                 <td className="py-2 px-4 text-right">${donor.amount.toFixed(2)}</td>
                 <td className="py-2 px-4 text-right">
-                  {new Date(donor.created_at).toLocaleDateString()}
+                  {new Date(donor.created_at).toLocaleDateString('es-ES')}
                 </td>
               </tr>
             ))}
