@@ -200,7 +200,7 @@ export default function DonacionPage() {
 
   const handleDonarAhora = (e: React.MouseEvent) => {
     e.preventDefault();
-    if (cantidad < 2) return;
+    if (cantidad < 0) return;
     if (tipo === "mensual") {
       navigateWithLoading(`/donacion/mensual?monto=${cantidad}`, 2500);
     } else {
@@ -430,7 +430,7 @@ export default function DonacionPage() {
             </div>
             <button
               className="w-full bg-[#ED6F1D] text-white rounded-full py-3 font-black text-xl shadow-lg transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled={cantidad < 2}
+              disabled={cantidad < 0}
               onClick={handleDonarAhora}
             >
               Donar ahora
