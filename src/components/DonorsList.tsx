@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import { useSupabaseQuery } from '@/hooks/useSupabase';
 
 interface Donor {
   id: number;
@@ -11,14 +10,48 @@ interface Donor {
   created_at: string;
 }
 
-export default function DonorsList() {
-  const { data: donors, error, loading } = useSupabaseQuery<Donor>('donors', {
-    orderBy: { column: 'created_at', ascending: false },
-    limit: 10
-  });
+// Datos estáticos de ejemplo para donantes
+const mockDonors: Donor[] = [
+  {
+    id: 1,
+    name: "María González",
+    email: "maria@example.com",
+    amount: 150.00,
+    created_at: "2024-12-28T10:30:00Z"
+  },
+  {
+    id: 2,
+    name: "Carlos Rodríguez",
+    email: "carlos@example.com",
+    amount: 75.50,
+    created_at: "2024-12-27T15:45:00Z"
+  },
+  {
+    id: 3,
+    name: "Ana Martínez",
+    email: "ana@example.com",
+    amount: 200.00,
+    created_at: "2024-12-26T09:15:00Z"
+  },
+  {
+    id: 4,
+    name: "Luis Pérez",
+    email: "luis@example.com",
+    amount: 50.00,
+    created_at: "2024-12-25T14:20:00Z"
+  },
+  {
+    id: 5,
+    name: "Sofia Herrera",
+    email: "sofia@example.com",
+    amount: 125.75,
+    created_at: "2024-12-24T11:30:00Z"
+  }
+];
 
-  if (loading) return <div className="p-4 text-center">Cargando donantes...</div>;
-  if (error) return <div className="p-4 text-center text-red-500">Error: {error.message}</div>;
+export default function DonorsList() {
+  const donors = mockDonors;
+
   if (!donors || donors.length === 0) return <div className="p-4 text-center">No hay donantes registrados.</div>;
 
   return (
