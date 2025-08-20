@@ -81,11 +81,9 @@ export default function PaymentModal({
 
   const goToPayphone = () => {
     onClose();
-    const userId = getOrCreateUserId();
     const params = new URLSearchParams({
       monto: cantidad.toString(),
       reference: `Donación BAQ - ${cantidad} USD`,
-      user_id: userId,
     });
     router.push(`/donacion/payphone?${params.toString()}`);
   };

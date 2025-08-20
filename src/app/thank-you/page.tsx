@@ -4,8 +4,8 @@ import Link from "next/link";
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   StreakData,
-  handleStreakCalculation,
   createConfetti,
+  fetchStreakFromAPI,
 } from "./DonationStreak";
 import DonationStreakPopup from "./DonationStreakPopup";
 import DonationStreakMinimized from "./DonationStreakMinimized";
@@ -37,6 +37,29 @@ export default function ThankYou() {
     }>
   >([]);
 
+  // Función para obtener la racha desde el backend
+  const fetchStreakData = async () => {
+    try {
+      const data = await fetchStreakFromAPI();
+      console.log("fetchStreakData -> data from service:", data);
+
+      // Asegurar formato
+      const normalized = {
+        currentStreak: typeof data.currentStreak === "number" ? data.currentStreak : 0,
+        lastDonationDate: data.lastDonationDate ?? null,
+        longestStreak: typeof data.longestStreak === "number" ? data.longestStreak : 0,
+        totalDonations: typeof data.totalDonations === "number" ? data.totalDonations : 0,
+        donationHistory: Array.isArray(data.donationHistory) ? data.donationHistory : [],
+      };
+
+      setStreakData(normalized);
+      setDonationHistory(normalized.donationHistory);
+    } catch (error) {
+      console.error("fetchStreakData error:", error);
+      // en fallo, mantener valores por defecto ya inicializados
+    }
+  };
+
   const confettiRef = useRef<HTMLDivElement | null>(null);
 
   // Lógica para compartir en redes sociales
@@ -65,7 +88,7 @@ export default function ThankYou() {
     }
   }, [shareText, shareUrl]);
 
-  // Simular carga y mostrar popup de racha
+  // Cargar datos de racha y mostrar popup
   useEffect(() => {
     // Mostrar popup después de 1 segundo
     const popupTimer = setTimeout(() => {
@@ -80,30 +103,28 @@ export default function ThankYou() {
         if (progress >= 100) {
           clearInterval(progressInterval);
 
-          // Calcular nueva racha
-          const newStreakData = handleStreakCalculation();
-          setStreakData(newStreakData);
-          setDonationHistory(newStreakData.donationHistory);
+          // Obtener datos de racha desde el backend
+          fetchStreakData().then(() => {
+            // Cambiar a fase completa
+            setPopupPhase("complete");
 
-          // Cambiar a fase completa
-          setPopupPhase("complete");
+            // Animar racha
+            setStreakAnimating(true);
+            setTimeout(() => setStreakAnimating(false), 500);
 
-          // Animar racha
-          setStreakAnimating(true);
-          setTimeout(() => setStreakAnimating(false), 500);
-
-          // Mostrar efecto de confetti
-          setShowConfetti(true);
-          if (confettiRef.current) {
-            createConfetti(confettiRef.current, 100);
-          }
+            // Mostrar efecto de confetti
+            setShowConfetti(true);
+            if (confettiRef.current) {
+              createConfetti(confettiRef.current, 100);
+            }
+          });
         }
       }, 30);
 
       return () => {
         clearInterval(progressInterval);
       };
-    }, []);
+    }, 1000);
 
     return () => {
       clearTimeout(popupTimer);
@@ -129,20 +150,17 @@ export default function ThankYou() {
         "¿Estás seguro que deseas reiniciar tu racha de donaciones? Esta acción no se puede deshacer."
       )
     ) {
-      if (typeof window !== "undefined") {
-        localStorage.removeItem("donationStreak");
-        setStreakData({
-          currentStreak: 0,
-          lastDonationDate: null,
-          longestStreak: 0,
-          totalDonations: 0,
-          donationHistory: [],
-        });
-        setDonationHistory([]);
+      setStreakData({
+        currentStreak: 0,
+        lastDonationDate: null,
+        longestStreak: 0,
+        totalDonations: 0,
+        donationHistory: [],
+      });
+      setDonationHistory([]);
 
-        // Opcional: mostrar mensaje de éxito
-        alert("Tu racha de donaciones ha sido reiniciada correctamente.");
-      }
+      // Opcional: mostrar mensaje de éxito
+      alert("Tu racha de donaciones ha sido reiniciada correctamente.");
     }
   };
 

@@ -2,11 +2,9 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
 import PaymentModal from "../components/PaymentModal";
 import Image from "next/image";
 import { useRouteLoading } from "@/hooks/useRouteLoading";
-import ModalInversionSocial from "./components/ModalInversionSocial";
 
 function calcularNinios(monto: number) {
   return Math.max(1, Math.floor(monto / 12));
@@ -95,8 +93,8 @@ export default function DonacionPage() {
 
   const [showPagoModal, setShowPagoModal] = useState(false);
   const [showDeunaModal, setShowDeunaModal] = useState(false);
-  const [showTipoButtons, setShowTipoButtons] = useState(false);
-  const [showInversionModal, setShowInversionModal] = useState(false);
+  // const [showTipoButtons, setShowTipoButtons] = useState(false);
+  // const [showInversionModal, setShowInversionModal] = useState(false);
 
   const [deunaForm, setDeunaForm] = useState({
     nombre: "",
@@ -249,148 +247,129 @@ export default function DonacionPage() {
               donación:
             </p>
 
-            {/* Tipo de donación */}
-            <div className="flex flex-col items-center w-full mb-6">
-              {!showTipoButtons ? (
-                <button
-                  className="w-full flex items-center justify-center gap-3 bg-[#c0392b] hover:bg-[#a93226] text-white rounded-2xl py-5 px-6 font-extrabold text-base shadow-xl mb-4 transition-transform hover:scale-105"
-                  onClick={() => setShowInversionModal(true)}
+            <div className="flex justify-center gap-4 w-full">
+              <button
+                className={`flex items-center gap-2 px-6 py-2 rounded-full font-bold text-lg transition-transform ${
+                  tipo === "unica"
+                    ? "bg-gradient-to-r from-[#2F3388] to-[#1D2394] text-white shadow-lg scale-105"
+                    : "bg-gray-200 text-gray-700 shadow-md hover:bg-[#2F3388] hover:text-white"
+                }`}
+                onClick={() => setTipo("unica")}
+              >
+                {/* Ícono corazón */}
+                <svg
+                  width="32"
+                  height="32"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  className="mr-2"
                 >
-                  {/* SVG de casa */}
-                  <img
-                    src="home.svg"
-                    className="w-6 h-6"
-                    alt="Casa"
-                    style={{ filter: "invert(1)" }}
-                  />
-                  Esto también es una inversión social
-                </button>
-              ) : (
-                <div className="flex justify-center gap-4 w-full">
-                  <button
-                    className={`flex items-center gap-2 px-6 py-2 rounded-full font-bold text-lg transition-transform ${
-                      tipo === "unica"
-                        ? "bg-gradient-to-r from-[#2F3388] to-[#1D2394] text-white shadow-lg scale-105"
-                        : "bg-gray-200 text-gray-700 shadow-md hover:bg-[#2F3388] hover:text-white"
-                    }`}
-                    onClick={() => setTipo("unica")}
-                  >
-                    {/* Ícono corazón */}
-                    <svg
-                      width="32"
-                      height="32"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      className="mr-2"
-                    >
-                      <path
-                        d="M17.5 8.5c-1.2-1.1-2.7-1.2-3.5-1.2-.8 0-2.3.1-3.5 1.2C8.1
+                  <path
+                    d="M17.5 8.5c-1.2-1.1-2.7-1.2-3.5-1.2-.8 0-2.3.1-3.5 1.2C8.1
                9.7 7 11.5 7 13.7c0 2.2 1.2 4.3 3.1 5.1.7.3
                1.4.4 2.1.4.7 0 1.4-.1 2.1-.4 1.9-.8
                3.1-2.9 3.1-5.1 0-2.2-1.1-4-2.9-5.2z"
-                        fill={tipo === "unica" ? "#fff" : "#ff7300"}
-                      />
-                      <path
-                        d="M12.5 6.5c.6-.7 1.2-1.7 1.2-2.7
+                    fill={tipo === "unica" ? "#fff" : "#ff7300"}
+                  />
+                  <path
+                    d="M12.5 6.5c.6-.7 1.2-1.7 1.2-2.7
                0-.2-.2-.3-.3-.3-.7 0-1.6.5-2.1 1.1-.5.6-.9
                1.4-.9 2.2 0 .2.2.3.3.3.7 0 1.5-.4 2-1.1z"
-                        fill={tipo === "unica" ? "#fff" : "#ff7300"}
-                      />
-                    </svg>
-                    Única vez
-                  </button>
+                    fill={tipo === "unica" ? "#fff" : "#ff7300"}
+                  />
+                </svg>
+                Única vez
+              </button>
 
-                  <button
-                    className={`flex items-center gap-2 px-6 py-2 rounded-full font-bold text-lg transition-transform ${
-                      tipo === "mensual"
-                        ? "bg-gradient-to-r from-[#2F3388] to-[#1D2394] text-white shadow-lg scale-105"
-                        : "bg-gray-200 text-gray-700 shadow-md hover:bg-[#2F3388] hover:text-white"
-                    }`}
-                    onClick={() => setTipo("mensual")}
-                  >
-                    {/* Ícono calendario */}
-                    <svg
-                      width="22"
-                      height="22"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      className="mr-1"
-                    >
-                      <rect
-                        x="3"
-                        y="4"
-                        width="18"
-                        height="17"
-                        rx="3"
-                        fill={tipo === "mensual" ? "#fff" : "#ff7300"}
-                        fillOpacity="0.15"
-                      />
-                      <rect
-                        x="3"
-                        y="8"
-                        width="18"
-                        height="13"
-                        rx="2"
-                        fill={tipo === "mensual" ? "#fff" : "#ff7300"}
-                      />
-                      <rect
-                        x="7"
-                        y="2"
-                        width="2"
-                        height="4"
-                        rx="1"
-                        fill={tipo === "mensual" ? "#fff" : "#ff7300"}
-                      />
-                      <rect
-                        x="15"
-                        y="2"
-                        width="2"
-                        height="4"
-                        rx="1"
-                        fill={tipo === "mensual" ? "#fff" : "#ff7300"}
-                      />
-                    </svg>
-                    Mensual
-                  </button>
-                </div>
-              )}
+              <button
+                className={`flex items-center gap-2 px-6 py-2 rounded-full font-bold text-lg transition-transform ${
+                  tipo === "mensual"
+                    ? "bg-gradient-to-r from-[#2F3388] to-[#1D2394] text-white shadow-lg scale-105"
+                    : "bg-gray-200 text-gray-700 shadow-md hover:bg-[#2F3388] hover:text-white"
+                }`}
+                onClick={() => setTipo("mensual")}
+              >
+                {/* Ícono calendario */}
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  className="mr-1"
+                >
+                  <rect
+                    x="3"
+                    y="4"
+                    width="18"
+                    height="17"
+                    rx="3"
+                    fill={tipo === "mensual" ? "#fff" : "#ff7300"}
+                    fillOpacity="0.15"
+                  />
+                  <rect
+                    x="3"
+                    y="8"
+                    width="18"
+                    height="13"
+                    rx="2"
+                    fill={tipo === "mensual" ? "#fff" : "#ff7300"}
+                  />
+                  <rect
+                    x="7"
+                    y="2"
+                    width="2"
+                    height="4"
+                    rx="1"
+                    fill={tipo === "mensual" ? "#fff" : "#ff7300"}
+                  />
+                  <rect
+                    x="15"
+                    y="2"
+                    width="2"
+                    height="4"
+                    rx="1"
+                    fill={tipo === "mensual" ? "#fff" : "#ff7300"}
+                  />
+                </svg>
+                Mensual
+              </button>
             </div>
 
-            {/* Mostrar montos y botón solo si showTipoButtons está activo */}
-            {showTipoButtons && (
-              <>
-              {/* Montos predefinidos */}
-              <div className="grid grid-cols-2 gap-4 mb-6 w-full">
-                {MONTOS_DONACION.map((m) => (
+            <div className="mt-6 w-full flex justify-start">
+            </div>
+
+            {/* Montos predefinidos */}
+            <div className="grid grid-cols-2 gap-4 mb-6 w-full">
+              {MONTOS_DONACION.map((m) => (
                 <button
                   key={m}
                   className={`flex flex-col items-center rounded-lg px-7 py-4 font-bold text-lg shadow-md transition-transform ${
-                  cantidad === m && !otroActivo
-                    ? "bg-gradient-to-r from-orange-400 to-orange-500 text-white shadow-lg scale-105 filter brightness-95 contrast-125"
-                    : "bg-white text-orange-600 opacity-95 hover:brightness-110"
+                    cantidad === m && !otroActivo
+                      ? "bg-gradient-to-r from-orange-400 to-orange-500 text-white shadow-lg scale-105 filter brightness-95 contrast-125"
+                      : "bg-white text-orange-600 opacity-95 hover:brightness-110"
                   }`}
                   onClick={() => handleCantidad(m)}
                 >
                   <span className="text-sm">USD</span>
                   <span className="text-xl">{m}</span>
                 </button>
-                ))}
-              </div>
+              ))}
+            </div>
 
-              {/* Otro monto manual */}
-              <div className="flex w-full mb-6">
-                <button
+            {/* Otro monto manual */}
+            <div className="flex w-full mb-6">
+              <button
                 className={`rounded-l-lg px-6 py-4 font-bold text-lg shadow-md transition-transform ${
                   otroActivo
-                  ? "bg-gradient-to-r from-orange-500 to-orange-300 text-white shadow-lg scale-105"
-                  : "bg-gradient-to-r from-orange-500 to-orange-300 text-white shadow-md"
+                    ? "bg-gradient-to-r from-orange-500 to-orange-300 text-white shadow-lg scale-105"
+                    : "bg-gradient-to-r from-orange-500 to-orange-300 text-white shadow-md"
                 }`}
                 onClick={handleOtroFocus}
                 type="button"
-                >
+              >
                 Otro
-                </button>
-                <input
+              </button>
+              <input
                 type="number"
                 placeholder="Ingresa el monto"
                 value={otroActivo ? otro : ""}
@@ -399,35 +378,33 @@ export default function DonacionPage() {
                   // Validar que el valor sea un número positivo y sin decimales mayor a 2
                   const value = parseFloat(e.target.value);
                   if (value >= 2 && Number.isInteger(value)) {
-                  setCantidad(value);
-                  setOtro(value.toString());
+                    setCantidad(value);
+                    setOtro(value.toString());
                   } else {
-                  setCantidad(0);
-                  setOtro("");
+                    setCantidad(0);
+                    setOtro("");
                   }
                 }}
                 inputMode="numeric"
                 pattern="[0-9]*"
                 min={otroActivo ? 3 : undefined}
                 className="flex-1 rounded-r-lg p-2 sm:p-3 md:p-4 font-bold text-sm sm:text-base md:text-lg bg-white shadow-md focus:outline-none"
-                />
-              </div>
+              />
+            </div>
 
-              {cantidad < 2 && (
-                <p className="text-center text-lg font-bold text-orange-400 mb-3">
+            {cantidad < 2 && (
+              <p className="text-center text-lg font-bold text-orange-400 mb-3">
                 El monto mínimo permitido es USD 2
-                </p>
-              )}
-
-              <button
-                className="w-full bg-[#ED6F1D] text-white rounded-full py-3 font-black text-xl shadow-lg transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
-                disabled={cantidad < 2}
-                onClick={handleDonarAhora}
-              >
-                Donar ahora
-              </button>
-              </>
+              </p>
             )}
+
+            <button
+              className="w-full bg-[#ED6F1D] text-white rounded-full py-3 font-black text-xl shadow-lg transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={cantidad < 2}
+              onClick={handleDonarAhora}
+            >
+              Donar ahora
+            </button>
           </div>
         </div>
 
@@ -677,15 +654,6 @@ export default function DonacionPage() {
           </div>
         </div>
       )}
-
-      {/* Modal de inversión social */}
-      <ModalInversionSocial
-        isOpen={showInversionModal}
-        onClose={() => {
-          setShowInversionModal(false);
-          setShowTipoButtons(true);
-        }}
-      />
     </div>
   );
 }

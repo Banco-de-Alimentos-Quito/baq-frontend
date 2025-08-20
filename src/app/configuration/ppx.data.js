@@ -94,7 +94,7 @@ false -> no se realizará ningún cobro de prueba
         if (response.status === "succeeded") {
            PaymentService.confirmPagoPluxTransaction(
             userEmail,
-            userPhone
+            response.detail.id_transaccion
           );
 
           setTimeout(() => {

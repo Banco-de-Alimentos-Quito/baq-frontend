@@ -1,4 +1,4 @@
-import CryptoJS from "crypto-js";
+import { getOrCreateUserId } from "../utils/utils";
 
 interface PaymentConfirmRequest {
   id: string;
@@ -32,7 +32,7 @@ export class PaymentService {
         userId,
       });
 
-      const response = await fetch(`${this.baseUrl}payphone/confirm`, {
+      const response = await fetch(`${this.baseUrl}/payphone/confirm`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -68,34 +68,31 @@ export class PaymentService {
    */
   static async confirmPagoPluxTransaction(
     email: any,
-    phone: any
+    idTransaction:any
   ): Promise<PaymentConfirmResponse> {
     try {
-      console.log("📤 Procesando respuesta PagoPlux:", response);
+
+      const userId = getOrCreateUserId();
 
       // Extraer y estructurar los datos que quieres enviar al backend
 
       const dataToSend = {
-        email: email,
-        phone: phone,
+        id_transaction: idTransaction,
+        user_id: userId,
+        email: email
       };
 
-      // const encryptedData = CryptoJS.AES.encrypt(
-      //   JSON.stringify(dataToSend),
-      //   this.encryptionKey
-      // ).toString();
-
-      // const reponse = await fetch(
-      //   `${this.baseUrl}pagoplux/verification`,
-      //   {
-      //     method: "POST",
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //       Accept: "application/json",
-      //     },
-      //     body: JSON.stringify(dataToSend),
-      //   }
-      // );
+      await fetch(
+        `${this.baseUrl}/pagoplux/transaccion-pendiente`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify(dataToSend),
+        }
+      );
 
       // if (!reponse.ok) {
       //   const errorText = await reponse.text();
