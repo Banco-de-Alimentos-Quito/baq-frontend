@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import Script from "next/script";
+import { getOrCreateUserId } from "../utils/utils";
 
 interface PayPalButtonProps {
   productDescription?: string;
@@ -21,36 +22,59 @@ export default function PayPalButton({
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // Generar y almacenar user_id si no existe
+    if (typeof window !== 'undefined') {
+      let userId = localStorage.getItem('user_id');
+      if (!userId) {
+        userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        localStorage.setItem('user_id', userId);
+      }
+    }
+
     // Función para inicializar los botones de PayPal
     const initPayPalButton = () => {
       if (window.paypal && containerRef.current && !buttonsRendered.current) {
         // Limpiamos el contenedor antes de renderizar
-        containerRef.current.innerHTML = '';
-        
-        window.paypal.Buttons({
-          style: {
-            shape: 'rect',
-            color: 'gold',
-            layout: 'vertical',
-            label: 'pay',
-          },
+        containerRef.current.innerHTML = "";
 
-          createOrder: function(_data: unknown, actions: any) {
-            return actions.order.create({
-              purchase_units: [{
-                description: productDescription,
-                amount: {
-                  currency_code: currency,
-                  value: amount
-                }
-              }]
-            });
-          },
+        window.paypal
+          .Buttons({
+            style: {
+              shape: "rect",
+              color: "gold",
+              layout: "vertical",
+              label: "pay",
+            },
 
-            onApprove: async function (_data: unknown, actions: any) {
+            createOrder: function (_data: unknown, actions: any) {
+              return actions.order.create({
+                purchase_units: [
+                  {
+                    description: productDescription,
+                    amount: {
+                      currency_code: currency,
+                      value: amount,
+                    },
+                  },
+                ],
+              });
+            },
+
+            onApprove: async function (data: unknown, actions: any) {
               try {
-                const orderData = await actions.order.capture();
-                console.log("Capture result", orderData);
+                const transacction = data;
+                const userId = getOrCreateUserId();
+
+                await fetch(`${process.env.NEXT_PUBLIC_API_URL}paypal/capture-order`, {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    data: transacction,
+                    userId: userId,
+                  }),
+                });
 
                 // Usar router.push en lugar de window.location
                 window.location.href = `/${successUrl}`;

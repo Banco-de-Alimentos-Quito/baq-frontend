@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import Paypal from "../components/Paypal";
 import { z } from "zod";
 import PluxModal from "./PluxModal";
+import { getOrCreateUserId } from "../utils/utils";
 
 interface DeunaForm {
   nombre: string;
@@ -87,10 +88,6 @@ export default function PaymentModal({
     router.push(`/donacion/payphone?${params.toString()}`);
   };
 
-  const handlePluxClick = () => {
-    setIsPluxModalOpen(true);
-  };
-
   const handleClosePluxModal = () => {
     setIsPluxModalOpen(false);
   };
@@ -99,16 +96,16 @@ export default function PaymentModal({
     setIsPpxFormOpen(true);
   };
 
-  const handlePpxFormSubmit = (e: React.FormEvent) => {
+  const formGoToPagoPlux = (e: React.FormEvent) => {
     e.preventDefault();
-
+    
     if (!ppxUserData.email || !ppxUserData.phone) {
       alert("Por favor, completa todos los campos");
       return;
     }
     // 3. Validar los datos con el esquema de Zod
     const result = PpxUserSchema.safeParse(ppxUserData);
-
+    
     if (!result.success) {
       // Si la validación falla, actualiza el estado de errores
       const errors = result.error.flatten().fieldErrors;
@@ -118,19 +115,23 @@ export default function PaymentModal({
       });
       return;
     }
-
+    
     // Si la validación es exitosa, limpia los errores
     setValidationErrors({ email: "", phone: "" });
-
+    
     // Cerrar modales
     setIsPpxFormOpen(false);
     onClose();
+    
+    
+    const userId = getOrCreateUserId();
 
     // Redirigir a la página de PagoPlux con los datos validados
     const params = new URLSearchParams({
       monto: cantidad.toString(),
       email: result.data.email,
       phone: result.data.phone,
+      user_id: userId,
     });
     router.push(`/donacion/pagoplux?${params.toString()}`);
   };
@@ -246,7 +247,7 @@ export default function PaymentModal({
               Información de Contacto
             </h2>
             <form
-              onSubmit={handlePpxFormSubmit}
+              onSubmit={formGoToPagoPlux}
               className="flex flex-col gap-4"
             >
               <div className="flex flex-col">
