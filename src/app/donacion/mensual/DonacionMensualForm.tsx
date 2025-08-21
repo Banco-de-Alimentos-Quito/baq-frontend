@@ -110,7 +110,7 @@ export default function DonacionMensualForm() {
 
   const handleCloseSuccessModal = () => {
     setShowSuccessModal(false);
-    router.push('/thank-you');
+    //router.push('/thank-you');
   };
 
   return (

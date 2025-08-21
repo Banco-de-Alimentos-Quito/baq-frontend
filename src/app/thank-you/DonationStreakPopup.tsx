@@ -168,18 +168,6 @@ export default function DonationStreakPopup({
           </div>
         )}
         
-        {/* Botón de reinicio de racha */}
-        {popupPhase === 'complete' && (
-          <div className="reset-streak-container">
-            <button 
-              className="reset-streak-btn"
-              onClick={resetStreak}
-            >
-              Reiniciar racha
-            </button>
-          </div>
-        )}
-        
         {/* Contenedor para efectos de confetti */}
         <div ref={confettiRef} className="confetti-container"></div>
         

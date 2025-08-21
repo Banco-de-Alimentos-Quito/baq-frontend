@@ -108,7 +108,7 @@ function DonacionMensualForm() {
 
         setTimeout(() => {
           setEnviado(false);
-          router.push('/thank-you');
+          //router.push('/thank-you');
         }, 2200);
       } else {
         console.error('❌ Error al procesar donación mensual:', result);
