@@ -8,9 +8,9 @@ import { useRouteLoading } from "@/hooks/useRouteLoading";
 
 function calcularNinios(monto: number) {
   // Si el monto es menor al mínimo permitido, devolver 0
-  if (monto < 2) return 0;
+  if (monto < 1) return 0;
   // Ahora 1 persona por cada 2 USD
-  return Math.floor(monto / 2);
+  return Math.floor(monto);
 }
 // Imágenes para donación única - opción 1
 const PUZZLE_PIECES_UNICA_1 = [
@@ -430,7 +430,7 @@ export default function DonacionPage() {
             </div>
             <button
               className="w-full bg-[#ED6F1D] text-white rounded-full py-3 font-black text-xl shadow-lg transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled={cantidad < 1 || (otroActivo && (!otro || otro === ''))}
+              disabled={cantidad < 1 || (otroActivo && (!otro || otro === ""))}
               onClick={handleDonarAhora}
             >
               Donar ahora

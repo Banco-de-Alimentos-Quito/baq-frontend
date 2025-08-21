@@ -8,10 +8,11 @@ import { getOrCreateUserId } from "../utils/utils";
 export default function PaymentConfirmationContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const [status, setStatus] = useState<"processing" | "success" | "error">(
-    "processing"
-  );
+  const [status, setStatus] = useState<
+    "processing" | "success" | "error" | "failed"
+  >("processing");
   const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState<string>("");
 
   useEffect(() => {
     const processPayment = async () => {
@@ -19,31 +20,44 @@ export default function PaymentConfirmationContent() {
       const id = searchParams.get("id");
       const clientTransactionId = searchParams.get("clientTransactionId");
       const userId = getOrCreateUserId();
-      console.log("El userId para enviar al backend es", userId)
+      console.log("El userId para enviar al backend es", userId);
 
       // Si faltan parámetros, igual redirige
-      if (!id || !clientTransactionId) {
-        setTimeout(() => {
-          router.push("/thank-you");
-        }, 2000);
-        return;
-      }
+      // if (!id || !clientTransactionId) {
+      //   setTimeout(() => {
+      //     router.push("/thank-you");
+      //   }, 2000);
+      //   return;
+      // }
 
       // Enviar al backend para confirmar (ignora errores)
       try {
-        await PaymentService.confirmPayPhoneTransaction(
+        const response = await PaymentService.confirmPayPhoneTransaction(
           id,
           clientTransactionId,
           userId
         );
-      } catch (error) {
-        //Mandar al servidor
-      }
 
-      // Redirigir a thank-you después de 2 segundos
-      setTimeout(() => {
-        router.push("/thank-you");
-      }, 2000);
+        if (response.status === "success") {
+          setStatus("success");
+
+          setMessage(response.message || "Transacción confirmada exitosamente");
+
+          setTimeout(() => {
+            router.push("/thank-you");
+          }, 3000);
+        } else if (response.status === "failed") {
+          setStatus("failed");
+          setMessage(response.message || "Transacción no ha sido aprobada");
+        } else {
+          setStatus("error");
+          setError("Error al procesar el pago");
+        }
+      } catch (error) {
+        console.error("💥 Error al confirmar transacción:", error);
+        setStatus("error");
+        setMessage("Error de conexión al confirmar la transacción");
+      }
     };
 
     processPayment();
@@ -59,6 +73,95 @@ export default function PaymentConfirmationContent() {
               Procesando tu pago...
             </h1>
             <p className="text-gray-600">Estamos confirmando tu donación</p>
+          </>
+        )}
+        {/* Estado: Éxito */}
+        {status === "success" && (
+          <>
+            <div className="bg-green-100 rounded-full h-16 w-16 flex items-center justify-center mx-auto mb-6">
+              <svg
+                className="w-8 h-8 text-green-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+            </div>
+            <h1 className="text-2xl font-bold text-green-600 mb-2">
+              ¡Pago Exitoso!
+            </h1>
+            <p className="text-gray-600 mb-4">{message}</p>
+            <p className="text-sm text-gray-500">
+              Redirigiendo a la página de agradecimiento...
+            </p>
+          </>
+        )}
+
+        {/* Estado: Error */}
+        {status === "error" && (
+          <>
+            <div className="bg-red-100 rounded-full h-16 w-16 flex items-center justify-center mx-auto mb-6">
+              <svg
+                className="w-8 h-8 text-red-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </div>
+            <h1 className="text-2xl font-bold text-red-600 mb-2">
+              Error en el Pago
+            </h1>
+            <p className="text-gray-600 mb-4">{message}</p>
+            <button
+              onClick={() => router.push("/donacion")}
+              className="bg-orange-600 text-white px-6 py-2 rounded-lg hover:bg-orange-700 transition-colors"
+            >
+              Volver al inicio
+            </button>
+          </>
+        )}
+
+        {/* Estado: Fallido - AGREGAR ESTE BLOQUE */}
+        {status === "failed" && (
+          <>
+            <div className="bg-yellow-100 rounded-full h-16 w-16 flex items-center justify-center mx-auto mb-6">
+              <svg
+                className="w-8 h-8 text-yellow-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+                />
+              </svg>
+            </div>
+            <h1 className="text-2xl font-bold text-yellow-600 mb-2">
+              Pago No Aprobado
+            </h1>
+            <p className="text-gray-600 mb-4">{message}</p>
+            <button
+              onClick={() => router.push("/donacion")}
+              className="bg-orange-600 text-white px-6 py-2 rounded-lg hover:bg-orange-700 transition-colors"
+            >
+              Volver al inicio
+            </button>
           </>
         )}
       </div>
