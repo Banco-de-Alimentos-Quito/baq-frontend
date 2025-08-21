@@ -4,10 +4,8 @@ import WhatWeDoSection from "@/components/sections/WhatWeDoSection";
 import HowToHelpSection from "@/components/sections/HowToHelpSection";
 import DonationSection from "@/components/sections/DonationSection";
 import TestimonialsSection from "@/components/sections/TestimonialsSection";
-import TransferSection from "@/components/sections/TransferSection";
-import Footer from "@/components/sections/Footer";
-import DonorsList from "@/components/DonorsList";
 import Link from "next/link";
+import FloatingDonationButton from "@/components/ui/floating-donation-button";
 
 export default function Home() {
   return (
@@ -16,8 +14,8 @@ export default function Home() {
       <WhatWeDoSection />
       <HowToHelpSection />
       <DonationSection />
+      <FloatingDonationButton />
       <TestimonialsSection />
-      <TransferSection />
 
       {/* Blog Section */}
       <section className="py-16 bg-gradient-to-br from-orange-50 to-blue-50">
@@ -41,9 +39,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      <DonorsList />
-      <Footer />
     </div>
   );
 }

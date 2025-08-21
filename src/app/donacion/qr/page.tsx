@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { toast, Toaster } from 'sonner';
 import { getOrCreateUserId } from "@/app/utils/utils";
 import { useMobile } from '@/hooks/use-mobile';
+import { set } from "zod";
 
 // Componente interno que usa useSearchParams
 function QRContent() {
@@ -24,7 +25,6 @@ function QRContent() {
   const nombre = params.get('nombre') || '';
   const apellido = params.get('apellido') || '';
   const correo = params.get('correo') || '';
-  const user_id = getOrCreateUserId();
   const telefono = params.get('telefono') || '';
   const documento = params.get('documento') || '';
   const comunidad = params.get('comunidad') || '0';
@@ -287,7 +287,7 @@ function QRContent() {
 
 
 
-      setShowLoadingModal(true);
+      setShowLoadingModal(false);
 
       console.log('🎯 === PROCESANDO RESULTADO ===');
       console.log('🔍 Estado recibido:', result.status);
@@ -304,7 +304,7 @@ function QRContent() {
           duration: 5000,
           id: 'payment-status-pending', // ID único para evitar duplicados
         });
-        console.log('✅ Toast de PENDING mostrado');
+        console.log('✅ Toast de PENDING mostrado');      
       } else if (result.status === 'APPROVED') {
         console.log('✅ Estado: APPROVED - Mostrando mensaje de éxito y abriendo modal');
         // Mostrar mensaje de éxito y abrir modal de datos complementarios
@@ -314,10 +314,13 @@ function QRContent() {
           id: 'payment-status-approved', // ID único para evitar duplicados
         });
         console.log('✅ Toast de APPROVED mostrado');
+        
+        // Cerrar modal de loading ANTES de abrir el modal de confirmación
+        setShowLoadingModal(false);
 
         // Abrir modal de datos complementarios
         console.log('🚪 Abriendo modal de datos complementarios...');
-    setShowConfirmationModal(true);
+        setShowConfirmationModal(true);
         console.log('✅ Modal abierto');
       } else {
         console.log('❓ Estado desconocido:', result.status, '- Mostrando mensaje de estado no válido');
@@ -328,6 +331,7 @@ function QRContent() {
           id: 'payment-status-unknown', // ID único para evitar duplicados
         });
         console.log('✅ Toast de estado desconocido mostrado');
+        setShowLoadingModal(false);
       }
 
       console.log('🎉 === PROCESAMIENTO COMPLETADO ===');
@@ -363,6 +367,8 @@ function QRContent() {
     setShowLoadingModal(true);
 
     try {
+
+      const user_id = await getOrCreateUserId();
       const payload = {
         correo_electronico: correoModal || correo || 'anonimo@baq.ec', // Email opcional, usar valor por defecto si no se proporciona
         monto_donar: cantidad,
@@ -379,6 +385,8 @@ function QRContent() {
       });
 
       if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Error response:', errorText);
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
