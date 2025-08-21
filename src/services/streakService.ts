@@ -60,12 +60,6 @@ class StreakService {
         throw new Error('Respuesta no JSON del backend');
       }
 
-      // Backend puede devolver { status: "error", message: "..." }
-      if (!response.ok || data?.status === 'error') {
-        console.warn('streakService -> backend error response:', data);
-        throw new Error(data?.message || `HTTP ${response.status}`);
-      }
-
       // Mapear campos esperados
       return this.mapApiResponseToStreakData(data as StreakApiResponseSuccess);
     } catch (error) {

@@ -56,7 +56,7 @@ export default function PayPalButton({
                 const transacction = data;
                 const userId = getOrCreateUserId();
 
-                await fetch(`${process.env.NEXT_PUBLIC_API_URL}paypal/capture-order`, {
+                await fetch(`${process.env.NEXT_PUBLIC_API_URL}/paypal/capture-order`, {
                   method: "POST",
                   headers: {
                     "Content-Type": "application/json",
