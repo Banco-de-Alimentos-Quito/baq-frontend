@@ -79,7 +79,7 @@ export default function DonacionMensualForm() {
         acepta_tratamiento_datos: termsChecked
       };
 
-      const response = await fetch('https://api.baq.ec/api/baq/donaciones-recurrentes/donador', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/donaciones-recurrentes/donador`, {
         method: 'POST',
         headers: {
           'accept': 'application/json',
