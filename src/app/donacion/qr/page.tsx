@@ -1,12 +1,12 @@
 // app/donacion/qr/page.tsx
 'use client';
-import React, { Suspense, useState, useEffect } from "react";
+import React, { Suspense, useState, useEffect, useCallback } from "react";
 import { useSearchParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { toast, Toaster } from 'sonner';
 import { getOrCreateUserId } from "@/app/utils/utils";
 import { useMobile } from '@/hooks/use-mobile';
-import { set } from "zod";
+
 
 // Componente interno que usa useSearchParams
 function QRContent() {
@@ -48,7 +48,7 @@ function QRContent() {
   const isMobile = useMobile();
 
   // Función para generar el QR dinámicamente
-  const generateQR = async () => {
+  const generateQR = useCallback(async () => {
     console.log('🚀 === INICIANDO GENERACIÓN DE QR ===');
     console.log('📅 Timestamp:', new Date().toISOString());
     console.log('💰 Monto:', cantidad);
@@ -70,9 +70,14 @@ function QRContent() {
       setIsLoadingQR(true);
       setQrError('');
 
+      console.log('🔧 Obteniendo o creando user_id...');
+      // Obtener o crear user_id
+      const userId = await getOrCreateUserId();
+      console.log('👤 User ID obtenido:', userId);
+
       console.log('🔧 Creando datos de transacción...');
-      // Crear referencia única para la transacción
-      const transactionRef = `BAQ-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      // Crear referencia única para la transacción que incluya el user_id
+      const transactionRef = `BAQ-${userId}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       console.log('🆔 Referencia de transacción generada:', transactionRef);
 
       // Crear detalle de la transacción - siempre "Donación BAQ"
@@ -170,8 +175,10 @@ function QRContent() {
       console.log('💥 === ERROR EN LA GENERACIÓN DE QR ===');
       console.error('❌ Error completo:', error);
       console.log('📋 Tipo de error:', typeof error);
-      console.log('📋 Mensaje de error:', error.message);
-      console.log('📋 Stack trace:', error.stack);
+      if (error instanceof Error) {
+        console.log('📋 Mensaje de error:', error.message);
+        console.log('📋 Stack trace:', error.stack);
+      }
       console.log('📅 Timestamp del error:', new Date().toISOString());
 
 
@@ -184,7 +191,7 @@ function QRContent() {
       console.log('🔄 Loading QR desactivado');
       console.log('🎉 === GENERACIÓN DE QR COMPLETADA ===');
     }
-  };
+  }, [cantidad, nombre, apellido, correo, telefono, documento, comunidad]);
 
   // Generar QR cuando se carga el componente
   useEffect(() => {
@@ -193,7 +200,7 @@ function QRContent() {
     console.log('💰 Cantidad actual:', cantidad);
     console.log('🚀 Llamando a generateQR()...');
     generateQR();
-  }, [cantidad]);
+  }, [cantidad, generateQR]);
 
   const handleConfirmPayment = async () => {
     console.log('🚀 === INICIANDO CONFIRMACIÓN DE PAGO ===');
@@ -340,8 +347,10 @@ function QRContent() {
       console.log('💥 === ERROR EN LA VERIFICACIÓN ===');
       console.error('❌ Error completo:', error);
       console.log('📋 Tipo de error:', typeof error);
-      console.log('📋 Mensaje de error:', error.message);
-      console.log('📋 Stack trace:', error.stack);
+      if (error instanceof Error) {
+        console.log('📋 Mensaje de error:', error.message);
+        console.log('📋 Stack trace:', error.stack);
+      }
       console.log('📅 Timestamp del error:', new Date().toISOString());
 
 
@@ -367,7 +376,7 @@ function QRContent() {
     setShowLoadingModal(true);
 
     try {
-
+      // Reutilizar el mismo user_id que se usó para generar el QR
       const user_id = await getOrCreateUserId();
       const payload = {
         correo_electronico: correoModal || correo || 'anonimo@baq.ec', // Email opcional, usar valor por defecto si no se proporciona
@@ -390,7 +399,7 @@ function QRContent() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const result = await response.json();
+      await response.json();
 
       setShowLoadingModal(false);
       setShowSuccessModal(true);
@@ -476,9 +485,11 @@ function QRContent() {
             </div>
           ) : (
             // En desktop, mostrar QR
-            <img
+            <Image
               src={qrData}
-          alt="QR para donación"
+              alt="QR para donación"
+              width={220}
+              height={220}
               className="my-[18px] rounded-2xl border-2 border-[#ff7300] bg-white w-[220px] h-[220px]"
             />
           )
