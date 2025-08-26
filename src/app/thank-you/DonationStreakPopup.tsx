@@ -10,7 +10,6 @@ interface DonationStreakPopupProps {
   popupPhase: 'loading' | 'complete' | 'minimized';
   loadingProgress: number;
   handleClosePopup: () => void;
-  resetStreak: () => void;
   showConfetti: boolean;
   streakAnimating: boolean;
   confettiRef: React.RefObject<HTMLDivElement | null>;
@@ -23,7 +22,6 @@ export default function DonationStreakPopup({
   popupPhase,
   loadingProgress,
   handleClosePopup,
-  resetStreak,
   showConfetti,
   streakAnimating,
   confettiRef,

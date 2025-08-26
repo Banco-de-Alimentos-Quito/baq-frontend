@@ -141,14 +141,6 @@ export default function PaymentModal({
     setPpxUserData({ email: "", phone: "" });
   };
 
-  // const newLocal = <button
-  //   className="flex items-center justify-center gap-2 py-3 rounded-lg border-2 border-[#0070ba] text-[#0070ba] font-semibold hover:bg-[#0070ba] hover:text-white transition"
-  //   onClick={() => { } }
-  // >
-  //   <span className="text-xl">💳</span>
-  //   Pagar con tarjeta
-  // </button>;
-
   return (
     <>
       <div

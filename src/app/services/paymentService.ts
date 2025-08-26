@@ -1,7 +1,7 @@
 import { getOrCreateUserId } from "../utils/utils";
 
 interface PaymentConfirmRequest {
-  id: string;
+  id: number;
   clientTransactionId: string;
   userId: string;
 }
@@ -21,7 +21,7 @@ export class PaymentService {
    * Confirma una transacción de PayPhone enviando los datos al backend
    */
   static async confirmPayPhoneTransaction(
-    id: string,
+    id: number,
     clientTransactionId: string,
     userId: string
   ): Promise<PaymentConfirmResponse> {

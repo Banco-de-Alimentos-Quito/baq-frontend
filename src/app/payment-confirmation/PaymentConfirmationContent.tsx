@@ -16,39 +16,64 @@ export default function PaymentConfirmationContent() {
 
   useEffect(() => {
     const processPayment = async () => {
-      // Capturar parámetros de PayPhone
+      // Verificar si ya se procesó esta transacción específica
       const id = searchParams.get("id");
       const clientTransactionId = searchParams.get("clientTransactionId");
+
+      if (!id || !clientTransactionId) {
+        setStatus("error");
+        setMessage("Parámetros de transacción inválidos o incompletos");
+        return;
+      }
+
+      // Comprobar si esta transacción ya fue procesada
+      const processedTransactions = JSON.parse(
+        localStorage.getItem("processedTransactions") || "{}"
+      );
+      const transactionKey = `${id}-${clientTransactionId}`;
+
+      if (processedTransactions[transactionKey]) {
+        console.log(
+          "Esta transacción ya fue procesada anteriormente",
+          transactionKey
+        );
+        router.replace("/thank-you");
+        return;
+      }
+
       const userId = getOrCreateUserId();
       console.log("El userId para enviar al backend es", userId);
 
-      // Si faltan parámetros, igual redirige
-      // if (!id || !clientTransactionId) {
-      //   setTimeout(() => {
-      //     router.push("/thank-you");
-      //   }, 2000);
-      //   return;
-      // }
+      const numericId = Number(id);
 
-      // Enviar al backend para confirmar (ignora errores)
       try {
         const response = await PaymentService.confirmPayPhoneTransaction(
-          id,
+          numericId,
           clientTransactionId,
           userId
         );
 
-        if (response.status === "success") {
-          setStatus("success");
+        if (response.status === "Approved" || response.status === "Aproved") {
+          // Registrar esta transacción como procesada
+          processedTransactions[transactionKey] = {
+            timestamp: new Date().toISOString(),
+            amount: response.amount || 0,
+          };
+          localStorage.setItem(
+            "processedTransactions",
+            JSON.stringify(processedTransactions)
+          );
 
+          // Continuar con el flujo normal
+          setStatus("success");
           setMessage(response.message || "Transacción confirmada exitosamente");
 
           setTimeout(() => {
             router.push("/thank-you");
           }, 3000);
-        } else if (response.status === "failed") {
+        } else if (response.status === "Cancelado") {
           setStatus("failed");
-          setMessage(response.message || "Transacción no ha sido aprobada");
+          setMessage(response.message || "La Transacción ha sido cancelada");
         } else {
           setStatus("error");
           setError("Error al procesar el pago");

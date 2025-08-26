@@ -10,8 +10,10 @@ import {
 import DonationStreakPopup from "./DonationStreakPopup";
 import DonationStreakMinimized from "./DonationStreakMinimized";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function ThankYou() {
+  const router = useRouter();
   // Estados para el manejo de la racha de donaciones
   const [streakData, setStreakData] = useState<StreakData>({
     currentStreak: 0,
@@ -153,27 +155,6 @@ export default function ThankYou() {
     setShowPopup(true);
   };
 
-  // Reiniciar racha
-  const resetStreak = () => {
-    if (
-      confirm(
-        "¿Estás seguro que deseas reiniciar tu racha de donaciones? Esta acción no se puede deshacer."
-      )
-    ) {
-      setStreakData({
-        currentStreak: 0,
-        lastDonationDate: null,
-        longestStreak: 0,
-        totalDonations: 0,
-        donationHistory: [],
-      });
-      setDonationHistory([]);
-
-      // Opcional: mostrar mensaje de éxito
-      alert("Tu racha de donaciones ha sido reiniciada correctamente.");
-    }
-  };
-
   // Obtener mensaje de celebración basado en la racha
   const getCelebrationMessage = () => {
     const streak = streakData.currentStreak;
@@ -183,6 +164,33 @@ export default function ThankYou() {
     else if (streak >= 5) return "¡Gran racha! Estás haciendo una diferencia.";
     else return "¡Gracias por mantener tu racha de donaciones!";
   };
+
+  useEffect(() => {
+    // Modificar el historial para prevenir la navegación hacia atrás a payment-confirmation
+    const preventReturn = () => {
+      // Reemplazar la entrada anterior en el historial (payment-confirmation)
+      window.history.replaceState(null, "", "/thank-you");
+
+      // Agregar una nueva entrada para que el botón atrás vaya a una ruta segura
+      window.history.pushState(null, "", "/thank-you");
+
+      // Cuando el usuario presione atrás, redirigir a donacion
+      const handlePopState = () => {
+        router.replace("/donacion");
+      };
+
+      window.addEventListener("popstate", handlePopState);
+      return () => window.removeEventListener("popstate", handlePopState);
+    };
+
+    // Ejecutar la prevención de retorno
+    const cleanup = preventReturn();
+
+    // Limpiar el estado de procesamiento
+    sessionStorage.setItem("paymentProcessed", "true");
+
+    return cleanup;
+  }, [router]);
 
   return (
     <div className="w-full max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-center min-h-[70vh]">
@@ -294,7 +302,6 @@ export default function ThankYou() {
           popupPhase={popupPhase}
           loadingProgress={loadingProgress}
           handleClosePopup={handleClosePopup}
-          resetStreak={resetStreak}
           showConfetti={showConfetti}
           streakAnimating={streakAnimating}
           confettiRef={confettiRef}
