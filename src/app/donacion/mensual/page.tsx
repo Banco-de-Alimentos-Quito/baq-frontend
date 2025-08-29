@@ -609,6 +609,22 @@ function DonacionMensualForm() {
           <button
             type="submit"
             disabled={!isFormValid()}
+            onClick={(e) => {
+              try {
+                const eventPayload = {
+                  value: monto || 0,
+                  currency: 'USD',
+                  donation_type: 'mensual',
+                };
+                if (typeof window !== 'undefined' && (window as any).gtag) {
+                  (window as any).gtag('event', 'generar_contrato', eventPayload);
+                } else if (typeof window !== 'undefined' && (window as any).dataLayer) {
+                  (window as any).dataLayer.push({ event: 'generar_contrato', ...eventPayload });
+                }
+              } catch (err) {
+                // no bloquear el envío en caso de error con analytics
+              }
+            }}
             style={{
               width: '100%',
               background: 'linear-gradient(90deg, #ff7300, #ffb347)',
