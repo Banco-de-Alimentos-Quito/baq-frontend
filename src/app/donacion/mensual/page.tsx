@@ -27,6 +27,8 @@ function DonacionMensualForm() {
   const [errores, setErrores] = useState<{ [k: string]: string }>({});
   const [cedulaValida, setCedulaValida] = useState<boolean | null>(null);
   const [correoValido, setCorreoValido] = useState<boolean | null>(null);
+  const [telefonoValido, setTelefonoValido] = useState<boolean | null>(null);
+  const [cuentaValida, setCuentaValida] = useState<boolean | null>(null);
 
   const validateEcuadorianId = (id: string): boolean => {
     // Remove any non-numeric characters
@@ -100,6 +102,36 @@ function DonacionMensualForm() {
         setErrores(err => ({ ...err, correo: '' }));
       }
     }
+
+    // Validación en tiempo real para teléfono
+    if (name === 'numero') {
+      const cleanPhone = value.replace(/\D/g, '');
+      if (value && cleanPhone.length >= 9 && cleanPhone.length <= 15) {
+        setTelefonoValido(true);
+        setErrores(err => ({ ...err, numero: '' }));
+      } else if (value) {
+        setTelefonoValido(false);
+        setErrores(err => ({ ...err, numero: 'Debe tener entre 9 y 15 dígitos.' }));
+      } else {
+        setTelefonoValido(null);
+        setErrores(err => ({ ...err, numero: '' }));
+      }
+    }
+
+    // Validación en tiempo real para número de cuenta
+    if (name === 'cuenta') {
+      const cleanAccount = value.replace(/\D/g, '');
+      if (value && cleanAccount.length >= 8 && cleanAccount.length <= 20) {
+        setCuentaValida(true);
+        setErrores(err => ({ ...err, cuenta: '' }));
+      } else if (value) {
+        setCuentaValida(false);
+        setErrores(err => ({ ...err, cuenta: 'Debe tener entre 8 y 20 dígitos.' }));
+      } else {
+        setCuentaValida(null);
+        setErrores(err => ({ ...err, cuenta: '' }));
+      }
+    }
   };
 
   const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -131,6 +163,34 @@ function DonacionMensualForm() {
       }
     } else if (name === 'correo' && !value) {
       setCorreoValido(null);
+    }
+
+    // Validación específica para teléfono
+    if (name === 'numero' && value) {
+      const cleanPhone = value.replace(/\D/g, '');
+      if (cleanPhone.length >= 9 && cleanPhone.length <= 15) {
+        setTelefonoValido(true);
+        setErrores(err => ({ ...err, numero: '' }));
+      } else {
+        setTelefonoValido(false);
+        setErrores(err => ({ ...err, numero: 'Debe tener entre 9 y 15 dígitos.' }));
+      }
+    } else if (name === 'numero' && !value) {
+      setTelefonoValido(null);
+    }
+
+    // Validación específica para cuenta
+    if (name === 'cuenta' && value) {
+      const cleanAccount = value.replace(/\D/g, '');
+      if (cleanAccount.length >= 8 && cleanAccount.length <= 20) {
+        setCuentaValida(true);
+        setErrores(err => ({ ...err, cuenta: '' }));
+      } else {
+        setCuentaValida(false);
+        setErrores(err => ({ ...err, cuenta: 'Debe tener entre 8 y 20 dígitos.' }));
+      }
+    } else if (name === 'cuenta' && !value) {
+      setCuentaValida(null);
     }
   };
 
@@ -190,15 +250,69 @@ function DonacionMensualForm() {
     setEnviado(true);
 
     try {
+      // Validaciones adicionales según el DTO del backend
+      
+      // Validar longitud de cédula/RUC (10-13 caracteres)
+      if (form.cedula.length < 10 || form.cedula.length > 13) {
+        toast.error('Cédula/RUC inválido', {
+          description: 'La cédula debe tener 10 dígitos o el RUC 13 dígitos.',
+          duration: 5000,
+        });
+        setEnviado(false);
+        return;
+      }
+
+      // Validar longitud de número telefónico (9-15 caracteres)
+      const cleanPhone = form.numero.replace(/\D/g, '');
+      if (cleanPhone.length < 9 || cleanPhone.length > 15) {
+        toast.error('Número de teléfono inválido', {
+          description: 'El número de teléfono debe tener entre 9 y 15 dígitos.',
+          duration: 5000,
+        });
+        setEnviado(false);
+        return;
+      }
+
+      // Validar número de cuenta (8-20 dígitos)
+      const cleanAccount = form.cuenta.replace(/\D/g, '');
+      if (cleanAccount.length < 8 || cleanAccount.length > 20) {
+        toast.error('Número de cuenta inválido', {
+          description: 'El número de cuenta debe tener entre 8 y 20 dígitos.',
+          duration: 5000,
+        });
+        setEnviado(false);
+        return;
+      }
+
+      // Validar monto mínimo (mayor a 0.99 USD)
+      if (monto < 0.99) {
+        toast.error('Monto inválido', {
+          description: 'El monto debe ser mayor a 1 USD.',
+          duration: 5000,
+        });
+        setEnviado(false);
+        return;
+      }
+
+      // Validar tipo de cuenta
+      if (!['Ahorros', 'Corriente'].includes(form.tipoCuenta)) {
+        toast.error('Tipo de cuenta inválido', {
+          description: 'Selecciona un tipo de cuenta válido.',
+          duration: 5000,
+        });
+        setEnviado(false);
+        return;
+      }
+
       // Prepare the payload according to the API specification
       const payload = {
         cedula_ruc: form.cedula,
         nombres_completos: form.nombres,
-        numero_telefono: form.numero,
+        numero_telefono: cleanPhone, // Usar número limpio
         correo_electronico: form.correo,
         direccion: form.direccion,
-        numero_cuenta: form.cuenta,
-        tipo_cuenta: form.tipoCuenta,
+        numero_cuenta: cleanAccount, // Usar cuenta limpia
+        tipo_cuenta: form.tipoCuenta as 'Ahorros' | 'Corriente',
         banco_cooperativa: form.banco === 'Otra' ? form.otroBanco : form.banco,
         monto_donar: monto,
         acepta_aporte_voluntario: form.acepta,
@@ -213,6 +327,22 @@ function DonacionMensualForm() {
         'monto_donar', 'acepta_aporte_voluntario', 'acepta_tratamiento_datos',
         'ciudad'
       ];
+
+      // Validación final de campos requeridos
+      const missingFields = requiredFields.filter(field => {
+        const value = payload[field as keyof typeof payload];
+        return value === undefined || value === null || value === '';
+      });
+
+      if (missingFields.length > 0) {
+        console.error('❌ Missing required fields:', missingFields);
+        toast.error('Campos faltantes', {
+          description: `Faltan campos requeridos: ${missingFields.join(', ')}`,
+          duration: 5000,
+        });
+        setEnviado(false);
+        return;
+      }
 
       console.log('📤 Enviando donación mensual:', payload);
 
@@ -247,6 +377,8 @@ function DonacionMensualForm() {
           setErrores({});
           setCedulaValida(null);
           setCorreoValido(null);
+          setTelefonoValido(null);
+          setCuentaValida(null);
           //router.push('/thank-you');
         }, 2200);
       } else {
@@ -259,6 +391,8 @@ function DonacionMensualForm() {
         setErrores({});
         setCedulaValida(null);
         setCorreoValido(null);
+        setTelefonoValido(null);
+        setCuentaValida(null);
       }
     } catch (error) {
       console.error('❌ Error enviando donación mensual:', error);
@@ -270,6 +404,8 @@ function DonacionMensualForm() {
       setErrores({});
       setCedulaValida(null);
       setCorreoValido(null);
+      setTelefonoValido(null);
+      setCuentaValida(null);
     }
   };
 
@@ -371,17 +507,60 @@ function DonacionMensualForm() {
 
           <label className="form-label" style={{ width: '100%', marginBottom: 8 }}>
             Número de teléfono
-            <input
-              type="tel"
-              name="numero"
-              required
-              value={form.numero}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              style={{ width: '100%', padding: 12, borderRadius: 8, border: '1px solid #ddd', marginTop: 4, fontSize: 16, color: '#222' }}
-              placeholder="Ej: 0991234567"
-            />
+            <div style={{ position: 'relative', width: '100%' }}>
+              <input
+                type="tel"
+                name="numero"
+                required
+                value={form.numero}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                style={{ width: '100%', padding: 12, borderRadius: 8, border: '1px solid #ddd', marginTop: 4, fontSize: 16, color: '#222', paddingRight: telefonoValido !== null ? 50 : 12 }}
+                placeholder="Ej: 0991234567"
+              />
+              {telefonoValido === true && (
+                <div style={{
+                  position: 'absolute',
+                  right: 12,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  width: 24,
+                  height: 24,
+                  borderRadius: '50%',
+                  backgroundColor: '#22c55e',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'white',
+                  fontSize: 14,
+                  fontWeight: 'bold'
+                }}>
+                  ✓
+                </div>
+              )}
+              {telefonoValido === false && (
+                <div style={{
+                  position: 'absolute',
+                  right: 12,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  width: 24,
+                  height: 24,
+                  borderRadius: '50%',
+                  backgroundColor: '#ef4444',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'white',
+                  fontSize: 14,
+                  fontWeight: 'bold'
+                }}>
+                  ✕
+                </div>
+              )}
+            </div>
             {tocado.numero && !form.numero && <span style={{ color: '#e53e3e', fontSize: 13 }}>Falta completar este campo</span>}
+            {errores.numero && <span style={{ color: '#e53e3e', fontSize: 13 }}>{errores.numero}</span>}
           </label>
 
           <label className="form-label" style={{ width: '100%', marginBottom: 8 }}>
@@ -474,17 +653,60 @@ function DonacionMensualForm() {
 
           <label className="form-label" style={{ width: '100%', marginBottom: 8 }}>
             Número de cuenta del donador
-            <input
-              type="text"
-              name="cuenta"
-              required
-              value={form.cuenta}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              style={{ width: '100%', padding: 12, borderRadius: 8, border: '1px solid #ddd', marginTop: 4, fontSize: 16, color: '#222' }}
-              placeholder="Ej: 1234567890"
-            />
+            <div style={{ position: 'relative', width: '100%' }}>
+              <input
+                type="text"
+                name="cuenta"
+                required
+                value={form.cuenta}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                style={{ width: '100%', padding: 12, borderRadius: 8, border: '1px solid #ddd', marginTop: 4, fontSize: 16, color: '#222', paddingRight: cuentaValida !== null ? 50 : 12 }}
+                placeholder="Ej: 1234567890"
+              />
+              {cuentaValida === true && (
+                <div style={{
+                  position: 'absolute',
+                  right: 12,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  width: 24,
+                  height: 24,
+                  borderRadius: '50%',
+                  backgroundColor: '#22c55e',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'white',
+                  fontSize: 14,
+                  fontWeight: 'bold'
+                }}>
+                  ✓
+                </div>
+              )}
+              {cuentaValida === false && (
+                <div style={{
+                  position: 'absolute',
+                  right: 12,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  width: 24,
+                  height: 24,
+                  borderRadius: '50%',
+                  backgroundColor: '#ef4444',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'white',
+                  fontSize: 14,
+                  fontWeight: 'bold'
+                }}>
+                  ✕
+                </div>
+              )}
+            </div>
             {tocado.cuenta && !form.cuenta && <span style={{ color: '#e53e3e', fontSize: 13 }}>Falta completar este campo</span>}
+            {errores.cuenta && <span style={{ color: '#e53e3e', fontSize: 13 }}>{errores.cuenta}</span>}
           </label>
 
           <label className="form-label" style={{ width: '100%', marginBottom: 8 }}>
