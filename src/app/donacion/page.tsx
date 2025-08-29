@@ -108,6 +108,7 @@ export default function DonacionPage() {
   const [consentChecked, setConsentChecked] = useState(false);
   const [comindadesChecked, setComindadesChecked] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [isLoadingMensual, setIsLoadingMensual] = useState(false);
 
   const { navigateWithLoading } = useRouteLoading();
 
@@ -198,11 +199,15 @@ export default function DonacionPage() {
     setOtroActivo(true);
   };
 
-  const handleDonarAhora = (e: React.MouseEvent) => {
+  const handleDonarAhora = async (e: React.MouseEvent) => {
     e.preventDefault();
     if (cantidad < 0) return;
     if (tipo === "mensual") {
-      navigateWithLoading(`/donacion/mensual?monto=${cantidad}`, 2500);
+      setIsLoadingMensual(true);
+      // Simular tiempo de carga
+      setTimeout(() => {
+        navigateWithLoading(`/donacion/mensual?monto=${cantidad}`, 100);
+      }, 2000);
     } else {
       setShowPagoModal(true);
     }
@@ -430,7 +435,7 @@ export default function DonacionPage() {
             </div>
             <button
               className="w-full bg-[#ED6F1D] text-white rounded-full py-3 font-black text-xl shadow-lg transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled={cantidad < 1 || (otroActivo && (!otro || otro === ""))}
+              disabled={cantidad < 1 || (otroActivo && (!otro || otro === "")) || isLoadingMensual}
               onClick={handleDonarAhora}
             >
               Donar ahora
@@ -533,6 +538,28 @@ export default function DonacionPage() {
           />
         </div>
       </section>
+
+      {/* Modal de carga para donación mensual */}
+      {isLoadingMensual && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+          <div className="bg-white rounded-xl p-8 max-w-sm mx-4 shadow-2xl text-center">
+            <div className="mb-6">
+              <div className="w-16 h-16 border-4 border-orange-200 border-t-orange-500 rounded-full animate-spin mx-auto mb-4"></div>
+              <h3 className="text-xl font-bold text-[#2F3388] mb-2">
+                Preparando tu donación mensual
+              </h3>
+              <p className="text-gray-600">
+                Estamos configurando todo para tu aporte recurrente...
+              </p>
+            </div>
+            <div className="flex items-center justify-center space-x-2 text-orange-500">
+              <div className="w-2 h-2 bg-orange-500 rounded-full animate-bounce"></div>
+              <div className="w-2 h-2 bg-orange-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+              <div className="w-2 h-2 bg-orange-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Modal de métodos de pago */}
       <PaymentModal

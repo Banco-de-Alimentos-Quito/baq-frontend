@@ -18,13 +18,15 @@ function DonacionMensualForm() {
     tipoCuenta: '',
     banco: '',
     otroBanco: '',
-    pais: '',
     ciudad: '',
     acepta: false,
   });
   const [enviado, setEnviado] = useState(false);
   const [tocado, setTocado] = useState<{ [k: string]: boolean }>({});
   const [termsChecked, setTermsChecked] = useState(false);
+  const [errores, setErrores] = useState<{ [k: string]: string }>({});
+  const [cedulaValida, setCedulaValida] = useState<boolean | null>(null);
+  const [correoValido, setCorreoValido] = useState<boolean | null>(null);
 
   const validateEcuadorianId = (id: string): boolean => {
     // Remove any non-numeric characters
@@ -64,16 +66,78 @@ function DonacionMensualForm() {
       [name]: type === 'checkbox' ? (target as HTMLInputElement).checked : value,
     }));
     setTocado(t => ({ ...t, [name]: true }));
+
+    // Limpiar errores cuando el usuario empiece a escribir
+    if (errores[name]) {
+      setErrores(err => ({ ...err, [name]: '' }));
+    }
+
+    // Validación en tiempo real para cédula
+    if (name === 'cedula') {
+      if (value && validateEcuadorianId(value)) {
+        setCedulaValida(true);
+        setErrores(err => ({ ...err, cedula: '' }));
+      } else if (value) {
+        setCedulaValida(false);
+        setErrores(err => ({ ...err, cedula: 'Cédula/RUC inválido. Verifica el formato.' }));
+      } else {
+        setCedulaValida(null);
+        setErrores(err => ({ ...err, cedula: '' }));
+      }
+    }
+
+    // Validación en tiempo real para correo
+    if (name === 'correo') {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (value && emailRegex.test(value)) {
+        setCorreoValido(true);
+        setErrores(err => ({ ...err, correo: '' }));
+      } else if (value) {
+        setCorreoValido(false);
+        setErrores(err => ({ ...err, correo: 'Formato de correo electrónico inválido.' }));
+      } else {
+        setCorreoValido(null);
+        setErrores(err => ({ ...err, correo: '' }));
+      }
+    }
   };
 
   const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setTocado(t => ({ ...t, [e.target.name]: true }));
+    const { name, value } = e.target;
+    setTocado(t => ({ ...t, [name]: true }));
+
+    // Validación específica para cédula
+    if (name === 'cedula' && value) {
+      if (validateEcuadorianId(value)) {
+        setCedulaValida(true);
+        setErrores(err => ({ ...err, cedula: '' }));
+      } else {
+        setCedulaValida(false);
+        setErrores(err => ({ ...err, cedula: 'Cédula/RUC inválido. Verifica el formato.' }));
+      }
+    } else if (name === 'cedula' && !value) {
+      setCedulaValida(null);
+    }
+
+    // Validación específica para correo
+    if (name === 'correo' && value) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (emailRegex.test(value)) {
+        setCorreoValido(true);
+        setErrores(err => ({ ...err, correo: '' }));
+      } else {
+        setCorreoValido(false);
+        setErrores(err => ({ ...err, correo: 'Formato de correo electrónico inválido.' }));
+      }
+    } else if (name === 'correo' && !value) {
+      setCorreoValido(null);
+    }
   };
 
   const isFormValid = () => {
     const requiredFields = form.cedula && form.nombres && form.numero && form.correo &&
       form.direccion && form.cuenta && form.tipoCuenta && form.banco &&
-      form.pais && form.ciudad && form.acepta && termsChecked;
+      form.ciudad && form.acepta && termsChecked;
 
     // Si seleccionó "Otra" en banco, también debe llenar otroBanco
     if (form.banco === 'Otra') {
@@ -93,7 +157,7 @@ function DonacionMensualForm() {
     
     setTocado({
       cedula: true, nombres: true, numero: true, correo: true, direccion: true,
-      cuenta: true, tipoCuenta: true, banco: true, otroBanco: true, pais: true, ciudad: true, acepta: true
+      cuenta: true, tipoCuenta: true, banco: true, otroBanco: true, ciudad: true, acepta: true
     });
 
     if (!isFormValid()) {
@@ -106,6 +170,17 @@ function DonacionMensualForm() {
       console.log('❌ Ecuadorian ID validation failed');
       toast.error('Cédula/RUC inválido', {
         description: 'El formato de la cédula o RUC ingresado no es válido. Verifica e intenta nuevamente.',
+        duration: 5000,
+      });
+      return;
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(form.correo)) {
+      console.log('❌ Email validation failed');
+      toast.error('Correo electrónico inválido', {
+        description: 'El formato del correo electrónico no es válido. Verifica e intenta nuevamente.',
         duration: 5000,
       });
       return;
@@ -128,9 +203,16 @@ function DonacionMensualForm() {
         monto_donar: monto,
         acepta_aporte_voluntario: form.acepta,
         acepta_tratamiento_datos: termsChecked,
-        pais: form.pais,
         ciudad: form.ciudad
       };
+
+      // Validate required fields before sending
+      const requiredFields = [
+        'cedula_ruc', 'nombres_completos', 'numero_telefono', 'correo_electronico',
+        'direccion', 'numero_cuenta', 'tipo_cuenta', 'banco_cooperativa',
+        'monto_donar', 'acepta_aporte_voluntario', 'acepta_tratamiento_datos',
+        'ciudad'
+      ];
 
       console.log('📤 Enviando donación mensual:', payload);
 
@@ -162,6 +244,9 @@ function DonacionMensualForm() {
 
         setTimeout(() => {
           setEnviado(false);
+          setErrores({});
+          setCedulaValida(null);
+          setCorreoValido(null);
           //router.push('/thank-you');
         }, 2200);
       } else {
@@ -171,6 +256,9 @@ function DonacionMensualForm() {
           duration: 3000,
         });
         setEnviado(false);
+        setErrores({});
+        setCedulaValida(null);
+        setCorreoValido(null);
       }
     } catch (error) {
       console.error('❌ Error enviando donación mensual:', error);
@@ -179,6 +267,9 @@ function DonacionMensualForm() {
         duration: 3000,
       });
       setEnviado(false);
+      setErrores({});
+      setCedulaValida(null);
+      setCorreoValido(null);
     }
   };
 
@@ -207,17 +298,60 @@ function DonacionMensualForm() {
 
           <label className="form-label" style={{ width: '100%', marginBottom: 8 }}>
             Cédula/RUC
-            <input
-              type="text"
-              name="cedula"
-              required
-              value={form.cedula}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              style={{ width: '100%', padding: 12, borderRadius: 8, border: '1px solid #ddd', marginTop: 4, fontSize: 16, color: '#222' }}
-              placeholder="Ej: 1710034065"
-            />
+            <div style={{ position: 'relative', width: '100%' }}>
+              <input
+                type="text"
+                name="cedula"
+                required
+                value={form.cedula}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                style={{ width: '100%', padding: 12, borderRadius: 8, border: '1px solid #ddd', marginTop: 4, fontSize: 16, color: '#222', paddingRight: cedulaValida !== null ? 50 : 12 }}
+                placeholder="Ej: 1710034065"
+              />
+              {cedulaValida === true && (
+                <div style={{
+                  position: 'absolute',
+                  right: 12,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  width: 24,
+                  height: 24,
+                  borderRadius: '50%',
+                  backgroundColor: '#22c55e',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'white',
+                  fontSize: 14,
+                  fontWeight: 'bold'
+                }}>
+                  ✓
+                </div>
+              )}
+              {cedulaValida === false && (
+                <div style={{
+                  position: 'absolute',
+                  right: 12,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  width: 24,
+                  height: 24,
+                  borderRadius: '50%',
+                  backgroundColor: '#ef4444',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'white',
+                  fontSize: 14,
+                  fontWeight: 'bold'
+                }}>
+                  ✕
+                </div>
+              )}
+            </div>
             {tocado.cedula && !form.cedula && <span style={{ color: '#e53e3e', fontSize: 13 }}>Falta completar este campo</span>}
+            {errores.cedula && <span style={{ color: '#e53e3e', fontSize: 13 }}>{errores.cedula}</span>}
           </label>
 
           <label className="form-label" style={{ width: '100%', marginBottom: 8 }}>
@@ -252,17 +386,60 @@ function DonacionMensualForm() {
 
           <label className="form-label" style={{ width: '100%', marginBottom: 8 }}>
             Correo electrónico
-            <input
-              type="email"
-              name="correo"
-              required
-              value={form.correo}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              style={{ width: '100%', padding: 12, borderRadius: 8, border: '1px solid #ddd', marginTop: 4, fontSize: 16, color: '#222' }}
-              placeholder="tucorreo@email.com"
-            />
+            <div style={{ position: 'relative', width: '100%' }}>
+              <input
+                type="email"
+                name="correo"
+                required
+                value={form.correo}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                style={{ width: '100%', padding: 12, borderRadius: 8, border: '1px solid #ddd', marginTop: 4, fontSize: 16, color: '#222', paddingRight: correoValido !== null ? 50 : 12 }}
+                placeholder="tucorreo@email.com"
+              />
+              {correoValido === true && (
+                <div style={{
+                  position: 'absolute',
+                  right: 12,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  width: 24,
+                  height: 24,
+                  borderRadius: '50%',
+                  backgroundColor: '#22c55e',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'white',
+                  fontSize: 14,
+                  fontWeight: 'bold'
+                }}>
+                  ✓
+                </div>
+              )}
+              {correoValido === false && (
+                <div style={{
+                  position: 'absolute',
+                  right: 12,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  width: 24,
+                  height: 24,
+                  borderRadius: '50%',
+                  backgroundColor: '#ef4444',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'white',
+                  fontSize: 14,
+                  fontWeight: 'bold'
+                }}>
+                  ✕
+                </div>
+              )}
+            </div>
             {tocado.correo && !form.correo && <span style={{ color: '#e53e3e', fontSize: 13 }}>Falta completar este campo</span>}
+            {errores.correo && <span style={{ color: '#e53e3e', fontSize: 13 }}>{errores.correo}</span>}
           </label>
 
           <label className="form-label" style={{ width: '100%', marginBottom: 8 }}>
@@ -278,28 +455,6 @@ function DonacionMensualForm() {
               placeholder="Ej: Av. Principal 123 y Secundaria"
             />
             {tocado.direccion && !form.direccion && <span style={{ color: '#e53e3e', fontSize: 13 }}>Falta completar este campo</span>}
-          </label>
-
-          <label className="form-label" style={{ width: '100%', marginBottom: 8 }}>
-            País
-            <select
-              name="pais"
-              required
-              value={form.pais}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              style={{ width: '100%', padding: 12, borderRadius: 8, border: '1px solid #ddd', marginTop: 4, fontSize: 16, background: '#fff', color: form.pais ? '#222' : '#bbb' }}
-            >
-              <option value="" style={{ color: '#bbb' }}>Selecciona tu país</option>
-              <option value="Ecuador">Ecuador</option>
-              <option value="Colombia">Colombia</option>
-              <option value="Perú">Perú</option>
-              <option value="Venezuela">Venezuela</option>
-              <option value="Estados Unidos">Estados Unidos</option>
-              <option value="España">España</option>
-              <option value="Otro">Otro</option>
-            </select>
-            {tocado.pais && !form.pais && <span style={{ color: '#e53e3e', fontSize: 13 }}>Falta completar este campo</span>}
           </label>
 
           <label className="form-label" style={{ width: '100%', marginBottom: 8 }}>
