@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { toast, Toaster } from 'sonner';
+import { toast } from 'sonner';
 import Link from 'next/link';
 
 export default function DonacionMensualForm() {
@@ -11,13 +11,15 @@ export default function DonacionMensualForm() {
   const [form, setForm] = useState({
     cedula: '',
     nombres: '',
-    genero: '',
+    numero: '',
     correo: '',
     direccion: '',
     cuenta: '',
     tipoCuenta: '',
     banco: '',
     otroBanco: '',
+    pais: '',
+    ciudad: '',
     acepta: false,
   });
   const [enviado, setEnviado] = useState(false);
@@ -40,9 +42,9 @@ export default function DonacionMensualForm() {
   };
 
   const isFormValid = () => {
-    const requiredFields = form.cedula && form.nombres && form.genero && form.correo &&
+    const requiredFields = form.cedula && form.nombres && form.numero && form.correo &&
       form.direccion && form.cuenta && form.tipoCuenta && form.banco &&
-      form.acepta && termsChecked;
+      form.pais && form.ciudad && form.acepta && termsChecked;
 
     // Si seleccionó "Otra" en banco, también debe llenar otroBanco
     if (form.banco === 'Otra') {
@@ -52,15 +54,65 @@ export default function DonacionMensualForm() {
     return requiredFields;
   };
 
+  const validateEcuadorianId = (id: string): boolean => {
+    // Remove any non-numeric characters
+    const cleanId = id.replace(/\D/g, '');
+
+    // Check length (10 for cedula, 13 for RUC)
+    if (cleanId.length !== 10 && cleanId.length !== 13) {
+      return false;
+    }
+
+    // For RUC (13 digits), validate the first 10 digits
+    const cedula = cleanId.length === 13 ? cleanId.substring(0, 10) : cleanId;
+
+    // Validate cedula algorithm
+    const coefficients = [2, 1, 2, 1, 2, 1, 2, 1, 2];
+    let sum = 0;
+
+    for (let i = 0; i < 9; i++) {
+      let digit = parseInt(cedula[i]) * coefficients[i];
+      if (digit >= 10) {
+        digit -= 9;
+      }
+      sum += digit;
+    }
+
+    const checkDigit = (10 - (sum % 10)) % 10;
+    const lastDigit = parseInt(cedula[9]);
+
+    return checkDigit === lastDigit;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    console.log('🚀 Form submission started');
+    console.log('📝 Current form data:', form);
+    console.log('✅ Terms checked:', termsChecked);
+    console.log('💰 Monto:', monto);
+    
     setTocado({
-      cedula: true, nombres: true, genero: true, correo: true, direccion: true,
-      cuenta: true, tipoCuenta: true, banco: true, otroBanco: true, acepta: true
+      cedula: true, nombres: true, numero: true, correo: true, direccion: true,
+      cuenta: true, tipoCuenta: true, banco: true, otroBanco: true, pais: true, ciudad: true, acepta: true
     });
 
-    if (!isFormValid()) return;
+    if (!isFormValid()) {
+      console.log('❌ Form validation failed');
+      return;
+    }
 
+    // Validate Ecuadorian ID (cedula/RUC) format
+    if (!validateEcuadorianId(form.cedula)) {
+      console.log('❌ Ecuadorian ID validation failed');
+      toast.error('Cédula/RUC inválido', {
+        description: 'El formato de la cédula o RUC ingresado no es válido. Verifica e intenta nuevamente.',
+        duration: 5000,
+      });
+      return;
+    }
+
+    console.log('✅ All validations passed, starting API call');
     setEnviado(true);
 
     try {
@@ -68,7 +120,7 @@ export default function DonacionMensualForm() {
       const payload = {
         cedula_ruc: form.cedula,
         nombres_completos: form.nombres,
-        genero: form.genero === 'Hombre' ? 'Masculino' : 'Femenino',
+        numero_telefono: form.numero,
         correo_electronico: form.correo,
         direccion: form.direccion,
         numero_cuenta: form.cuenta,
@@ -76,33 +128,142 @@ export default function DonacionMensualForm() {
         banco_cooperativa: form.banco === 'Otra' ? form.otroBanco : form.banco,
         monto_donar: monto,
         acepta_aporte_voluntario: form.acepta,
-        acepta_tratamiento_datos: termsChecked
+        acepta_tratamiento_datos: termsChecked,
+        pais: form.pais,
+        ciudad: form.ciudad
+        // Note: estatus_kyc is handled by the backend, not sent from frontend
       };
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/donaciones-recurrentes/donador`, {
+      // Validate required fields before sending
+      const requiredFields = [
+        'cedula_ruc', 'nombres_completos', 'numero_telefono', 'correo_electronico',
+        'direccion', 'numero_cuenta', 'tipo_cuenta', 'banco_cooperativa',
+        'monto_donar', 'acepta_aporte_voluntario', 'acepta_tratamiento_datos',
+        'pais', 'ciudad'
+      ];
+
+      const missingFields = requiredFields.filter(field => {
+        const value = payload[field as keyof typeof payload];
+        return value === undefined || value === null || value === '';
+      });
+
+      if (missingFields.length > 0) {
+        console.error('❌ Missing required fields:', missingFields);
+        throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
+      }
+
+      // Validate data types
+      if (typeof payload.monto_donar !== 'number' || payload.monto_donar < 0.99) {
+        throw new Error('Monto must be a number greater than or equal to 0.99 USD');
+      }
+
+      if (typeof payload.acepta_aporte_voluntario !== 'boolean') {
+        throw new Error('acepta_aporte_voluntario must be boolean');
+      }
+
+      if (typeof payload.acepta_tratamiento_datos !== 'boolean') {
+        throw new Error('acepta_tratamiento_datos must be boolean');
+      }
+
+      // Validate numero_cuenta format (should be number string, 8-20 chars)
+      if (!/^\d{8,20}$/.test(payload.numero_cuenta)) {
+        throw new Error('numero_cuenta must be 8-20 digits');
+      }
+
+      // Validate cedula_ruc format (10 or 13 digits)
+      if (!/^\d{10,13}$/.test(payload.cedula_ruc)) {
+        throw new Error('cedula_ruc must be 10-13 digits');
+      }
+
+      if (!validateEcuadorianId(payload.cedula_ruc)) {
+        throw new Error('cedula_ruc must be a valid Ecuadorian ID or RUC');
+      }
+
+      // Validate numero_telefono format (9-15 characters, should be digits only)
+      const cleanPhone = payload.numero_telefono.replace(/\D/g, '');
+      if (cleanPhone.length < 9 || cleanPhone.length > 15) {
+        throw new Error('numero_telefono must be 9-15 digits');
+      }
+      // Update payload with clean phone number
+      payload.numero_telefono = cleanPhone;
+
+      // Get API URL from environment variable
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+      if (!apiUrl) {
+        throw new Error('API URL not configured');
+      }
+      
+      const endpoint = `${apiUrl}/donaciones-recurrentes/donador`;
+
+      console.log('🔗 API Endpoint:', endpoint);
+      console.log('📤 Payload:', payload);
+
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
-          'accept': 'application/json',
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
         },
         body: JSON.stringify(payload)
       });
 
+      console.log('📥 Response status:', response.status);
+      console.log('📥 Response headers:', Object.fromEntries(response.headers.entries()));
+
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        let errorText;
+        try {
+          const errorJson = await response.json();
+          errorText = JSON.stringify(errorJson);
+          console.error('❌ Error response JSON:', errorJson);
+        } catch {
+          errorText = await response.text();
+          console.error('❌ Error response text:', errorText);
+        }
+        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
       }
 
       const result = await response.json();
+      console.log('✅ Success response:', result);
 
       // Show success modal instead of toast
       setEnviado(false);
       setShowSuccessModal(true);
 
     } catch (error) {
-      console.error('Error submitting form:', error);
-      toast.error('Error al enviar el formulario', {
-        description: 'Hubo un problema al procesar tu solicitud. Por favor, intenta nuevamente.',
-        duration: 4000,
+      console.error('❌ Error submitting form:', error);
+
+      let errorMessage = 'Error al enviar el formulario';
+      let errorDescription = 'Hubo un problema al procesar tu solicitud. Por favor, intenta nuevamente.';
+
+      if (error instanceof Error) {
+        if (error.message.includes('Missing required fields')) {
+          errorMessage = 'Campos requeridos faltantes';
+          errorDescription = error.message;
+        } else if (error.message.includes('must be')) {
+          errorMessage = 'Error de validación';
+          errorDescription = error.message;
+        } else if (error.message.includes('HTTP error! status: 400')) {
+          errorMessage = 'Error de validación del servidor';
+          errorDescription = 'Los datos enviados no cumplen con los requisitos del servidor. Verifica la información.';
+        } else if (error.message.includes('HTTP error! status: 404')) {
+          errorMessage = 'Servicio no encontrado';
+          errorDescription = 'El servicio de backend no está disponible. Contacta al administrador.';
+        } else if (error.message.includes('HTTP error! status: 500')) {
+          errorMessage = 'Error interno del servidor';
+          errorDescription = 'Hay un problema en el servidor backend. Contacta al administrador técnico.';
+        } else if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+          errorMessage = 'Error de conexión';
+          errorDescription = 'No se pudo conectar con el servidor. Verifica tu conexión a internet.';
+        } else if (error.message.includes('CORS')) {
+          errorMessage = 'Error de configuración CORS';
+          errorDescription = 'Problema de configuración del servidor. Contacta al administrador.';
+        }
+      }
+
+      toast.error(errorMessage, {
+        description: errorDescription,
+        duration: 5000,
       });
       setEnviado(false);
     }
@@ -110,7 +271,23 @@ export default function DonacionMensualForm() {
 
   const handleCloseSuccessModal = () => {
     setShowSuccessModal(false);
-    //router.push('/thank-you');
+    // Reset form after successful submission
+    setForm({
+      cedula: '',
+      nombres: '',
+      numero: '',
+      correo: '',
+      direccion: '',
+      cuenta: '',
+      tipoCuenta: '',
+      banco: '',
+      otroBanco: '',
+      pais: '',
+      ciudad: '',
+      acepta: false,
+    });
+    setTocado({});
+    setTermsChecked(false);
   };
 
   return (
@@ -146,7 +323,7 @@ export default function DonacionMensualForm() {
               onChange={handleChange}
               onBlur={handleBlur}
               style={{ width: '100%', padding: 12, borderRadius: 8, border: '1px solid #ddd', marginTop: 4, fontSize: 16, color: '#222' }}
-              placeholder="Ej: 1234567890"
+              placeholder="Ej: 1710034065"
             />
             {tocado.cedula && !form.cedula && <span style={{ color: '#e53e3e', fontSize: 13 }}>Falta completar este campo</span>}
           </label>
@@ -167,20 +344,18 @@ export default function DonacionMensualForm() {
           </label>
 
           <label className="form-label" style={{ width: '100%', marginBottom: 8 }}>
-            Género
-            <select
-              name="genero"
+            Número de teléfono
+            <input
+              type="tel"
+              name="numero"
               required
-              value={form.genero}
+              value={form.numero}
               onChange={handleChange}
               onBlur={handleBlur}
-              style={{ width: '100%', padding: 12, borderRadius: 8, border: '1px solid #ddd', marginTop: 4, fontSize: 16, background: '#fff', color: form.genero ? '#222' : '#bbb' }}
-            >
-              <option value="" style={{ color: '#bbb' }}>Selecciona tu género</option>
-              <option value="Hombre">Hombre</option>
-              <option value="Mujer">Mujer</option>
-            </select>
-            {tocado.genero && !form.genero && <span style={{ color: '#e53e3e', fontSize: 13 }}>Falta completar este campo</span>}
+              style={{ width: '100%', padding: 12, borderRadius: 8, border: '1px solid #ddd', marginTop: 4, fontSize: 16, color: '#222' }}
+              placeholder="Ej: 0991234567"
+            />
+            {tocado.numero && !form.numero && <span style={{ color: '#e53e3e', fontSize: 13 }}>Falta completar este campo</span>}
           </label>
 
           <label className="form-label" style={{ width: '100%', marginBottom: 8 }}>
@@ -211,6 +386,43 @@ export default function DonacionMensualForm() {
               placeholder="Ej: Av. Principal 123 y Secundaria"
             />
             {tocado.direccion && !form.direccion && <span style={{ color: '#e53e3e', fontSize: 13 }}>Falta completar este campo</span>}
+          </label>
+
+          <label className="form-label" style={{ width: '100%', marginBottom: 8 }}>
+            País
+            <select
+              name="pais"
+              required
+              value={form.pais}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              style={{ width: '100%', padding: 12, borderRadius: 8, border: '1px solid #ddd', marginTop: 4, fontSize: 16, background: '#fff', color: form.pais ? '#222' : '#bbb' }}
+            >
+              <option value="" style={{ color: '#bbb' }}>Selecciona tu país</option>
+              <option value="Ecuador">Ecuador</option>
+              <option value="Colombia">Colombia</option>
+              <option value="Perú">Perú</option>
+              <option value="Venezuela">Venezuela</option>
+              <option value="Estados Unidos">Estados Unidos</option>
+              <option value="España">España</option>
+              <option value="Otro">Otro</option>
+            </select>
+            {tocado.pais && !form.pais && <span style={{ color: '#e53e3e', fontSize: 13 }}>Falta completar este campo</span>}
+          </label>
+
+          <label className="form-label" style={{ width: '100%', marginBottom: 8 }}>
+            Ciudad
+            <input
+              type="text"
+              name="ciudad"
+              required
+              value={form.ciudad}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              style={{ width: '100%', padding: 12, borderRadius: 8, border: '1px solid #ddd', marginTop: 4, fontSize: 16, color: '#222' }}
+              placeholder="Ej: Quito, Guayaquil, Cuenca"
+            />
+            {tocado.ciudad && !form.ciudad && <span style={{ color: '#e53e3e', fontSize: 13 }}>Falta completar este campo</span>}
           </label>
 
           <label className="form-label" style={{ width: '100%', marginBottom: 8 }}>
@@ -350,6 +562,11 @@ export default function DonacionMensualForm() {
           <button
             type="submit"
             disabled={!isFormValid() || enviado}
+            onClick={(e) => {
+              console.log('🖱️ Submit button clicked');
+              console.log('📋 Form valid:', isFormValid());
+              console.log('📤 Already sending:', enviado);
+            }}
             style={{
               width: '100%',
               background: 'linear-gradient(90deg, #ff7300, #ffb347)',

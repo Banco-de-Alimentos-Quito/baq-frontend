@@ -18,11 +18,63 @@ function DonacionMensualForm() {
     tipoCuenta: '',
     banco: '',
     otroBanco: '',
+    pais: '',
+    ciudad: '',
     acepta: false,
   });
   const [enviado, setEnviado] = useState(false);
   const [tocado, setTocado] = useState<{ [k: string]: boolean }>({});
   const [termsChecked, setTermsChecked] = useState(false);
+
+  // Test function to verify API connection
+  const testConnection = async () => {
+    try {
+      console.log('🧪 Testing API connection...');
+      const response = await fetch('http://localhost:3001/api/baq/health');
+      const result = await response.json();
+      console.log('✅ API connection test successful:', result);
+      toast.success('Conexión exitosa', {
+        description: 'El servidor backend está funcionando correctamente.',
+        duration: 3000,
+      });
+    } catch (error) {
+      console.error('❌ API connection test failed:', error);
+      toast.error('Error de conexión', {
+        description: 'No se pudo conectar con el servidor backend.',
+        duration: 3000,
+      });
+    }
+  };
+
+  const validateEcuadorianId = (id: string): boolean => {
+    // Remove any non-numeric characters
+    const cleanId = id.replace(/\D/g, '');
+
+    // Check length (10 for cedula, 13 for RUC)
+    if (cleanId.length !== 10 && cleanId.length !== 13) {
+      return false;
+    }
+
+    // For RUC (13 digits), validate the first 10 digits
+    const cedula = cleanId.length === 13 ? cleanId.substring(0, 10) : cleanId;
+
+    // Validate cedula algorithm
+    const coefficients = [2, 1, 2, 1, 2, 1, 2, 1, 2];
+    let sum = 0;
+
+    for (let i = 0; i < 9; i++) {
+      let digit = parseInt(cedula[i]) * coefficients[i];
+      if (digit >= 10) {
+        digit -= 9;
+      }
+      sum += digit;
+    }
+
+    const checkDigit = (10 - (sum % 10)) % 10;
+    const lastDigit = parseInt(cedula[9]);
+
+    return checkDigit === lastDigit;
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const target = e.target;
@@ -41,7 +93,7 @@ function DonacionMensualForm() {
   const isFormValid = () => {
     const requiredFields = form.cedula && form.nombres && form.numero && form.correo &&
       form.direccion && form.cuenta && form.tipoCuenta && form.banco &&
-      form.acepta && termsChecked;
+      form.pais && form.ciudad && form.acepta && termsChecked;
 
     // Si seleccionó "Otra" en banco, también debe llenar otroBanco
     if (form.banco === 'Otra') {
@@ -53,13 +105,33 @@ function DonacionMensualForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    console.log('🚀 Form submission started');
+    console.log('📝 Current form data:', form);
+    console.log('✅ Terms checked:', termsChecked);
+    console.log('💰 Monto:', monto);
+    
     setTocado({
       cedula: true, nombres: true, numero: true, correo: true, direccion: true,
-      cuenta: true, tipoCuenta: true, banco: true, otroBanco: true, acepta: true
+      cuenta: true, tipoCuenta: true, banco: true, otroBanco: true, pais: true, ciudad: true, acepta: true
     });
 
-    if (!isFormValid()) return;
+    if (!isFormValid()) {
+      console.log('❌ Form validation failed');
+      return;
+    }
 
+    // Validate Ecuadorian ID (cedula/RUC) format
+    if (!validateEcuadorianId(form.cedula)) {
+      console.log('❌ Ecuadorian ID validation failed');
+      toast.error('Cédula/RUC inválido', {
+        description: 'El formato de la cédula o RUC ingresado no es válido. Verifica e intenta nuevamente.',
+        duration: 5000,
+      });
+      return;
+    }
+
+    console.log('✅ All validations passed, starting API call');
     setEnviado(true);
 
     try {
@@ -75,7 +147,9 @@ function DonacionMensualForm() {
         banco_cooperativa: form.banco === 'Otra' ? form.otroBanco : form.banco,
         monto_donar: monto,
         acepta_aporte_voluntario: form.acepta,
-        acepta_tratamiento_datos: termsChecked
+        acepta_tratamiento_datos: termsChecked,
+        pais: form.pais,
+        ciudad: form.ciudad
       };
 
       console.log('📤 Enviando donación mensual:', payload);
@@ -161,7 +235,7 @@ function DonacionMensualForm() {
               onChange={handleChange}
               onBlur={handleBlur}
               style={{ width: '100%', padding: 12, borderRadius: 8, border: '1px solid #ddd', marginTop: 4, fontSize: 16, color: '#222' }}
-              placeholder="Ej: 1234567890"
+              placeholder="Ej: 1710034065"
             />
             {tocado.cedula && !form.cedula && <span style={{ color: '#e53e3e', fontSize: 13 }}>Falta completar este campo</span>}
           </label>
@@ -224,6 +298,43 @@ function DonacionMensualForm() {
               placeholder="Ej: Av. Principal 123 y Secundaria"
             />
             {tocado.direccion && !form.direccion && <span style={{ color: '#e53e3e', fontSize: 13 }}>Falta completar este campo</span>}
+          </label>
+
+          <label className="form-label" style={{ width: '100%', marginBottom: 8 }}>
+            País
+            <select
+              name="pais"
+              required
+              value={form.pais}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              style={{ width: '100%', padding: 12, borderRadius: 8, border: '1px solid #ddd', marginTop: 4, fontSize: 16, background: '#fff', color: form.pais ? '#222' : '#bbb' }}
+            >
+              <option value="" style={{ color: '#bbb' }}>Selecciona tu país</option>
+              <option value="Ecuador">Ecuador</option>
+              <option value="Colombia">Colombia</option>
+              <option value="Perú">Perú</option>
+              <option value="Venezuela">Venezuela</option>
+              <option value="Estados Unidos">Estados Unidos</option>
+              <option value="España">España</option>
+              <option value="Otro">Otro</option>
+            </select>
+            {tocado.pais && !form.pais && <span style={{ color: '#e53e3e', fontSize: 13 }}>Falta completar este campo</span>}
+          </label>
+
+          <label className="form-label" style={{ width: '100%', marginBottom: 8 }}>
+            Ciudad
+            <input
+              type="text"
+              name="ciudad"
+              required
+              value={form.ciudad}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              style={{ width: '100%', padding: 12, borderRadius: 8, border: '1px solid #ddd', marginTop: 4, fontSize: 16, color: '#222' }}
+              placeholder="Ej: Quito, Guayaquil, Cuenca"
+            />
+            {tocado.ciudad && !form.ciudad && <span style={{ color: '#e53e3e', fontSize: 13 }}>Falta completar este campo</span>}
           </label>
 
           <label className="form-label" style={{ width: '100%', marginBottom: 8 }}>
@@ -359,6 +470,25 @@ function DonacionMensualForm() {
               .
             </span>
           </div>
+
+          <button
+            type="button"
+            onClick={testConnection}
+            style={{
+              width: '100%',
+              background: '#2F3388',
+              color: '#fff',
+              fontWeight: 'bold',
+              fontSize: 16,
+              border: 'none',
+              borderRadius: 8,
+              padding: 12,
+              marginTop: 8,
+              cursor: 'pointer',
+            }}
+          >
+            🧪 Probar Conexión API
+          </button>
 
           <button
             type="submit"
