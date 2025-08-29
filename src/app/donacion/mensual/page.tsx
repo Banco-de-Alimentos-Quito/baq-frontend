@@ -26,26 +26,6 @@ function DonacionMensualForm() {
   const [tocado, setTocado] = useState<{ [k: string]: boolean }>({});
   const [termsChecked, setTermsChecked] = useState(false);
 
-  // Test function to verify API connection
-  const testConnection = async () => {
-    try {
-      console.log('🧪 Testing API connection...');
-      const response = await fetch('http://localhost:3001/api/baq/health');
-      const result = await response.json();
-      console.log('✅ API connection test successful:', result);
-      toast.success('Conexión exitosa', {
-        description: 'El servidor backend está funcionando correctamente.',
-        duration: 3000,
-      });
-    } catch (error) {
-      console.error('❌ API connection test failed:', error);
-      toast.error('Error de conexión', {
-        description: 'No se pudo conectar con el servidor backend.',
-        duration: 3000,
-      });
-    }
-  };
-
   const validateEcuadorianId = (id: string): boolean => {
     // Remove any non-numeric characters
     const cleanId = id.replace(/\D/g, '');
@@ -472,25 +452,6 @@ function DonacionMensualForm() {
           </div>
 
           <button
-            type="button"
-            onClick={testConnection}
-            style={{
-              width: '100%',
-              background: '#2F3388',
-              color: '#fff',
-              fontWeight: 'bold',
-              fontSize: 16,
-              border: 'none',
-              borderRadius: 8,
-              padding: 12,
-              marginTop: 8,
-              cursor: 'pointer',
-            }}
-          >
-            🧪 Probar Conexión API
-          </button>
-
-          <button
             type="submit"
             disabled={!isFormValid()}
             style={{
@@ -595,4 +556,4 @@ export default function DonacionMensualPage() {
       <DonacionMensualForm />
     </Suspense>
   );
-} 
+}
