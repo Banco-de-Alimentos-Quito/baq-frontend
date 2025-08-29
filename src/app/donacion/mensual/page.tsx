@@ -29,6 +29,9 @@ function DonacionMensualForm() {
   const [correoValido, setCorreoValido] = useState<boolean | null>(null);
   const [telefonoValido, setTelefonoValido] = useState<boolean | null>(null);
   const [cuentaValida, setCuentaValida] = useState<boolean | null>(null);
+  const [nombresValido, setNombresValido] = useState<boolean | null>(null);
+  const [direccionValida, setDireccionValida] = useState<boolean | null>(null);
+  const [ciudadValida, setCiudadValida] = useState<boolean | null>(null);
 
   const validateEcuadorianId = (id: string): boolean => {
     // Remove any non-numeric characters
@@ -132,6 +135,48 @@ function DonacionMensualForm() {
         setErrores(err => ({ ...err, cuenta: '' }));
       }
     }
+
+    // Validación en tiempo real para nombres
+    if (name === 'nombres') {
+      if (value && value.trim().length >= 3) {
+        setNombresValido(true);
+        setErrores(err => ({ ...err, nombres: '' }));
+      } else if (value) {
+        setNombresValido(false);
+        setErrores(err => ({ ...err, nombres: 'Debe tener al menos 3 caracteres.' }));
+      } else {
+        setNombresValido(null);
+        setErrores(err => ({ ...err, nombres: '' }));
+      }
+    }
+
+    // Validación en tiempo real para dirección
+    if (name === 'direccion') {
+      if (value && value.trim().length >= 5) {
+        setDireccionValida(true);
+        setErrores(err => ({ ...err, direccion: '' }));
+      } else if (value) {
+        setDireccionValida(false);
+        setErrores(err => ({ ...err, direccion: 'Debe tener al menos 5 caracteres.' }));
+      } else {
+        setDireccionValida(null);
+        setErrores(err => ({ ...err, direccion: '' }));
+      }
+    }
+
+    // Validación en tiempo real para ciudad
+    if (name === 'ciudad') {
+      if (value && value.trim().length >= 2) {
+        setCiudadValida(true);
+        setErrores(err => ({ ...err, ciudad: '' }));
+      } else if (value) {
+        setCiudadValida(false);
+        setErrores(err => ({ ...err, ciudad: 'Debe tener al menos 2 caracteres.' }));
+      } else {
+        setCiudadValida(null);
+        setErrores(err => ({ ...err, ciudad: '' }));
+      }
+    }
   };
 
   const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -191,6 +236,45 @@ function DonacionMensualForm() {
       }
     } else if (name === 'cuenta' && !value) {
       setCuentaValida(null);
+    }
+
+    // Validación específica para nombres
+    if (name === 'nombres' && value) {
+      if (value.trim().length >= 3) {
+        setNombresValido(true);
+        setErrores(err => ({ ...err, nombres: '' }));
+      } else {
+        setNombresValido(false);
+        setErrores(err => ({ ...err, nombres: 'Debe tener al menos 3 caracteres.' }));
+      }
+    } else if (name === 'nombres' && !value) {
+      setNombresValido(null);
+    }
+
+    // Validación específica para dirección
+    if (name === 'direccion' && value) {
+      if (value.trim().length >= 5) {
+        setDireccionValida(true);
+        setErrores(err => ({ ...err, direccion: '' }));
+      } else {
+        setDireccionValida(false);
+        setErrores(err => ({ ...err, direccion: 'Debe tener al menos 5 caracteres.' }));
+      }
+    } else if (name === 'direccion' && !value) {
+      setDireccionValida(null);
+    }
+
+    // Validación específica para ciudad
+    if (name === 'ciudad' && value) {
+      if (value.trim().length >= 2) {
+        setCiudadValida(true);
+        setErrores(err => ({ ...err, ciudad: '' }));
+      } else {
+        setCiudadValida(false);
+        setErrores(err => ({ ...err, ciudad: 'Debe tener al menos 2 caracteres.' }));
+      }
+    } else if (name === 'ciudad' && !value) {
+      setCiudadValida(null);
     }
   };
 
@@ -379,6 +463,9 @@ function DonacionMensualForm() {
           setCorreoValido(null);
           setTelefonoValido(null);
           setCuentaValida(null);
+          setNombresValido(null);
+          setDireccionValida(null);
+          setCiudadValida(null);
           //router.push('/thank-you');
         }, 2200);
       } else {
@@ -393,6 +480,9 @@ function DonacionMensualForm() {
         setCorreoValido(null);
         setTelefonoValido(null);
         setCuentaValida(null);
+        setNombresValido(null);
+        setDireccionValida(null);
+        setCiudadValida(null);
       }
     } catch (error) {
       console.error('❌ Error enviando donación mensual:', error);
@@ -406,6 +496,9 @@ function DonacionMensualForm() {
       setCorreoValido(null);
       setTelefonoValido(null);
       setCuentaValida(null);
+      setNombresValido(null);
+      setDireccionValida(null);
+      setCiudadValida(null);
     }
   };
 
@@ -492,17 +585,60 @@ function DonacionMensualForm() {
 
           <label className="form-label" style={{ width: '100%', marginBottom: 8 }}>
             Nombres Completos
-            <input
-              type="text"
-              name="nombres"
-              required
-              value={form.nombres}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              style={{ width: '100%', padding: 12, borderRadius: 8, border: '1px solid #ddd', marginTop: 4, fontSize: 16, color: '#222' }}
-              placeholder="Ej: Juan Carlos Pérez González"
-            />
+            <div style={{ position: 'relative', width: '100%' }}>
+              <input
+                type="text"
+                name="nombres"
+                required
+                value={form.nombres}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                style={{ width: '100%', padding: 12, borderRadius: 8, border: '1px solid #ddd', marginTop: 4, fontSize: 16, color: '#222', paddingRight: nombresValido !== null ? 50 : 12 }}
+                placeholder="Ej: Juan Carlos Pérez González"
+              />
+              {nombresValido === true && (
+                <div style={{
+                  position: 'absolute',
+                  right: 12,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  width: 24,
+                  height: 24,
+                  borderRadius: '50%',
+                  backgroundColor: '#22c55e',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'white',
+                  fontSize: 14,
+                  fontWeight: 'bold'
+                }}>
+                  ✓
+                </div>
+              )}
+              {nombresValido === false && (
+                <div style={{
+                  position: 'absolute',
+                  right: 12,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  width: 24,
+                  height: 24,
+                  borderRadius: '50%',
+                  backgroundColor: '#ef4444',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'white',
+                  fontSize: 14,
+                  fontWeight: 'bold'
+                }}>
+                  ✕
+                </div>
+              )}
+            </div>
             {tocado.nombres && !form.nombres && <span style={{ color: '#e53e3e', fontSize: 13 }}>Falta completar este campo</span>}
+            {errores.nombres && <span style={{ color: '#e53e3e', fontSize: 13 }}>{errores.nombres}</span>}
           </label>
 
           <label className="form-label" style={{ width: '100%', marginBottom: 8 }}>
@@ -623,32 +759,118 @@ function DonacionMensualForm() {
 
           <label className="form-label" style={{ width: '100%', marginBottom: 8 }}>
             Dirección
-            <input
-              type="text"
-              name="direccion"
-              required
-              value={form.direccion}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              style={{ width: '100%', padding: 12, borderRadius: 8, border: '1px solid #ddd', marginTop: 4, fontSize: 16, color: '#222' }}
-              placeholder="Ej: Av. Principal 123 y Secundaria"
-            />
+            <div style={{ position: 'relative', width: '100%' }}>
+              <input
+                type="text"
+                name="direccion"
+                required
+                value={form.direccion}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                style={{ width: '100%', padding: 12, borderRadius: 8, border: '1px solid #ddd', marginTop: 4, fontSize: 16, color: '#222', paddingRight: direccionValida !== null ? 50 : 12 }}
+                placeholder="Ej: Av. Principal 123 y Secundaria"
+              />
+              {direccionValida === true && (
+                <div style={{
+                  position: 'absolute',
+                  right: 12,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  width: 24,
+                  height: 24,
+                  borderRadius: '50%',
+                  backgroundColor: '#22c55e',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'white',
+                  fontSize: 14,
+                  fontWeight: 'bold'
+                }}>
+                  ✓
+                </div>
+              )}
+              {direccionValida === false && (
+                <div style={{
+                  position: 'absolute',
+                  right: 12,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  width: 24,
+                  height: 24,
+                  borderRadius: '50%',
+                  backgroundColor: '#ef4444',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'white',
+                  fontSize: 14,
+                  fontWeight: 'bold'
+                }}>
+                  ✕
+                </div>
+              )}
+            </div>
             {tocado.direccion && !form.direccion && <span style={{ color: '#e53e3e', fontSize: 13 }}>Falta completar este campo</span>}
+            {errores.direccion && <span style={{ color: '#e53e3e', fontSize: 13 }}>{errores.direccion}</span>}
           </label>
 
           <label className="form-label" style={{ width: '100%', marginBottom: 8 }}>
             Ciudad
-            <input
-              type="text"
-              name="ciudad"
-              required
-              value={form.ciudad}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              style={{ width: '100%', padding: 12, borderRadius: 8, border: '1px solid #ddd', marginTop: 4, fontSize: 16, color: '#222' }}
-              placeholder="Ej: Quito, Guayaquil, Cuenca"
-            />
+            <div style={{ position: 'relative', width: '100%' }}>
+              <input
+                type="text"
+                name="ciudad"
+                required
+                value={form.ciudad}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                style={{ width: '100%', padding: 12, borderRadius: 8, border: '1px solid #ddd', marginTop: 4, fontSize: 16, color: '#222', paddingRight: ciudadValida !== null ? 50 : 12 }}
+                placeholder="Ej: Quito, Guayaquil, Cuenca"
+              />
+              {ciudadValida === true && (
+                <div style={{
+                  position: 'absolute',
+                  right: 12,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  width: 24,
+                  height: 24,
+                  borderRadius: '50%',
+                  backgroundColor: '#22c55e',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'white',
+                  fontSize: 14,
+                  fontWeight: 'bold'
+                }}>
+                  ✓
+                </div>
+              )}
+              {ciudadValida === false && (
+                <div style={{
+                  position: 'absolute',
+                  right: 12,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  width: 24,
+                  height: 24,
+                  borderRadius: '50%',
+                  backgroundColor: '#ef4444',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'white',
+                  fontSize: 14,
+                  fontWeight: 'bold'
+                }}>
+                  ✕
+                </div>
+              )}
+            </div>
             {tocado.ciudad && !form.ciudad && <span style={{ color: '#e53e3e', fontSize: 13 }}>Falta completar este campo</span>}
+            {errores.ciudad && <span style={{ color: '#e53e3e', fontSize: 13 }}>{errores.ciudad}</span>}
           </label>
 
           <label className="form-label" style={{ width: '100%', marginBottom: 8 }}>
