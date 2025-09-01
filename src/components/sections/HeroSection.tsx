@@ -1,6 +1,15 @@
+'use client';
+
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import Link from 'next/link';
+
+// Type for Google Analytics gtag function
+declare global {
+  interface Window {
+    gtag: (command: string, eventName: string, params?: Record<string, unknown>) => void;
+  }
+}
 
 export default function HeroSection() {
   return (
@@ -28,7 +37,19 @@ export default function HeroSection() {
           Cada donación, por pequeña que sea, marca una gran diferencia en la vida de familias y personas vulnerables en Quito.
         </p>
         <div className="mt-10">
-          <Button asChild size="lg" className="px-10 py-6 text-lg text-[#ed6f1d] hover:bg-orange-400 text-primary-foreground shadow-lg transform hover:scale-105 transition-transform duration-300">
+          <Button 
+            asChild 
+            size="lg" 
+            className="px-10 py-6 text-lg text-[#ed6f1d] hover:bg-orange-400 text-primary-foreground shadow-lg transform hover:scale-105 transition-transform duration-300"
+            onClick={() => {
+              if (typeof window !== 'undefined' && window.gtag) {
+                window.gtag('event', 'presiono_dono_landing', {
+                  ubicacion: 'hero_section',
+                  tipo_boton: 'donar_ahora'
+                });
+              }
+            }}
+          >
             <Link href="/donacion">Donar Ahora</Link>
           </Button>
         </div>
