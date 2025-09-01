@@ -182,12 +182,21 @@ function DonacionMensualForm() {
   const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setTocado(t => ({ ...t, [name]: true }));
-
+  
     // Validación específica para cédula
     if (name === 'cedula' && value) {
       if (validateEcuadorianId(value)) {
         setCedulaValida(true);
         setErrores(err => ({ ...err, cedula: '' }));
+        
+        // Evento GA4 - Campo completado exitosamente
+        if (typeof window !== 'undefined' && (window as any).gtag) {
+          (window as any).gtag('event', 'campo_cedula', {
+            campo_nombre: 'cedula',
+            campo_tipo: 'identificacion',
+            form_step: 1
+          });
+        }
       } else {
         setCedulaValida(false);
         setErrores(err => ({ ...err, cedula: 'Cédula/RUC inválido. Verifica el formato.' }));
@@ -195,13 +204,22 @@ function DonacionMensualForm() {
     } else if (name === 'cedula' && !value) {
       setCedulaValida(null);
     }
-
+  
     // Validación específica para correo
     if (name === 'correo' && value) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (emailRegex.test(value)) {
         setCorreoValido(true);
         setErrores(err => ({ ...err, correo: '' }));
+        
+        // Evento GA4 - Campo completado exitosamente
+        if (typeof window !== 'undefined' && (window as any).gtag) {
+          (window as any).gtag('event', 'campo_correo', {
+            campo_nombre: 'correo',
+            campo_tipo: 'contacto',
+            form_step: 2
+          });
+        }
       } else {
         setCorreoValido(false);
         setErrores(err => ({ ...err, correo: 'Formato de correo electrónico inválido.' }));
@@ -209,13 +227,22 @@ function DonacionMensualForm() {
     } else if (name === 'correo' && !value) {
       setCorreoValido(null);
     }
-
+  
     // Validación específica para teléfono
     if (name === 'numero' && value) {
       const cleanPhone = value.replace(/\D/g, '');
       if (cleanPhone.length >= 9 && cleanPhone.length <= 15) {
         setTelefonoValido(true);
         setErrores(err => ({ ...err, numero: '' }));
+        
+        // Evento GA4 - Campo completado exitosamente
+        if (typeof window !== 'undefined' && (window as any).gtag) {
+          (window as any).gtag('event', 'campo_telefono', {
+            campo_nombre: 'numero',
+            campo_tipo: 'contacto',
+            form_step: 3
+          });
+        }
       } else {
         setTelefonoValido(false);
         setErrores(err => ({ ...err, numero: 'Debe tener entre 9 y 15 dígitos.' }));
@@ -223,13 +250,22 @@ function DonacionMensualForm() {
     } else if (name === 'numero' && !value) {
       setTelefonoValido(null);
     }
-
+  
     // Validación específica para cuenta
     if (name === 'cuenta' && value) {
       const cleanAccount = value.replace(/\D/g, '');
       if (cleanAccount.length >= 8 && cleanAccount.length <= 20) {
         setCuentaValida(true);
         setErrores(err => ({ ...err, cuenta: '' }));
+        
+        // Evento GA4 - Campo completado exitosamente
+        if (typeof window !== 'undefined' && (window as any).gtag) {
+          (window as any).gtag('event', 'campo_cuenta', {
+            campo_nombre: 'cuenta',
+            campo_tipo: 'bancario',
+            form_step: 4
+          });
+        }
       } else {
         setCuentaValida(false);
         setErrores(err => ({ ...err, cuenta: 'Debe tener entre 8 y 20 dígitos.' }));
@@ -237,12 +273,21 @@ function DonacionMensualForm() {
     } else if (name === 'cuenta' && !value) {
       setCuentaValida(null);
     }
-
+  
     // Validación específica para nombres
     if (name === 'nombres' && value) {
       if (value.trim().length >= 3) {
         setNombresValido(true);
         setErrores(err => ({ ...err, nombres: '' }));
+        
+        // Evento GA4 - Campo completado exitosamente
+        if (typeof window !== 'undefined' && (window as any).gtag) {
+          (window as any).gtag('event', 'campo_nombres', {
+            campo_nombre: 'nombres',
+            campo_tipo: 'identificacion',
+            form_step: 5
+          });
+        }
       } else {
         setNombresValido(false);
         setErrores(err => ({ ...err, nombres: 'Debe tener al menos 3 caracteres.' }));
@@ -250,12 +295,21 @@ function DonacionMensualForm() {
     } else if (name === 'nombres' && !value) {
       setNombresValido(null);
     }
-
+  
     // Validación específica para dirección
     if (name === 'direccion' && value) {
       if (value.trim().length >= 5) {
         setDireccionValida(true);
         setErrores(err => ({ ...err, direccion: '' }));
+        
+        // Evento GA4 - Campo completado exitosamente
+        if (typeof window !== 'undefined' && (window as any).gtag) {
+          (window as any).gtag('event', 'campo_direccion', {
+            campo_nombre: 'direccion',
+            campo_tipo: 'contacto',
+            form_step: 6
+          });
+        }
       } else {
         setDireccionValida(false);
         setErrores(err => ({ ...err, direccion: 'Debe tener al menos 5 caracteres.' }));
@@ -263,18 +317,60 @@ function DonacionMensualForm() {
     } else if (name === 'direccion' && !value) {
       setDireccionValida(null);
     }
-
+  
     // Validación específica para ciudad
     if (name === 'ciudad' && value) {
       if (value.trim().length >= 2) {
         setCiudadValida(true);
         setErrores(err => ({ ...err, ciudad: '' }));
+        
+        // Evento GA4 - Campo completado exitosamente
+        if (typeof window !== 'undefined' && (window as any).gtag) {
+          (window as any).gtag('event', 'campo_ciudad', {
+            campo_nombre: 'ciudad',
+            campo_tipo: 'contacto',
+            form_step: 7
+          });
+        }
       } else {
         setCiudadValida(false);
         setErrores(err => ({ ...err, ciudad: 'Debe tener al menos 2 caracteres.' }));
       }
     } else if (name === 'ciudad' && !value) {
       setCiudadValida(null);
+    }
+  
+    // Validación para campos select (tipoCuenta, banco)
+    if (name === 'tipoCuenta' && value) {
+      if (typeof window !== 'undefined' && (window as any).gtag) {
+        (window as any).gtag('event', 'campo_tipoCuenta', {
+          campo_nombre: 'tipoCuenta',
+          campo_tipo: 'bancario',
+          form_step: 8,
+          valor_seleccionado: value
+        });
+      }
+    }
+  
+    if (name === 'banco' && value) {
+      if (typeof window !== 'undefined' && (window as any).gtag) {
+        (window as any).gtag('event', 'campo_banco', {
+          campo_nombre: 'banco',
+          campo_tipo: 'bancario',
+          form_step: 9,
+          valor_seleccionado: value
+        });
+      }
+    }
+  
+    if (name === 'otroBanco' && value && value.trim().length >= 2) {
+      if (typeof window !== 'undefined' && (window as any).gtag) {
+        (window as any).gtag('event', 'campo_otroBanco', {
+          campo_nombre: 'otroBanco',
+          campo_tipo: 'bancario',
+          form_step: 10
+        });
+      }
     }
   };
 
@@ -1016,7 +1112,18 @@ function DonacionMensualForm() {
               type="checkbox"
               name="acepta"
               checked={form.acepta}
-              onChange={handleChange}
+              onChange={(e) => {
+                handleChange(e);
+                // Evento GA4 para aceptar débito
+                if (e.target.checked && typeof window !== 'undefined' && (window as any).gtag) {
+                  (window as any).gtag('event', 'aceptar_debito', {
+                    campo_nombre: 'acepta_debito',
+                    campo_tipo: 'consentimiento',
+                    form_step: 11,
+                    valor: 'aceptado'
+                  });
+                }
+              }}
               onBlur={handleBlur}
               required
               style={{ marginRight: 8 }}
@@ -1032,7 +1139,18 @@ function DonacionMensualForm() {
               type="checkbox"
               name="terms"
               checked={termsChecked}
-              onChange={e => setTermsChecked(e.target.checked)}
+              onChange={(e) => {
+                setTermsChecked(e.target.checked);
+                // Evento GA4 para aceptar términos y condiciones
+                if (e.target.checked && typeof window !== 'undefined' && (window as any).gtag) {
+                  (window as any).gtag('event', 'aceptar_terminos', {
+                    campo_nombre: 'acepta_terminos',
+                    campo_tipo: 'consentimiento',
+                    form_step: 12,
+                    valor: 'aceptado'
+                  });
+                }
+              }}
               required
               style={{ marginRight: 8 }}
             />
