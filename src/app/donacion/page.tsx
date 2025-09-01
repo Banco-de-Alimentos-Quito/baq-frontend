@@ -6,6 +6,14 @@ import PaymentModal from "../components/PaymentModal";
 import Image from "next/image";
 import { useRouteLoading } from "@/hooks/useRouteLoading";
 
+// Type for Google Analytics gtag function
+declare global {
+  interface Window {
+    gtag: (command: string, eventName: string, params?: Record<string, any>) => void;
+    dataLayer: any[];
+  }
+}
+
 function calcularNinios(monto: number) {
   // Si el monto es menor al mínimo permitido, devolver 0
   if (monto < 1) return 0;
@@ -202,6 +210,18 @@ export default function DonacionPage() {
   const handleDonarAhora = async (e: React.MouseEvent) => {
     e.preventDefault();
     if (cantidad < 0) return;
+    
+    // GA4 event for donation action
+    if (typeof window !== 'undefined' && window.gtag) {
+      if (tipo === "mensual") {
+        window.gtag('event', 'dona_ahora_mensual', {
+          monto: cantidad,
+          tipo_donacion: tipo,
+          accion: 'procesar_donacion_mensual'
+        });
+      }
+    }
+    
     if (tipo === "mensual") {
       setIsLoadingMensual(true);
       // Simular tiempo de carga
@@ -294,7 +314,15 @@ export default function DonacionPage() {
                     ? "bg-gradient-to-r from-[#2F3388] to-[#1D2394] text-white shadow-lg scale-105"
                     : "bg-gray-200 text-gray-700 shadow-md hover:bg-[#2F3388] hover:text-white"
                 }`}
-                onClick={() => setTipo("mensual")}
+                onClick={() => {
+                  setTipo("mensual");
+                  if (typeof window !== 'undefined' && window.gtag) {
+                    window.gtag('event', 'donacion_mensual', {
+                      tipo_donacion: 'mensual',
+                      accion: 'seleccion_tipo'
+                    });
+                  }
+                }}
               >
                 {/* Ícono calendario */}
                 <svg
@@ -354,7 +382,16 @@ export default function DonacionPage() {
                       ? "bg-gradient-to-r from-orange-400 to-orange-500 text-white shadow-lg scale-105 filter brightness-95 contrast-125"
                       : "bg-white text-orange-600 opacity-95 hover:brightness-110"
                   }`}
-                  onClick={() => handleCantidad(m)}
+                  onClick={() => {
+                    handleCantidad(m);
+                    if (tipo === "mensual" && typeof window !== 'undefined' && window.gtag) {
+                      window.gtag('event', 'monto_mensual', {
+                        monto: m,
+                        tipo_donacion: tipo,
+                        accion: 'seleccion_monto'
+                      });
+                    }
+                  }}
                 >
                   <span className="text-sm">USD</span>
                   <span className="text-xl">{m}</span>
@@ -370,7 +407,16 @@ export default function DonacionPage() {
                     ? "bg-gradient-to-r from-orange-500 to-orange-300 text-white shadow-lg scale-105"
                     : "bg-gradient-to-r from-orange-500 to-orange-300 text-white shadow-md"
                 }`}
-                onClick={handleOtroFocus}
+                onClick={() => {
+                  handleOtroFocus();
+                  if (tipo === "mensual" && typeof window !== 'undefined' && window.gtag) {
+                    window.gtag('event', 'monto_mensual', {
+                      monto: 'otro',
+                      tipo_donacion: tipo,
+                      accion: 'seleccion_monto_personalizado'
+                    });
+                  }
+                }}
                 type="button"
               >
                 Otro

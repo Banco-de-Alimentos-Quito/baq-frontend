@@ -1,7 +1,16 @@
+'use client';
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Gift } from 'lucide-react';
 import Link from 'next/link';
+
+// Type for Google Analytics gtag function
+declare global {
+  interface Window {
+    gtag: (command: string, eventName: string, params?: Record<string, unknown>) => void;
+  }
+}
 
 export default function DonationSection() {
   return (
@@ -27,6 +36,14 @@ export default function DonationSection() {
                 asChild
                 size="lg"
                 className="px-10 py-6 text-lg text-[#ed6f1d] hover:bg-orange-400 text-primary-foreground transition-transform hover:scale-105"
+                onClick={() => {
+                  if (typeof window !== 'undefined' && window.gtag) {
+                    window.gtag('event', 'presiono_dono_landing', {
+                      ubicacion: 'donation_section',
+                      tipo_boton: 'donar_ahora'
+                    });
+                  }
+                }}
               >
                 <Link href="/donacion">
                   Donar Ahora
