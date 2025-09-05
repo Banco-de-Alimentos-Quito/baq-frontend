@@ -33,16 +33,11 @@ export default function PaymentConfirmationContent() {
       const transactionKey = `${id}-${clientTransactionId}`;
 
       if (processedTransactions[transactionKey]) {
-        console.log(
-          "Esta transacción ya fue procesada anteriormente",
-          transactionKey
-        );
         router.replace("/thank-you");
         return;
       }
 
       const userId = getOrCreateUserId();
-      console.log("El userId para enviar al backend es", userId);
 
       const numericId = Number(id);
 

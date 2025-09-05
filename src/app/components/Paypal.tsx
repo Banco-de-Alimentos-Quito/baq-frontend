@@ -102,7 +102,7 @@ export default function PayPalButton({
   return (
     <>
       <Script
-        src={`https://www.paypal.com/sdk/js?client-id=${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID}&currency=${currency}`}
+        src={`https://www.paypal.com/sdk/js?client-id=${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID}&currency=${currency}&locale=es_ES`}
         data-sdk-integration-source="button-factory"
         onLoad={() => {
           if (window.paypalButtonCallback) {

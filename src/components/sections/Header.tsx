@@ -7,6 +7,13 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 
+// Type for Google Analytics gtag function
+declare global {
+  interface Window {
+    gtag: (command: string, eventName: string, params?: Record<string, any>) => void;
+  }
+}
+
 const NavLinks = ({ onClick }: { onClick?: () => void }) => (
   <>
     <ScrollLink href="/#what-we-do" className="text-sm font-medium hover:text-primary transition-colors" onClick={onClick}>
@@ -51,7 +58,19 @@ export default function Header() {
         </Link>
         <nav className="hidden md:flex items-center gap-6">
           <NavLinks />
-          <Button asChild size="sm" className="bg-primary text-[#ed6f1d] hover:bg-orange-400 text-primary-foreground">
+          <Button 
+            asChild 
+            size="sm" 
+            className="bg-primary text-[#ed6f1d] hover:bg-orange-400 text-primary-foreground"
+            onClick={() => {
+              if (typeof window !== 'undefined' && (window as any).gtag) {
+                (window as any).gtag('event', 'presiono_dono_landing', {
+                  ubicacion: 'header',
+                  tipo_boton: 'donar_ahora'
+                });
+              }
+            }}
+          >
             <Link href="/donacion">Donar Ahora</Link>
           </Button>
         </nav>
