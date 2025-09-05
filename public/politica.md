@@ -10,10 +10,7 @@ Al proporcionarnos tus datos y aceptar los términos para una donación recurren
 
 **2\. ¿Quién es el responsable del Tratamiento de tus Datos?**
 
-- **Nombre de la Entidad:** Banco de alimentos de Quito
-- **Dirección:** Saraguro y Calle Guamote
-- **Correo Electrónico de Contacto para Asuntos de Privacidad:** [donaciones@baq.ec](mailto:donaciones@baq.ec)
-- **Teléfono (Opcional):** 099 5450 969 (Donación monetaria) - 097 8655 501 (donación de alimentos)
+El responsable del tratamiento es el **Banco de Alimentos de Quito, domiciliado en Saraguro y Calle Guamote, Quito 170139, Ecuador**. Para cualquier asunto de privacidad, puede contactarse al correo **administracion@baq.ec**. Los teléfonos de atención son **099 545 0969** (donación monetaria) y BAQ realiza el tratamientode datos personales conforme a la Ley Orgánica de Protección de Datos Personales **(LOPDP)** y demás normativa aplicable en Ecuador
 
 **3\. ¿Qué Información Personal Recopilamos?**
 
@@ -114,15 +111,19 @@ Para ejercer cualquiera de estos derechos, por favor contáctanos a través de <
 
 Si transferimos tus datos personales fuera de tu país de residencia (por ejemplo, si nuestros servidores o proveedores de servicios están ubicados en otro país), nos aseguraremos de que existan las salvaguardas adecuadas para proteger tu información, como cláusulas contractuales tipo aprobadas por las autoridades competentes o la adhesión de los destinatarios a marcos de privacidad reconocidos.
 
-**11\. Privacidad de Menores**
+**11\. Derechos de las personas**
 
-Nuestros servicios de donación no están dirigidos a personas menores de18 años sin el consentimiento de sus padres o tutores legales. No recopilamos intencionadamente información personal de menores sin dicho consentimiento. Si tienes conocimiento de que un menor nos ha proporcionado datos personales sin el consentimiento parental, por favor contáctanos para que podamos tomar las medidas adecuadas.
+La persona titular de los datos puede ejercer los derechos de acceso, rectificación, actualización, oposición, supresión cuando corresponda, limitación del tratamiento y portabilidad en los supuestos previstos por la **LOPDP**. También puede retirar el consentimiento otorgado; dicho retiro detendrá los débitos futuros, sin afectar los pagos ya procesados ni la licitud del tratamiento anterior. Además, tiene derecho a presentar reclamaciones ante la autoridad competente. Las solicitudes deberán enviarse a **administracion@baq.ec** y podrán requerir la **verificación de identidad**.
 
-**12\. Cookies y Tecnologías Similares**
+**12\. Privacidad de Menores**
+
+Nuestros servicios de donación no están dirigidos a personas menores de 18 años sin el consentimiento de sus padres o tutores legales. No recopilamos intencionadamente información personal de menores sin dicho consentimiento. Si tienes conocimiento de que un menor nos ha proporcionado datos personales sin el consentimiento parental, por favor contáctanos para que podamos tomar las medidas adecuadas.
+
+**13\. Cookies y Tecnologías Similares**
 
 Podemos utilizar cookies y tecnologías similares en nuestro sitio web para facilitar el proceso de donación, recordar tus preferencias y analizar el tráfico. Para más información, consulta nuestro enlace de Términos y Condiciones de uso. <https://www.baq.ec/terminos-y-condiciones/>
 
-**13\. Tratamiento Específico de Datos para el Compromiso de Donación Recurrente**
+**14\. Tratamiento Específico de Datos para el Compromiso de Donación Recurrente**
 
 Adicionalmente a lo general, el tratamiento de tus datos para el compromiso de donación recurrente implica:
 
@@ -134,15 +135,14 @@ Adicionalmente a lo general, el tratamiento de tus datos para el compromiso de d
 - **Gestión de la Suscripción:** Te proporcionaremos un mecanismo claro y accesible para que puedas consultar el estado de tu donación recurrente, actualizar tu información de pago (generalmente a través de un portal seguro de la pasarela de pago o contactándonos) o cancelar tu compromiso en cualquier momento, según los términos acordados. La cancelación detendrá los futuros cobros, pero no afectará los pagos ya procesados.
 - **Seguridad Continua:** Realizamos revisiones periódicas de nuestras medidas de seguridad y las de nuestros proveedores para asegurar la protección continua de tus datos.
 
-**14\. Cambios a esta Política de Privacidad**
+**15\. Cambios a esta Política de Privacidad**
 
 Podemos actualizar esta Política de Privacidad ocasionalmente para reflejar cambios en nuestras prácticas o por razones legales, operativas o regulatorias. Cuando realicemos cambios significativos, te notificaremos a través de un aviso en nuestro sitio web, por correo electrónico, o por otros medios antes de que el cambio entre en vigor. Te recomendamos revisar esta Política periódicamente. La fecha de "Última Actualización" en la parte superior indicará cuándo se revisó por última vez.
 
-**15\. Contacto**
+**16\. Contacto**
 
-Si tienes alguna pregunta, inquietud o queja sobre esta Política de Privacidad o nuestras prácticas de tratamiento de datos, o si deseas ejercer tus derechos, por favor contáctanos:
-
-Banco de alimentos de Quito - Saraguro, Quito 170139 - <comunicacion@baq.ec>
+Para consultas, inquietudes o el ejercicio de derechos, puede dirigirse a **administracion@baq.ec** o al domicilio señalado. BAQ atenderá las solicitudes dentro de los plazos previstos por la normativa aplicable y, cuando corresponda, podrá requerir
+información adicional paraverificar la identidad de la persona solicitante.
 
 **Recordatorios Clave:**
 
