@@ -86,11 +86,7 @@ export default function DonacionMensualForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    console.log('🚀 Form submission started');
-    console.log('📝 Current form data:', form);
-    console.log('✅ Terms checked:', termsChecked);
-    console.log('💰 Monto:', monto);
+  
     
     setTocado({
       cedula: true, nombres: true, numero: true, correo: true, direccion: true,
@@ -98,13 +94,11 @@ export default function DonacionMensualForm() {
     });
 
     if (!isFormValid()) {
-      console.log('❌ Form validation failed');
       return;
     }
 
     // Validate Ecuadorian ID (cedula/RUC) format
     if (!validateEcuadorianId(form.cedula)) {
-      console.log('❌ Ecuadorian ID validation failed');
       toast.error('Cédula/RUC inválido', {
         description: 'El formato de la cédula o RUC ingresado no es válido. Verifica e intenta nuevamente.',
         duration: 5000,
@@ -112,7 +106,6 @@ export default function DonacionMensualForm() {
       return;
     }
 
-    console.log('✅ All validations passed, starting API call');
     setEnviado(true);
 
     try {
@@ -195,8 +188,6 @@ export default function DonacionMensualForm() {
       
       const endpoint = `${apiUrl}/donaciones-recurrentes/donador`;
 
-      console.log('🔗 API Endpoint:', endpoint);
-      console.log('📤 Payload:', payload);
 
       const response = await fetch(endpoint, {
         method: 'POST',
@@ -206,9 +197,6 @@ export default function DonacionMensualForm() {
         },
         body: JSON.stringify(payload)
       });
-
-      console.log('📥 Response status:', response.status);
-      console.log('📥 Response headers:', Object.fromEntries(response.headers.entries()));
 
       if (!response.ok) {
         let errorText;
@@ -224,7 +212,6 @@ export default function DonacionMensualForm() {
       }
 
       const result = await response.json();
-      console.log('✅ Success response:', result);
 
       // Show success modal instead of toast
       setEnviado(false);
@@ -563,9 +550,6 @@ export default function DonacionMensualForm() {
             type="submit"
             disabled={!isFormValid() || enviado}
             onClick={(e) => {
-              console.log('🖱️ Submit button clicked');
-              console.log('📋 Form valid:', isFormValid());
-              console.log('📤 Already sending:', enviado);
             }}
             style={{
               width: '100%',

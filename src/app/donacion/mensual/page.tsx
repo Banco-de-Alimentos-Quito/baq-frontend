@@ -390,10 +390,6 @@ function DonacionMensualForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    console.log('🚀 Form submission started');
-    console.log('📝 Current form data:', form);
-    console.log('✅ Terms checked:', termsChecked);
-    console.log('💰 Monto:', monto);
     
     setTocado({
       cedula: true, nombres: true, numero: true, correo: true, direccion: true,
@@ -401,13 +397,11 @@ function DonacionMensualForm() {
     });
 
     if (!isFormValid()) {
-      console.log('❌ Form validation failed');
       return;
     }
 
     // Validate Ecuadorian ID (cedula/RUC) format
     if (!validateEcuadorianId(form.cedula)) {
-      console.log('❌ Ecuadorian ID validation failed');
       toast.error('Cédula/RUC inválido', {
         description: 'El formato de la cédula o RUC ingresado no es válido. Verifica e intenta nuevamente.',
         duration: 5000,
@@ -418,7 +412,6 @@ function DonacionMensualForm() {
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(form.correo)) {
-      console.log('❌ Email validation failed');
       toast.error('Correo electrónico inválido', {
         description: 'El formato del correo electrónico no es válido. Verifica e intenta nuevamente.',
         duration: 5000,
@@ -426,7 +419,6 @@ function DonacionMensualForm() {
       return;
     }
 
-    console.log('✅ All validations passed, starting API call');
     setEnviado(true);
 
     try {
@@ -524,7 +516,6 @@ function DonacionMensualForm() {
         return;
       }
 
-      console.log('📤 Enviando donación mensual:', payload);
 
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/donaciones-recurrentes/donador`, {
         method: 'POST',
@@ -542,7 +533,6 @@ function DonacionMensualForm() {
       const result = await response.json();
 
       if (response.ok) {
-        console.log('✅ Donación mensual procesada exitosamente:', result);
         toast.success('¡Donación mensual registrada!', {
           description: 'Tus datos han sido enviados exitosamente a nuestro sistema.',
           duration: 2200,

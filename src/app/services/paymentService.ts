@@ -26,11 +26,6 @@ export class PaymentService {
     userId: string
   ): Promise<PaymentConfirmResponse> {
     try {
-      console.log("📤 Enviando datos a PayPhone:", {
-        id,
-        clientTransactionId,
-        userId,
-      });
 
       const response = await fetch(`${this.baseUrl}/payphone/confirm`, {
         method: "POST",

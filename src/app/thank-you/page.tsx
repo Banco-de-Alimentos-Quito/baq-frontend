@@ -43,7 +43,6 @@ export default function ThankYou() {
   const fetchStreakData = async () => {
     try {
       const data = await fetchStreakFromAPI();
-      console.log("fetchStreakData -> data from service:", data);
 
       // Asegurar formato
       const normalized = {
