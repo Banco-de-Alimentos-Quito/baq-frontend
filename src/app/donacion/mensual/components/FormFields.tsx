@@ -29,6 +29,10 @@ export function ValidatedInput({
   onChange,
   onBlur
 }: ValidatedInputProps) {
+  // Campos que deben tener placeholder más gris
+  const greyPlaceholderFields = ['cedula', 'nombres', 'numero', 'correo', 'direccion', 'ciudad', 'cuenta'];
+  const shouldHaveGreyPlaceholder = greyPlaceholderFields.includes(name);
+
   return (
     <label className="form-label" style={{ width: '100%', marginBottom: 8 }}>
       {label}
@@ -41,6 +45,7 @@ export function ValidatedInput({
           value={value}
           onChange={onChange}
           onBlur={onBlur}
+          className={shouldHaveGreyPlaceholder ? 'grey-placeholder' : ''}
           style={{
             width: '100%',
             padding: 12,

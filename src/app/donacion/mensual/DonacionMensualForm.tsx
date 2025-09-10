@@ -8,7 +8,6 @@ import { ValidatedInput, ValidatedSelect } from "./components/FormFields";
 import {
   BANK_OPTIONS,
   ACCOUNT_TYPE_OPTIONS,
-  PROVINCE_OPTIONS,
 } from "./constants/formOptions";
 import { DonationService } from "./services/donationService";
 
@@ -18,6 +17,11 @@ export default function DonacionMensualForm() {
 
   // Añadir estado para la factura
   const [quiereFactura, setQuiereFactura] = useState<boolean | null>(null);
+
+  // Debug: monitorear cambios en quiereFactura
+  React.useEffect(() => {
+    console.log("🔄 DEBUG - Estado quiereFactura cambió a:", quiereFactura, typeof quiereFactura);
+  }, [quiereFactura]);
 
   const [form, setForm] = useState<FormData>({
     cedula: "",
@@ -41,6 +45,7 @@ export default function DonacionMensualForm() {
   const {
     errors,
     validationState,
+    documentType,
     validateField,
     clearValidation,
     validateEcuadorianId,
@@ -131,11 +136,22 @@ export default function DonacionMensualForm() {
     setEnviado(true);
 
     try {
+      // Debug: mostrar el valor antes de enviar
+      console.log("🚀 DEBUG - Valor de quiereFactura:", quiereFactura);
+      console.log("🚀 DEBUG - Tipo de quiereFactura:", typeof quiereFactura);
+      console.log("🚀 DEBUG - quiereFactura === true:", quiereFactura === true);
+      console.log("🚀 DEBUG - quiereFactura === false:", quiereFactura === false);
+      console.log("🚀 DEBUG - quiereFactura ?? false:", quiereFactura ?? false);
+      
+      // Asegurar que el valor sea booleano explícito
+      const facturaValue = quiereFactura === true ? true : false;
+      console.log("🚀 DEBUG - Valor final facturaValue:", facturaValue, typeof facturaValue);
+      
       await DonationService.submitDonation(
         form,
         monto,
         termsChecked,
-        quiereFactura
+        facturaValue
       );
       setEnviado(false);
       setShowSuccessModal(true);
@@ -189,6 +205,7 @@ export default function DonacionMensualForm() {
     });
     setTocado({});
     setTermsChecked(false);
+    setQuiereFactura(null);
     clearValidation();
   };
 
@@ -231,18 +248,34 @@ export default function DonacionMensualForm() {
             Donación mensual
           </h1>
 
-          <ValidatedInput
-            label="Cédula/RUC/Pasaporte"
-            name="cedula"
-            value={form.cedula}
-            placeholder="Ej: 1710034065"
-            required
-            validation={validationState.cedula}
-            error={errors.cedula}
-            touched={tocado.cedula}
-            onChange={handleChange}
-            onBlur={handleBlur}
-          />
+          <div style={{ width: '100%' }}>
+            <ValidatedInput
+              label="Cédula/RUC/Pasaporte"
+              name="cedula"
+              value={form.cedula}
+              placeholder="Ej: 1710034065, 1710034065001, A1234567"
+              required
+              validation={validationState.cedula}
+              error={errors.cedula}
+              touched={tocado.cedula}
+              onChange={handleChange}
+              onBlur={handleBlur}
+            />
+            {documentType && form.cedula && (
+              <div style={{
+                marginTop: '4px',
+                padding: '4px 8px',
+                backgroundColor: '#e6f7ff',
+                border: '1px solid #91d5ff',
+                borderRadius: '4px',
+                fontSize: '12px',
+                color: '#1890ff',
+                fontWeight: '500'
+              }}>
+                ✓ {documentType} detectado
+              </div>
+            )}
+          </div>
 
           <ValidatedInput
             label="Nombres Completos"
@@ -385,7 +418,15 @@ export default function DonacionMensualForm() {
             <div style={{ display: "flex", gap: "12px" }}>
               <button
                 type="button"
-                onClick={() => setQuiereFactura(true)}
+                onClick={() => {
+                  console.log("✅ DEBUG - Antes: quiereFactura =", quiereFactura);
+                  setQuiereFactura(true);
+                  console.log("✅ DEBUG - Después: setQuiereFactura(true) ejecutado");
+                  // Verificar después de un pequeño delay
+                  setTimeout(() => {
+                    console.log("✅ DEBUG - Estado después del setTimeout:", quiereFactura);
+                  }, 100);
+                }}
                 style={{
                   flex: 1,
                   padding: "12px",
@@ -403,7 +444,15 @@ export default function DonacionMensualForm() {
               </button>
               <button
                 type="button"
-                onClick={() => setQuiereFactura(false)}
+                onClick={() => {
+                  console.log("❌ DEBUG - Antes: quiereFactura =", quiereFactura);
+                  setQuiereFactura(false);
+                  console.log("❌ DEBUG - Después: setQuiereFactura(false) ejecutado");
+                  // Verificar después de un pequeño delay
+                  setTimeout(() => {
+                    console.log("❌ DEBUG - Estado después del setTimeout:", quiereFactura);
+                  }, 100);
+                }}
                 style={{
                   flex: 1,
                   padding: "12px",

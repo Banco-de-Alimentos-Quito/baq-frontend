@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { DocumentValidatorFactory } from '../validators/documentValidators';
 
 export type FormData = {
   cedula: string;
@@ -10,7 +11,6 @@ export type FormData = {
   tipoCuenta: string;
   banco: string;
   otroBanco: string;
-  provincia: string;
   ciudad: string;
   acepta: boolean;
 };
@@ -26,28 +26,38 @@ export type ErrorState = {
 export function useFormValidation() {
   const [errors, setErrors] = useState<ErrorState>({});
   const [validationState, setValidationState] = useState<ValidationState>({});
+  const [documentType, setDocumentType] = useState<string | null>(null);
 
+  const validateDocument = (document: string): { isValid: boolean; type: string | null; message?: string } => {
+    if (!document.trim()) {
+      return { isValid: false, type: null, message: 'Campo requerido' };
+    }
+
+    const result = DocumentValidatorFactory.validateDocument(document);
+    
+    if (!result.isValid && result.type) {
+      return { 
+        isValid: false, 
+        type: result.type, 
+        message: `${result.type} inválido/a. Verifica el formato.` 
+      };
+    }
+    
+    if (!result.type) {
+      return { 
+        isValid: false, 
+        type: null, 
+        message: 'Formato de documento no reconocido' 
+      };
+    }
+
+    return { isValid: true, type: result.type };
+  };
+
+  // Mantener función legacy para compatibilidad
   const validateEcuadorianId = (id: string): boolean => {
-    const cleanId = id.replace(/\D/g, '');
-    if (cleanId.length !== 10 && cleanId.length !== 13) {
-      return false;
-    }
-
-    const cedula = cleanId.length === 13 ? cleanId.substring(0, 10) : cleanId;
-    const coefficients = [2, 1, 2, 1, 2, 1, 2, 1, 2];
-    let sum = 0;
-
-    for (let i = 0; i < 9; i++) {
-      let digit = parseInt(cedula[i]) * coefficients[i];
-      if (digit >= 10) {
-        digit -= 9;
-      }
-      sum += digit;
-    }
-
-    const checkDigit = (10 - (sum % 10)) % 10;
-    const lastDigit = parseInt(cedula[9]);
-    return checkDigit === lastDigit;
+    const result = validateDocument(id);
+    return result.isValid;
   };
 
   const validateField = (name: keyof FormData, value: string) => {
@@ -57,10 +67,14 @@ export function useFormValidation() {
     switch (name) {
       case 'cedula':
         if (value) {
-          isValid = validateEcuadorianId(value);
+          const docResult = validateDocument(value);
+          isValid = docResult.isValid;
+          setDocumentType(docResult.type);
           if (!isValid) {
-            errorMessage = 'Cédula/RUC inválido. Verifica el formato.';
+            errorMessage = docResult.message || 'Documento inválido. Verifica el formato.';
           }
+        } else {
+          setDocumentType(null);
         }
         break;
 
@@ -120,15 +134,6 @@ export function useFormValidation() {
           }
         }
         break;
-
-      case 'provincia':
-        if (value) {
-          isValid = value.trim().length >= 2;
-          if (!isValid) {
-            errorMessage = 'Debe seleccionar una provincia.';
-          }
-        }
-        break;
     }
 
     setValidationState(prev => ({ ...prev, [name]: isValid }));
@@ -145,8 +150,10 @@ export function useFormValidation() {
   return {
     errors,
     validationState,
+    documentType,
     validateField,
     clearValidation,
-    validateEcuadorianId
+    validateEcuadorianId,
+    validateDocument
   };
 }

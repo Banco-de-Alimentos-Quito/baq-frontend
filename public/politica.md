@@ -105,7 +105,7 @@ Dependiendo de tu jurisdicción, puedes tener los siguientes derechos sobre tu i
 - **Derecho a no ser Objeto de Decisiones Individuales Automatizadas:** Incluida la elaboración de perfiles, que produzcan efectos jurídicos sobre ti o te afecten significativamente de modo similar.
 - **Derecho a Presentar una Reclamación:** Ante la autoridad de protección de datos competente si consideras que el tratamiento de tus datos personales infringe la normativa aplicable.
 
-Para ejercer cualquiera de estos derechos, por favor contáctanos a través de <comunicacion@baq.ec> o la dirección postal indicada en la sección 2. Podríamos necesitar verificar tu identidad antes de procesar tu solicitud.
+Para ejercer cualquiera de estos derechos, por favor contáctanos a través de <administracion@baq.ec> o la dirección postal indicada en la sección 2. Podríamos necesitar verificar tu identidad antes de procesar tu solicitud.
 
 **10\. Transferencias Internacionales de Datos (Si Aplica)**
 

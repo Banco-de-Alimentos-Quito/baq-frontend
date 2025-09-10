@@ -143,3 +143,22 @@
 .animation-delay-200 {
   animation-delay: 0.2s;
 }
+
+/* Estilo para placeholders más grises en campos específicos */
+.grey-placeholder::placeholder {
+  color: #999 !important;
+  opacity: 1 !important;
+}
+
+.grey-placeholder::-webkit-input-placeholder {
+  color: #999 !important;
+}
+
+.grey-placeholder::-moz-placeholder {
+  color: #999 !important;
+  opacity: 1 !important;
+}
+
+.grey-placeholder:-ms-input-placeholder {
+  color: #999 !important;
+}

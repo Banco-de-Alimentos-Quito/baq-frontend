@@ -12,9 +12,8 @@ export interface DonationPayload {
   monto_donar: number;
   acepta_aporte_voluntario: boolean;
   acepta_tratamiento_datos: boolean;
-  provincia: string;
   ciudad: string;
-  requiere_factura: boolean; 
+  requiere_factura: boolean;
 }
 
 export class DonationService {
@@ -23,9 +22,14 @@ export class DonationService {
         'cedula_ruc', 'nombres_completos', 'numero_telefono', 'correo_electronico',
         'direccion', 'numero_cuenta', 'tipo_cuenta', 'banco_cooperativa',
         'monto_donar', 'acepta_aporte_voluntario', 'acepta_tratamiento_datos',
-        'provincia', 'ciudad'
+        'ciudad', 'requiere_factura'
       ];    const missingFields = requiredFields.filter(field => {
       const value = payload[field as keyof DonationPayload];
+      // Especial handling para booleanos
+      if (field === 'requiere_factura') {
+        console.log("🔍 DEBUG - Validando requiere_factura:", value, typeof value);
+        return typeof value !== 'boolean';
+      }
       return value === undefined || value === null || value === '';
     });
 
@@ -69,9 +73,8 @@ export class DonationService {
       monto_donar: monto,
       acepta_aporte_voluntario: form.acepta,
       acepta_tratamiento_datos: termsChecked,
-      provincia: form.provincia,
       ciudad: form.ciudad,
-      requiere_factura: quiereFactura,
+      requiere_factura: quiereFactura
     };
   }
 
@@ -81,7 +84,13 @@ export class DonationService {
     termsChecked: boolean,
     quiereFactura: boolean
   ): Promise<any> {
+    console.log("🔍 DEBUG - Parámetro quiereFactura recibido:", quiereFactura, typeof quiereFactura);
+    
     const payload = this.transformFormData(form, monto, termsChecked, quiereFactura);
+    
+    console.log("📦 DEBUG - Payload completo:", payload);
+    console.log("📝 DEBUG - requiere_factura en payload:", payload.requiere_factura, typeof payload.requiere_factura);
+    
     this.validatePayload(payload);
 
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -91,6 +100,9 @@ export class DonationService {
 
     const endpoint = `${apiUrl}/donaciones-recurrentes/donador`;
 
+    console.log("🌐 DEBUG - Endpoint:", endpoint);
+    console.log("📤 DEBUG - JSON que se va a enviar:", JSON.stringify(payload, null, 2));
+
     const response = await fetch(endpoint, {
       method: 'POST',
       headers: {
@@ -99,6 +111,9 @@ export class DonationService {
       },
       body: JSON.stringify(payload)
     });
+
+    console.log("📥 DEBUG - Response status:", response.status);
+    console.log("📥 DEBUG - Response ok:", response.ok);
 
     if (!response.ok) {
       let errorText;
