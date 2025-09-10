@@ -22,7 +22,6 @@ export default function DonacionMensualForm() {
     tipoCuenta: '',
     banco: '',
     otroBanco: '',
-    provincia: '',
     ciudad: '',
     acepta: false,
   });
@@ -64,8 +63,7 @@ export default function DonacionMensualForm() {
 
   const isFormValid = () => {
     const requiredFields = form.cedula && form.nombres && form.numero && form.correo &&
-      form.direccion && form.cuenta && form.tipoCuenta && form.banco &&
-      form.provincia && form.ciudad && form.acepta && termsChecked;
+      form.direccion && form.cuenta && form.tipoCuenta && form.banco && form.ciudad && form.acepta && termsChecked;
 
     if (form.banco === 'Otra') {
       return requiredFields && form.otroBanco;
@@ -146,7 +144,6 @@ export default function DonacionMensualForm() {
       tipoCuenta: '',
       banco: '',
       otroBanco: '',
-      provincia: '',
       ciudad: '',
       acepta: false,
     });
@@ -179,7 +176,7 @@ export default function DonacionMensualForm() {
           </h1>
 
           <ValidatedInput
-            label="Cédula/RUC"
+            label="Cédula/RUC/Pasaporte"
             name="cedula"
             value={form.cedula}
             placeholder="Ej: 1710034065"
@@ -241,18 +238,6 @@ export default function DonacionMensualForm() {
             validation={validationState.direccion}
             error={errors.direccion}
             touched={tocado.direccion}
-            onChange={handleChange}
-            onBlur={handleBlur}
-          />
-
-          <ValidatedSelect
-            label="Provincia"
-            name="provincia"
-            value={form.provincia}
-            options={PROVINCE_OPTIONS}
-            placeholder="Selecciona tu provincia"
-            required
-            touched={tocado.provincia}
             onChange={handleChange}
             onBlur={handleBlur}
           />
