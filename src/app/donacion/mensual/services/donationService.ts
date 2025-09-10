@@ -14,6 +14,7 @@ export interface DonationPayload {
   acepta_tratamiento_datos: boolean;
   provincia: string;
   ciudad: string;
+  requiere_factura: boolean; 
 }
 
 export class DonationService {
@@ -53,7 +54,8 @@ export class DonationService {
   private static transformFormData(
     form: FormData, 
     monto: number, 
-    termsChecked: boolean
+    termsChecked: boolean,
+    quiereFactura: boolean
   ): DonationPayload {
     return {
       cedula_ruc: form.cedula,
@@ -68,16 +70,18 @@ export class DonationService {
       acepta_aporte_voluntario: form.acepta,
       acepta_tratamiento_datos: termsChecked,
       provincia: form.provincia,
-      ciudad: form.ciudad
+      ciudad: form.ciudad,
+      requiere_factura: quiereFactura,
     };
   }
 
   static async submitDonation(
     form: FormData, 
     monto: number, 
-    termsChecked: boolean
+    termsChecked: boolean,
+    quiereFactura: boolean
   ): Promise<any> {
-    const payload = this.transformFormData(form, monto, termsChecked);
+    const payload = this.transformFormData(form, monto, termsChecked, quiereFactura);
     this.validatePayload(payload);
 
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;

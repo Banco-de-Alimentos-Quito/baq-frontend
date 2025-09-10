@@ -1,50 +1,66 @@
-'use client';
-import React, { useState } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { toast } from 'sonner';
-import Link from 'next/link';
-import { useFormValidation, FormData } from './hooks/useFormValidation';
-import { ValidatedInput, ValidatedSelect } from './components/FormFields';
-import { BANK_OPTIONS, ACCOUNT_TYPE_OPTIONS, PROVINCE_OPTIONS } from './constants/formOptions';
-import { DonationService } from './services/donationService';
+"use client";
+import React, { useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { toast } from "sonner";
+import Link from "next/link";
+import { useFormValidation, FormData } from "./hooks/useFormValidation";
+import { ValidatedInput, ValidatedSelect } from "./components/FormFields";
+import {
+  BANK_OPTIONS,
+  ACCOUNT_TYPE_OPTIONS,
+  PROVINCE_OPTIONS,
+} from "./constants/formOptions";
+import { DonationService } from "./services/donationService";
 
 export default function DonacionMensualForm() {
   const params = useSearchParams();
-  const monto = Number(params.get('monto')) || 0;
-  
+  const monto = Number(params.get("monto")) || 0;
+
+  // Añadir estado para la factura
+  const [quiereFactura, setQuiereFactura] = useState<boolean | null>(null);
+
   const [form, setForm] = useState<FormData>({
-    cedula: '',
-    nombres: '',
-    numero: '',
-    correo: '',
-    direccion: '',
-    cuenta: '',
-    tipoCuenta: '',
-    banco: '',
-    otroBanco: '',
-    ciudad: '',
+    cedula: "",
+    nombres: "",
+    numero: "",
+    correo: "",
+    direccion: "",
+    cuenta: "",
+    tipoCuenta: "",
+    banco: "",
+    otroBanco: "",
+    ciudad: "",
     acepta: false,
   });
-  
+
   const [enviado, setEnviado] = useState(false);
   const [tocado, setTocado] = useState<{ [k: string]: boolean }>({});
   const [termsChecked, setTermsChecked] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  
-  const { errors, validationState, validateField, clearValidation, validateEcuadorianId } = useFormValidation();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const {
+    errors,
+    validationState,
+    validateField,
+    clearValidation,
+    validateEcuadorianId,
+  } = useFormValidation();
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const target = e.target;
     const { name, value, type } = target;
-    
-    const newValue = type === 'checkbox' ? (target as HTMLInputElement).checked : value;
-    
-    setForm(prev => ({
+
+    const newValue =
+      type === "checkbox" ? (target as HTMLInputElement).checked : value;
+
+    setForm((prev) => ({
       ...prev,
       [name]: newValue,
     }));
-    
-    setTocado(prev => ({ ...prev, [name]: true }));
+
+    setTocado((prev) => ({ ...prev, [name]: true }));
 
     // Validar campo en tiempo real si tiene valor
     if (value && name in form) {
@@ -52,24 +68,39 @@ export default function DonacionMensualForm() {
     }
   };
 
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleBlur = (
+    e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
-    setTocado(prev => ({ ...prev, [name]: true }));
-    
+    setTocado((prev) => ({ ...prev, [name]: true }));
+
     if (value && name in form) {
       validateField(name as keyof FormData, value);
     }
   };
 
   const isFormValid = () => {
-    const requiredFields = form.cedula && form.nombres && form.numero && form.correo &&
-      form.direccion && form.cuenta && form.tipoCuenta && form.banco && form.ciudad && form.acepta && termsChecked;
+    const requiredFields =
+      form.cedula &&
+      form.nombres &&
+      form.numero &&
+      form.correo &&
+      form.direccion &&
+      form.cuenta &&
+      form.tipoCuenta &&
+      form.banco &&
+      form.ciudad &&
+      form.acepta &&
+      termsChecked;
 
-    if (form.banco === 'Otra') {
+    // Añadir validación de la opción de factura
+    const facturaSeleccionada = quiereFactura !== null;
+
+    if (form.banco === "Otra") {
       return requiredFields && form.otroBanco;
     }
 
-    return requiredFields;
+    return requiredFields && facturaSeleccionada;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -81,7 +112,7 @@ export default function DonacionMensualForm() {
       acc[key as string] = true;
       return acc;
     }, {} as { [k: string]: boolean });
-    
+
     setTocado({ ...allTouched, acepta: true });
 
     if (!isFormValid()) {
@@ -89,8 +120,9 @@ export default function DonacionMensualForm() {
     }
 
     if (!validateEcuadorianId(form.cedula)) {
-      toast.error('Cédula/RUC inválido', {
-        description: 'El formato de la cédula o RUC ingresado no es válido. Verifica e intenta nuevamente.',
+      toast.error("Cédula/RUC inválido", {
+        description:
+          "El formato de la cédula o RUC ingresado no es válido. Verifica e intenta nuevamente.",
         duration: 5000,
       });
       return;
@@ -99,28 +131,36 @@ export default function DonacionMensualForm() {
     setEnviado(true);
 
     try {
-      await DonationService.submitDonation(form, monto, termsChecked);
+      await DonationService.submitDonation(
+        form,
+        monto,
+        termsChecked,
+        quiereFactura
+      );
       setEnviado(false);
       setShowSuccessModal(true);
     } catch (error) {
-      console.error('❌ Error submitting form:', error);
-      
-      let errorMessage = 'Error al enviar el formulario';
-      let errorDescription = 'Hubo un problema al procesar tu solicitud. Por favor, intenta nuevamente.';
+      console.error("❌ Error submitting form:", error);
+
+      let errorMessage = "Error al enviar el formulario";
+      let errorDescription =
+        "Hubo un problema al procesar tu solicitud. Por favor, intenta nuevamente.";
 
       if (error instanceof Error) {
-        if (error.message.includes('Missing required fields')) {
-          errorMessage = 'Campos requeridos faltantes';
+        if (error.message.includes("Missing required fields")) {
+          errorMessage = "Campos requeridos faltantes";
           errorDescription = error.message;
-        } else if (error.message.includes('must be')) {
-          errorMessage = 'Error de validación';
+        } else if (error.message.includes("must be")) {
+          errorMessage = "Error de validación";
           errorDescription = error.message;
-        } else if (error.message.includes('HTTP error! status: 400')) {
-          errorMessage = 'Error de validación del servidor';
-          errorDescription = 'Los datos enviados no cumplen con los requisitos del servidor.';
-        } else if (error.message.includes('Failed to fetch')) {
-          errorMessage = 'Error de conexión';
-          errorDescription = 'No se pudo conectar con el servidor. Verifica tu conexión a internet.';
+        } else if (error.message.includes("HTTP error! status: 400")) {
+          errorMessage = "Error de validación del servidor";
+          errorDescription =
+            "Los datos enviados no cumplen con los requisitos del servidor.";
+        } else if (error.message.includes("Failed to fetch")) {
+          errorMessage = "Error de conexión";
+          errorDescription =
+            "No se pudo conectar con el servidor. Verifica tu conexión a internet.";
         }
       }
 
@@ -135,16 +175,16 @@ export default function DonacionMensualForm() {
   const handleCloseSuccessModal = () => {
     setShowSuccessModal(false);
     setForm({
-      cedula: '',
-      nombres: '',
-      numero: '',
-      correo: '',
-      direccion: '',
-      cuenta: '',
-      tipoCuenta: '',
-      banco: '',
-      otroBanco: '',
-      ciudad: '',
+      cedula: "",
+      nombres: "",
+      numero: "",
+      correo: "",
+      direccion: "",
+      cuenta: "",
+      tipoCuenta: "",
+      banco: "",
+      otroBanco: "",
+      ciudad: "",
       acepta: false,
     });
     setTocado({});
@@ -153,25 +193,41 @@ export default function DonacionMensualForm() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f8fafc' }}>
+    <div style={{ minHeight: "100vh", background: "#f8fafc" }}>
       {/* Espacio reservado para navbar (sin mostrarlo) */}
-      <div style={{ paddingTop: 120, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+      <div
+        style={{
+          paddingTop: 120,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
         <form
           onSubmit={handleSubmit}
           style={{
-            background: '#fff',
+            background: "#fff",
             borderRadius: 24,
-            boxShadow: '0 4px 24px #0001',
-            padding: '40px 32px',
+            boxShadow: "0 4px 24px #0001",
+            padding: "40px 32px",
             maxWidth: 420,
-            width: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
+            width: "100%",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
             gap: 18,
           }}
         >
-          <h1 style={{ color: '#2F3388', fontWeight: 900, fontSize: '1.5rem', marginBottom: 18, textAlign: 'center' }}>
+          <h1
+            style={{
+              color: "#2F3388",
+              fontWeight: 900,
+              fontSize: "1.5rem",
+              marginBottom: 18,
+              textAlign: "center",
+            }}
+          >
             Donación mensual
           </h1>
 
@@ -292,7 +348,7 @@ export default function DonacionMensualForm() {
             onBlur={handleBlur}
           />
 
-          {form.banco === 'Otra' && (
+          {form.banco === "Otra" && (
             <ValidatedInput
               label="Especifica tu banco o cooperativa"
               name="otroBanco"
@@ -315,7 +371,76 @@ export default function DonacionMensualForm() {
             onBlur={() => {}}
           />
 
-          <div style={{ width: '100%', margin: '12px 0', background: '#f8fafc', borderRadius: 8, padding: 12, border: '1px solid #eee', color: '#2F3388', fontSize: 15 }}>
+          <div style={{ width: "100%", marginBottom: "12px" }}>
+            <label
+              style={{
+                display: "block",
+                fontWeight: 600,
+                marginBottom: "8px",
+                color: "#2F3388",
+              }}
+            >
+              ¿Deseas recibir factura?
+            </label>
+            <div style={{ display: "flex", gap: "12px" }}>
+              <button
+                type="button"
+                onClick={() => setQuiereFactura(true)}
+                style={{
+                  flex: 1,
+                  padding: "12px",
+                  border: "2px solid",
+                  borderColor: quiereFactura === true ? "#ff7300" : "#e2e8f0",
+                  borderRadius: "8px",
+                  background: quiereFactura === true ? "#fff0e6" : "#fff",
+                  color: quiereFactura === true ? "#ff7300" : "#4a5568",
+                  fontWeight: quiereFactura === true ? "600" : "400",
+                  cursor: "pointer",
+                  transition: "all 0.2s",
+                }}
+              >
+                Sí, quiero factura
+              </button>
+              <button
+                type="button"
+                onClick={() => setQuiereFactura(false)}
+                style={{
+                  flex: 1,
+                  padding: "12px",
+                  border: "2px solid",
+                  borderColor: quiereFactura === false ? "#ff7300" : "#e2e8f0",
+                  borderRadius: "8px",
+                  background: quiereFactura === false ? "#fff0e6" : "#fff",
+                  color: quiereFactura === false ? "#ff7300" : "#4a5568",
+                  fontWeight: quiereFactura === false ? "600" : "400",
+                  cursor: "pointer",
+                  transition: "all 0.2s",
+                }}
+              >
+                No, gracias
+              </button>
+            </div>
+            {quiereFactura === null && (
+              <p
+                style={{ color: "#e53e3e", fontSize: "13px", marginTop: "4px" }}
+              >
+                Por favor selecciona una opción
+              </p>
+            )}
+          </div>
+
+          <div
+            style={{
+              width: "100%",
+              margin: "12px 0",
+              background: "#f8fafc",
+              borderRadius: 8,
+              padding: 12,
+              border: "1px solid #eee",
+              color: "#2F3388",
+              fontSize: 15,
+            }}
+          >
             <input
               type="checkbox"
               name="acepta"
@@ -326,29 +451,53 @@ export default function DonacionMensualForm() {
               style={{ marginRight: 8 }}
             />
             <span>
-              Acepto que se me debite mensualmente este monto a favor de la Fundación Banco de Alimentos Quito.
+              Acepto que se me debite mensualmente este monto a favor de la
+              Fundación Banco de Alimentos Quito.
             </span>
-            {tocado.acepta && !form.acepta && <span style={{ color: '#e53e3e', fontSize: 13, display: 'block', marginTop: 4 }}>Debes aceptar la cláusula</span>}
+            {tocado.acepta && !form.acepta && (
+              <span
+                style={{
+                  color: "#e53e3e",
+                  fontSize: 13,
+                  display: "block",
+                  marginTop: 4,
+                }}
+              >
+                Debes aceptar la cláusula
+              </span>
+            )}
           </div>
 
-          <div style={{ width: '100%', margin: '12px 0', background: '#f8fafc', borderRadius: 8, padding: 12, border: '1px solid #eee', color: '#2F3388', fontSize: 15 }}>
+          <div
+            style={{
+              width: "100%",
+              margin: "12px 0",
+              background: "#f8fafc",
+              borderRadius: 8,
+              padding: 12,
+              border: "1px solid #eee",
+              color: "#2F3388",
+              fontSize: 15,
+            }}
+          >
             <input
               type="checkbox"
               name="terms"
               checked={termsChecked}
-              onChange={e => setTermsChecked(e.target.checked)}
+              onChange={(e) => setTermsChecked(e.target.checked)}
               required
               style={{ marginRight: 8 }}
             />
             <span>
-              Acepto que he leído previamente los{' '}
+              Acepto que he leído previamente los{" "}
               <Link
                 href="/politicas"
                 className="text-primary hover:underline"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Términos y Condiciones, y Política de Tratamiento de Datos Personales
+                Términos y Condiciones, y Política de Tratamiento de Datos
+                Personales
               </Link>
               .
             </span>
@@ -358,102 +507,127 @@ export default function DonacionMensualForm() {
             type="submit"
             disabled={!isFormValid() || enviado}
             style={{
-              width: '100%',
-              background: 'linear-gradient(90deg, #ff7300, #ffb347)',
-              color: '#fff',
-              fontWeight: 'bold',
+              width: "100%",
+              background: "linear-gradient(90deg, #ff7300, #ffb347)",
+              color: "#fff",
+              fontWeight: "bold",
               fontSize: 18,
-              border: 'none',
+              border: "none",
               borderRadius: 8,
               padding: 14,
               marginTop: 8,
-              boxShadow: '0 2px 8px #ff730033',
-              cursor: (!isFormValid() || enviado) ? 'not-allowed' : 'pointer',
-              opacity: (!isFormValid() || enviado) ? 0.5 : 1,
-              transition: 'background 0.2s',
+              boxShadow: "0 2px 8px #ff730033",
+              cursor: !isFormValid() || enviado ? "not-allowed" : "pointer",
+              opacity: !isFormValid() || enviado ? 0.5 : 1,
+              transition: "background 0.2s",
             }}
           >
-            {enviado ? 'Enviando...' : 'Generar contrato'}
+            {enviado ? "Enviando..." : "Generar contrato"}
           </button>
 
           {enviado && (
-            <div style={{
-              position: 'fixed',
-              inset: 0,
-              zIndex: 9999,
-              background: 'rgba(0,0,0,0.25)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-              <div style={{
-                background: '#fff',
-                borderRadius: 18,
-                boxShadow: '0 4px 24px #0002',
-                padding: '48px 32px',
-                minWidth: 320,
-                maxWidth: 380,
-                textAlign: 'center',
-                position: 'relative',
-              }}>
-                <div style={{ fontSize: 22, fontWeight: 900, color: '#2F3388', marginBottom: 18 }}>
+            <div
+              style={{
+                position: "fixed",
+                inset: 0,
+                zIndex: 9999,
+                background: "rgba(0,0,0,0.25)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <div
+                style={{
+                  background: "#fff",
+                  borderRadius: 18,
+                  boxShadow: "0 4px 24px #0002",
+                  padding: "48px 32px",
+                  minWidth: 320,
+                  maxWidth: 380,
+                  textAlign: "center",
+                  position: "relative",
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: 22,
+                    fontWeight: 900,
+                    color: "#2F3388",
+                    marginBottom: 18,
+                  }}
+                >
                   Enviando solicitud...
                 </div>
-                <div style={{ fontSize: 16, color: '#555', marginBottom: 18 }}>
+                <div style={{ fontSize: 16, color: "#555", marginBottom: 18 }}>
                   Por favor espera mientras procesamos tu información.
                 </div>
-                <div style={{
-                  width: 40,
-                  height: 40,
-                  border: '4px solid #f3f3f3',
-                  borderTop: '4px solid #ff7300',
-                  borderRadius: '50%',
-                  animation: 'spin 1s linear infinite',
-                  margin: '0 auto'
-                }}></div>
+                <div
+                  style={{
+                    width: 40,
+                    height: 40,
+                    border: "4px solid #f3f3f3",
+                    borderTop: "4px solid #ff7300",
+                    borderRadius: "50%",
+                    animation: "spin 1s linear infinite",
+                    margin: "0 auto",
+                  }}
+                ></div>
               </div>
             </div>
           )}
 
           {showSuccessModal && (
-            <div style={{
-              position: 'fixed',
-              inset: 0,
-              zIndex: 9999,
-              background: 'rgba(0,0,0,0.25)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-              <div style={{
-                background: '#fff',
-                borderRadius: 18,
-                boxShadow: '0 4px 24px #0002',
-                padding: '48px 32px',
-                minWidth: 320,
-                maxWidth: 380,
-                textAlign: 'center',
-                position: 'relative',
-              }}>
-                <div style={{ fontSize: 22, fontWeight: 900, color: '#2F3388', marginBottom: 18 }}>
+            <div
+              style={{
+                position: "fixed",
+                inset: 0,
+                zIndex: 9999,
+                background: "rgba(0,0,0,0.25)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <div
+                style={{
+                  background: "#fff",
+                  borderRadius: 18,
+                  boxShadow: "0 4px 24px #0002",
+                  padding: "48px 32px",
+                  minWidth: 320,
+                  maxWidth: 380,
+                  textAlign: "center",
+                  position: "relative",
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: 22,
+                    fontWeight: 900,
+                    color: "#2F3388",
+                    marginBottom: 18,
+                  }}
+                >
                   ¡Solicitud enviada exitosamente!
                 </div>
-                <div style={{ fontSize: 16, color: '#555', marginBottom: 18 }}>
-                  Revisa tu correo electrónico para acceder al portal y completar tu donación mensual.
+                <div style={{ fontSize: 16, color: "#555", marginBottom: 18 }}>
+                  Revisa tu correo electrónico para acceder al portal y
+                  completar tu donación mensual.
                 </div>
                 <button
                   onClick={handleCloseSuccessModal}
                   style={{
-                    background: 'linear-gradient(90deg, #ff7300, #ffb347)',
-                    color: '#fff',
-                    fontWeight: 'bold',
+                    background: "linear-gradient(90deg, #ff7300, #ffb347)",
+                    color: "#fff",
+                    fontWeight: "bold",
                     fontSize: 18,
-                    border: 'none',
+                    border: "none",
                     borderRadius: 8,
                     padding: 14,
                     marginTop: 8,
-                    boxShadow: '0 2px 8px #ff730033',
-                    cursor: 'pointer',
+                    boxShadow: "0 2px 8px #ff730033",
+                    cursor: "pointer",
                   }}
                 >
                   Aceptar
