@@ -41,11 +41,14 @@ export default function PaymentConfirmationContent() {
 
       const numericId = Number(id);
 
+      const direccion = localStorage.getItem("direccionDonador") || "";
+      
       try {
         const response = await PaymentService.confirmPayPhoneTransaction(
           numericId,
           clientTransactionId,
-          userId
+          userId, 
+          direccion
         );
 
         if (response.status === "Approved" || response.status === "Aproved") {

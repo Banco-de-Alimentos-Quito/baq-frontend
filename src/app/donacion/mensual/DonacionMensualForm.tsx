@@ -8,7 +8,6 @@ import { ValidatedInput, ValidatedSelect } from "./components/FormFields";
 import {
   BANK_OPTIONS,
   ACCOUNT_TYPE_OPTIONS,
-  PROVINCE_OPTIONS,
 } from "./constants/formOptions";
 import { DonationService } from "./services/donationService";
 
@@ -20,16 +19,16 @@ export default function DonacionMensualForm() {
   const [quiereFactura, setQuiereFactura] = useState<boolean | null>(null);
 
   const [form, setForm] = useState<FormData>({
-    cedula: "",
-    nombres: "",
-    numero: "",
-    correo: "",
-    direccion: "",
-    cuenta: "",
-    tipoCuenta: "",
-    banco: "",
-    otroBanco: "",
-    ciudad: "",
+    cedula: '',
+    nombres: '',
+    numero: '',
+    correo: '',
+    direccion: '',
+    cuenta: '',
+    tipoCuenta: '',
+    banco: '',
+    otroBanco: '',
+    ciudad: '',
     acepta: false,
   });
 
@@ -175,16 +174,16 @@ export default function DonacionMensualForm() {
   const handleCloseSuccessModal = () => {
     setShowSuccessModal(false);
     setForm({
-      cedula: "",
-      nombres: "",
-      numero: "",
-      correo: "",
-      direccion: "",
-      cuenta: "",
-      tipoCuenta: "",
-      banco: "",
-      otroBanco: "",
-      ciudad: "",
+      cedula: '',
+      nombres: '',
+      numero: '',
+      correo: '',
+      direccion: '',
+      cuenta: '',
+      tipoCuenta: '',
+      banco: '',
+      otroBanco: '',
+      ciudad: '',
       acepta: false,
     });
     setTocado({});

@@ -12,7 +12,6 @@ export interface DonationPayload {
   monto_donar: number;
   acepta_aporte_voluntario: boolean;
   acepta_tratamiento_datos: boolean;
-  provincia: string;
   ciudad: string;
   requiere_factura: boolean; 
 }
@@ -22,8 +21,7 @@ export class DonationService {
       const requiredFields = [
         'cedula_ruc', 'nombres_completos', 'numero_telefono', 'correo_electronico',
         'direccion', 'numero_cuenta', 'tipo_cuenta', 'banco_cooperativa',
-        'monto_donar', 'acepta_aporte_voluntario', 'acepta_tratamiento_datos',
-        'provincia', 'ciudad'
+        'monto_donar', 'acepta_aporte_voluntario', 'acepta_tratamiento_datos', 'ciudad'
       ];    const missingFields = requiredFields.filter(field => {
       const value = payload[field as keyof DonationPayload];
       return value === undefined || value === null || value === '';
@@ -69,7 +67,6 @@ export class DonationService {
       monto_donar: monto,
       acepta_aporte_voluntario: form.acepta,
       acepta_tratamiento_datos: termsChecked,
-      provincia: form.provincia,
       ciudad: form.ciudad,
       requiere_factura: quiereFactura,
     };

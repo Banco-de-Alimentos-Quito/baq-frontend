@@ -4,6 +4,7 @@ interface PaymentConfirmRequest {
   id: number;
   clientTransactionId: string;
   userId: string;
+  direccion?: string;
 }
 
 interface PaymentConfirmResponse {
@@ -23,10 +24,10 @@ export class PaymentService {
   static async confirmPayPhoneTransaction(
     id: number,
     clientTransactionId: string,
-    userId: string
+    userId: string,
+    direccion: string
   ): Promise<PaymentConfirmResponse> {
     try {
-
       const response = await fetch(`${this.baseUrl}/payphone/confirm`, {
         method: "POST",
         headers: {
@@ -37,6 +38,7 @@ export class PaymentService {
           id,
           clientTransactionId,
           userId,
+          direccion,
         } as PaymentConfirmRequest),
       });
 
@@ -63,31 +65,33 @@ export class PaymentService {
    */
   static async confirmPagoPluxTransaction(
     email: any,
-    idTransaction:any
+    idTransaction: any,
+    direccion?: string
   ): Promise<PaymentConfirmResponse> {
     try {
-
       const userId = getOrCreateUserId();
+
+      // Obtener dirección del sessionStorage si no se proporcionó
+      const direccionToUse =
+        direccion || sessionStorage.getItem("direccionDonador") || "";
 
       // Extraer y estructurar los datos que quieres enviar al backend
 
       const dataToSend = {
         id_transaction: idTransaction,
         user_id: userId,
-        email: email
+        email: email,
+        direccion: direccionToUse
       };
 
-      await fetch(
-        `${this.baseUrl}/pagoplux/transaccion-pendiente`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: JSON.stringify(dataToSend),
-        }
-      );
+      await fetch(`${this.baseUrl}/pagoplux/transaccion-pendiente`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(dataToSend),
+      });
 
       // if (!reponse.ok) {
       //   const errorText = await reponse.text();

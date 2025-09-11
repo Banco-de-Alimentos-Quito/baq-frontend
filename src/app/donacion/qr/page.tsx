@@ -322,6 +322,8 @@ function QRContent() {
         });
         console.log('✅ Toast de APPROVED mostrado');
         
+        localStorage.removeItem("direccionDonador"); // <-- Borra la dirección después de enviar al backend
+      
         // Cerrar modal de loading ANTES de abrir el modal de confirmación
         setShowLoadingModal(false);
 

@@ -10,7 +10,6 @@ export type FormData = {
   tipoCuenta: string;
   banco: string;
   otroBanco: string;
-  provincia: string;
   ciudad: string;
   acepta: boolean;
 };
@@ -121,14 +120,6 @@ export function useFormValidation() {
         }
         break;
 
-      case 'provincia':
-        if (value) {
-          isValid = value.trim().length >= 2;
-          if (!isValid) {
-            errorMessage = 'Debe seleccionar una provincia.';
-          }
-        }
-        break;
     }
 
     setValidationState(prev => ({ ...prev, [name]: isValid }));

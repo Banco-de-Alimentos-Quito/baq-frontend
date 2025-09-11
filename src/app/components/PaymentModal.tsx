@@ -63,6 +63,7 @@ export default function PaymentModal({
     email: "",
     phone: "",
   });
+  const [direccion, setDireccion] = useState("");
 
   if (!isOpen) return null;
   const goToDeuna = () => {
@@ -98,14 +99,14 @@ export default function PaymentModal({
 
   const formGoToPagoPlux = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!ppxUserData.email || !ppxUserData.phone) {
       alert("Por favor, completa todos los campos");
       return;
     }
     // 3. Validar los datos con el esquema de Zod
     const result = PpxUserSchema.safeParse(ppxUserData);
-    
+
     if (!result.success) {
       // Si la validación falla, actualiza el estado de errores
       const errors = result.error.flatten().fieldErrors;
@@ -115,15 +116,16 @@ export default function PaymentModal({
       });
       return;
     }
-    
+
     // Si la validación es exitosa, limpia los errores
     setValidationErrors({ email: "", phone: "" });
-    
+
+    sessionStorage.setItem("direccionDonador", direccion);
+
     // Cerrar modales
     setIsPpxFormOpen(false);
     onClose();
-    
-    
+
     const userId = getOrCreateUserId();
 
     // Redirigir a la página de PagoPlux con los datos validados
@@ -132,6 +134,7 @@ export default function PaymentModal({
       email: result.data.email,
       phone: result.data.phone,
       user_id: userId,
+      direccion: encodeURIComponent(direccion),
     });
     router.push(`/donacion/pagoplux?${params.toString()}`);
   };
@@ -238,10 +241,7 @@ export default function PaymentModal({
             <h2 className="text-center text-2xl font-extrabold text-[#2F3388] mb-6">
               Información de Contacto
             </h2>
-            <form
-              onSubmit={formGoToPagoPlux}
-              className="flex flex-col gap-4"
-            >
+            <form onSubmit={formGoToPagoPlux} className="flex flex-col gap-4">
               <div className="flex flex-col">
                 <label className="text-sm font-semibold text-gray-600 mb-1">
                   Correo Electrónico *
@@ -306,6 +306,23 @@ export default function PaymentModal({
                     {validationErrors.phone}
                   </p>
                 )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Dirección
+                </label>
+                <input
+                  type="text"
+                  value={direccion}
+                  onChange={(e) => setDireccion(e.target.value)}
+                  placeholder="Ingresa tu dirección"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  required
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Ingresa la dirección para la factura
+                </p>
               </div>
 
               <button
