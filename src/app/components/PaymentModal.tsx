@@ -63,6 +63,7 @@ export default function PaymentModal({
     email: "",
     phone: "",
   });
+  const [ciudad, setCiudad] = useState("");
   const [direccion, setDireccion] = useState("");
 
   if (!isOpen) return null;
@@ -135,6 +136,7 @@ export default function PaymentModal({
       phone: result.data.phone,
       user_id: userId,
       direccion: encodeURIComponent(direccion),
+      ciudad: encodeURIComponent(ciudad),
     });
     router.push(`/donacion/pagoplux?${params.toString()}`);
   };
@@ -165,14 +167,32 @@ export default function PaymentModal({
             Selecciona tu método de pago
           </h2>
           <div className="flex flex-col gap-4">
-            {cantidad > 0 && ( // Solo mostrar si hay un monto válido
-              <Paypal
-                amount={cantidad}
-                productDescription="Donación al Banco de Alimentos de Quito"
-                successUrl="thank-you"
-              />
+            {cantidad >= 50 ? (
+              <button
+                className="flex items-center justify-center gap-2 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-blue-400 text-white font-semibold hover:from-blue-700 hover:to-blue-500 transition"
+                onClick={() => {
+                  onClose();
+                  router.push(`/donacion/paypal?monto=${cantidad}`);
+                }}
+              >
+                <img
+                  src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_74x46.jpg"
+                  alt="PayPal"
+                  className="h-6"
+                />
+                Pagar con PayPal
+              </button>
+            ) : (
+              <div className="flex items-center justify-center py-3">
+                <div style={{ width: "100%" }}>
+                  <Paypal
+                    amount={cantidad}
+                    productDescription={`Donación BAQ - ${cantidad} USD`}
+                    successUrl="thank-you"
+                  />
+                </div>
+              </div>
             )}
-
             {/* <PpxButton data={dynamicPayboxData} /> */}
 
             <button
@@ -306,6 +326,23 @@ export default function PaymentModal({
                     {validationErrors.phone}
                   </p>
                 )}
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Ciudad
+                </label>
+                <input
+                  type="text"
+                  value={ciudad}
+                  onChange={(e) => setCiudad(e.target.value)}
+                  placeholder="Ingresa tu ciudad"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  required
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Ingresa la ciudad para la factura
+                </p>
               </div>
 
               <div>

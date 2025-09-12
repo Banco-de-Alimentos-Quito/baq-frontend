@@ -25,7 +25,8 @@ export class PaymentService {
     id: number,
     clientTransactionId: string,
     userId: string,
-    direccion: string
+    address: string,
+    city?: string,
   ): Promise<PaymentConfirmResponse> {
     try {
       const response = await fetch(`${this.baseUrl}/payphone/confirm`, {
@@ -38,7 +39,8 @@ export class PaymentService {
           id,
           clientTransactionId,
           userId,
-          direccion,
+          address,
+          city,
         } as PaymentConfirmRequest),
       });
 
@@ -66,7 +68,9 @@ export class PaymentService {
   static async confirmPagoPluxTransaction(
     email: any,
     idTransaction: any,
-    direccion?: string
+    userPhone: string,
+    direccion?: string,
+    ciudad?: string,
   ): Promise<PaymentConfirmResponse> {
     try {
       const userId = getOrCreateUserId();
@@ -75,13 +79,19 @@ export class PaymentService {
       const direccionToUse =
         direccion || sessionStorage.getItem("direccionDonador") || "";
 
+      // Obtener ciudad del sessionStorage si no se proporcionó
+      const cityToSend =
+        ciudad || sessionStorage.getItem("ciudadDonador") || "";
+
       // Extraer y estructurar los datos que quieres enviar al backend
 
       const dataToSend = {
         id_transaction: idTransaction,
         user_id: userId,
         email: email,
-        direccion: direccionToUse
+        phone: userPhone,
+        direccion: direccionToUse,
+        ciudad: cityToSend,
       };
 
       await fetch(`${this.baseUrl}/pagoplux/transaccion-pendiente`, {

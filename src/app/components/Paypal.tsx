@@ -56,6 +56,9 @@ export default function PayPalButton({
                 const transacction = data;
                 const userId = getOrCreateUserId();
 
+                const identificacionDonante = sessionStorage.getItem("donanteIdentificacion") || "";
+                const direccionDonante = sessionStorage.getItem("donanteDireccion") || "";
+
                 await fetch(`${process.env.NEXT_PUBLIC_API_URL}/paypal/capture-order`, {
                   method: "POST",
                   headers: {
@@ -64,6 +67,8 @@ export default function PayPalButton({
                   body: JSON.stringify({
                     data: transacction,
                     userId: userId,
+                    identificacionDonante,
+                    direccionDonante,
                   }),
                 });
 
@@ -110,9 +115,10 @@ export default function PayPalButton({
           }
         }}
       />
-      <div id="smart-button-container">
+      <div id="smart-button-container" className="relative z-10">
         <div style={{ textAlign: "center" }}>
-          <div ref={containerRef} id="paypal-button-container"></div>
+          {/* Agregar margen suficiente para evitar que el botón quede muy pegado al texto */}
+          <div ref={containerRef} id="paypal-button-container" style={{ margin: "0 auto" }}></div>
         </div>
       </div>
     </>

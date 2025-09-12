@@ -1,9 +1,9 @@
 import { PaymentService } from "../services/paymentService";
 
-const generatePayboxData = (amount, userEmail, userPhone) => {
+const generatePayboxData = (amount, userEmail, userPhone, direccion, ciudad) => {
   return {
     /* Requerido. Email de la cuenta PagoPlux del Establecimiento */
-    PayboxRemail: "administracion@baq.ec",
+    PayboxRemail: "direccion@baq.ec",
     /* Requerido. Email del usuario que realiza el pago */
     //userEmail ||
     PayboxSendmail: userEmail,
@@ -27,13 +27,13 @@ const generatePayboxData = (amount, userEmail, userPhone) => {
     * Production: false (Modo Prueba, se realizarán cobros de prueba y no   
     se guardará ni afectará al sistema) 
     */
-    PayboxProduction: true,
+    PayboxProduction: false,
     /* Requerido Ambiente de ejecución 
     * prod: Modo Producción, Se procesarán cobros y se cargarán al sistema,   
     afectará a la tdc. 
     * sandbox: Modo Prueba, se realizarán cobros de prueba 
     */
-    PayboxEnvironment: "prod",
+    PayboxEnvironment: "sandbox",
     /* Requerido. Lenguaje del Paybox
      * Español: es | (string) (Paybox en español)
      */
@@ -68,7 +68,7 @@ const generatePayboxData = (amount, userEmail, userPhone) => {
   Id o nombre exacto del plan registrado en el comercio en la   
   plataforma de pagoplux 
 */
-    PayboxIdPlan: "1608",
+    PayboxIdPlan: "837",
     /** 
 * true -> los cobros se realizan de manera automática según la 
 frecuencia del plan asignado en PAGOPLUX 
@@ -94,7 +94,10 @@ false -> no se realizará ningún cobro de prueba
         if (response.status === "succeeded") {
            PaymentService.confirmPagoPluxTransaction(
             userEmail,
-            response.detail.id_transaccion
+            response.detail.id_transaccion,
+            userPhone,
+            direccion,
+            ciudad
           );
 
           setTimeout(() => {

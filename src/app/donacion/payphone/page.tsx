@@ -6,7 +6,7 @@ import PayphoneButton from "../../components/PayPhone";
 import PaymentMaintenanceModal from "@/app/components/PaymentMaintenanceModal";
 
 // Componente modal para la dirección
-function AddressModal({ isOpen, onClose, direccion, setDireccion, onConfirm }) {
+function AddressModal({ isOpen, onClose, direccion, setDireccion, ciudad, setCiudad, onConfirm }) {
   if (!isOpen) return null;
 
   return (
@@ -24,6 +24,12 @@ function AddressModal({ isOpen, onClose, direccion, setDireccion, onConfirm }) {
           value={direccion}
           onChange={(e) => setDireccion(e.target.value)}
         />
+        <input
+          className="border rounded-lg px-3 py-2 w-full mb-4"
+          placeholder="Ciudad"
+          value={ciudad}
+          onChange={(e) => setCiudad(e.target.value)}
+        />
         <div className="flex justify-end space-x-3">
           <button
             onClick={onClose}
@@ -33,9 +39,9 @@ function AddressModal({ isOpen, onClose, direccion, setDireccion, onConfirm }) {
           </button>
           <button
             onClick={onConfirm}
-            disabled={!billing.direccion.trim()}
+            disabled={!direccion.trim()}
             className={`rounded-lg px-4 py-2 text-white ${
-              billing.direccion.trim()
+              direccion.trim()
                 ? "bg-orange-600 hover:bg-blue-700"
                 : "bg-orange-300 cursor-not-allowed"
             } transition`}
@@ -54,6 +60,7 @@ function PayphonePageContent() {
   const [monto, setMonto] = useState<number>(0);
   const [reference, setReference] = useState<string>("");
   const [direccion, setDireccion] = useState("");
+  const [ciudad, setCiudad] = useState("");
   // Estado para controlar la visibilidad del modal
   const [showAddressModal, setShowAddressModal] = useState(false);
   // Estado para saber si ya se confirmó la dirección
@@ -102,6 +109,7 @@ function PayphonePageContent() {
   const handleConfirmAddress = () => {
     if (direccion.trim()) {
       localStorage.setItem("direccionDonador", direccion);
+      localStorage.setItem("ciudadDonador", ciudad);
       setAddressConfirmed(true);
       setShowAddressModal(false);
     }
@@ -156,11 +164,13 @@ function PayphonePageContent() {
         </div>
 
         {/* Modal para dirección */}
-        <AddressModal 
+        <AddressModal
           isOpen={showAddressModal}
           onClose={() => setShowAddressModal(false)}
           direccion={direccion}
           setDireccion={setDireccion}
+          ciudad={ciudad}
+          setCiudad={setCiudad}
           onConfirm={handleConfirmAddress}
         />
 
@@ -178,17 +188,17 @@ function PayphonePageContent() {
               <PayphoneButton
                 amount={monto}
                 reference={reference || `Donación BAQ - ${monto} USD`}
-                metadata={{ direccion }}
+                metadata={{ direccion, ciudad }}
                 onSuccess={handleSuccess}
                 onError={handleError}
               />
             )}
           </div>
-          
+
           {isHighAmount && (
             <p className="text-sm text-gray-600 mt-3">
-              {addressConfirmed 
-                ? "Dirección de facturación registrada ✓" 
+              {addressConfirmed
+                ? "Dirección de facturación registrada ✓"
                 : "Para montos desde USD 50, se requiere dirección para la factura"}
             </p>
           )}
@@ -212,19 +222,19 @@ function PayphonePageContent() {
 
 export default function PayphonePage() {
   return (
-      <Suspense
-        fallback={
-          <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600 mx-auto mb-4"></div>
-              <p className="text-blue-600 font-semibold">
-                Cargando página de pago...
-              </p>
-            </div>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-blue-600 font-semibold">
+              Cargando página de pago...
+            </p>
           </div>
-        }
-      >
-        <PayphonePageContent />
-      </Suspense>
+        </div>
+      }
+    >
+      <PayphonePageContent />
+    </Suspense>
   );
 }

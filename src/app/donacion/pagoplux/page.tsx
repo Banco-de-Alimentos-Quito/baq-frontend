@@ -23,6 +23,11 @@ function PagoPluxContent() {
     ? decodeURIComponent(direccionFromURL)
     : sessionStorage.getItem("direccionDonador") || "";
 
+  const ciudadFromURL = searchParams.get("ciudad");
+  const ciudad = ciudadFromURL
+    ? decodeURIComponent(ciudadFromURL)
+    : sessionStorage.getItem("ciudadDonador") || "";
+
   useEffect(() => {
     // Verificar que todos los parámetros estén presentes
     if (!monto || !email || !phone) {
@@ -32,7 +37,7 @@ function PagoPluxContent() {
     }
 
     // Generar los datos de configuración para PagoPlux
-    const data = generatePayboxData(monto, email, phone);
+    const data = generatePayboxData(monto, email, phone, direccion, ciudad);
 
     setPayboxData(data);
     setIsLoading(false);
@@ -94,7 +99,15 @@ function PagoPluxContent() {
           </p>
           {payboxData && (
             <div className="flex justify-center">
-              <PpxButton data={{...(typeof payboxData === "object" && payboxData !== null ? payboxData : {}), direccion: direccion}} />
+              <PpxButton
+                data={{
+                  ...(typeof payboxData === "object" && payboxData !== null
+                    ? payboxData
+                    : {}),
+                  direccion: direccion,
+                  ciudad: ciudad,
+                }}
+              />
             </div>
           )}
         </div>
