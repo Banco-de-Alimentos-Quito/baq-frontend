@@ -141,6 +141,22 @@ export default function PaymentModal({
     router.push(`/donacion/pagoplux?${params.toString()}`);
   };
 
+  const getPpxUserSchema = (requireAddress: boolean) =>
+    z.object({
+      email: z
+        .string()
+        .email({ message: "Por favor, ingresa un correo válido." }),
+      phone: z
+        .string()
+        .regex(/^\d{10}$/, { message: "El teléfono debe tener 10 dígitos." }),
+      ...(requireAddress && {
+        ciudad: z.string().min(2, { message: "La ciudad es obligatoria." }),
+        direccion: z
+          .string()
+          .min(5, { message: "La dirección es obligatoria." }),
+      }),
+    });
+
   const handleClosePpxForm = () => {
     setIsPpxFormOpen(false);
     setPpxUserData({ email: "", phone: "" });
@@ -327,40 +343,44 @@ export default function PaymentModal({
                   </p>
                 )}
               </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Ciudad
-                </label>
-                <input
-                  type="text"
-                  value={ciudad}
-                  onChange={(e) => setCiudad(e.target.value)}
-                  placeholder="Ingresa tu ciudad"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  required
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  Ingresa la ciudad para la factura
-                </p>
-              </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Dirección
-                </label>
-                <input
-                  type="text"
-                  value={direccion}
-                  onChange={(e) => setDireccion(e.target.value)}
-                  placeholder="Ingresa tu dirección"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  required
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  Ingresa la dirección para la factura
-                </p>
-              </div>
+              {cantidad >= 50 && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Ciudad
+                  </label>
+                  <input
+                    type="text"
+                    value={ciudad}
+                    onChange={(e) => setCiudad(e.target.value)}
+                    placeholder="Ingresa tu ciudad"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    required
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Ingresa la ciudad para la factura
+                  </p>
+                </div>
+              )}
+
+              {cantidad >= 50 && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Dirección
+                  </label>
+                  <input
+                    type="text"
+                    value={direccion}
+                    onChange={(e) => setDireccion(e.target.value)}
+                    placeholder="Ingresa tu dirección"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    required
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Ingresa la dirección para la factura
+                  </p>
+                </div>
+              )}
 
               <button
                 type="submit"
