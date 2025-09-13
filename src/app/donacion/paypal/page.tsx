@@ -128,8 +128,11 @@ export default function PaypalPage() {
 
   const handleSuccess = () => {
     // Limpiar datos después de un pago exitoso
-    sessionStorage.removeItem("donanteIdentificacion");
-    sessionStorage.removeItem("donanteDireccion");
+    useFormStore.setState({
+      identificacion: "",
+      tipoIdentificacion: "cedula",
+      direccion: "",
+    });
   };
 
   const goBack = () => {

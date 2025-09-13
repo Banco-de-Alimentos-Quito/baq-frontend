@@ -6,22 +6,12 @@ import { Toaster } from "@/components/ui/toaster";
 import Header from "@/components/sections/Header";
 import Footer from "@/components/sections/Footer";
 import LoadingWrapper from "@/components/ui/LoadingWrapper";
-import { useEffect } from "react";
-import { useFormStore } from "./store/formStore";
+import StoreInitializer from "./components/StoreInitializer";
 
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
 });
-
-function StoreInitializer() {
-  useEffect(() => {
-    // Inicializa el userId al cargar la aplicación
-    useFormStore.getState().initUser();
-  }, []);
-
-  return null;
-}
 
 export const metadata: Metadata = {
   title: "Banco de Alimentos de Quito",
@@ -73,6 +63,7 @@ export default function RootLayout({
         </Script>
 
         <StoreInitializer />
+
         <LoadingWrapper>
           <Header />
           <main>{children}</main>

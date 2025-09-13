@@ -37,8 +37,8 @@ function PagoPluxContent() {
   const monto = formStore.monto || montoFromURL || "0";
   const email = formStore.email || emailFromURL || "";
   const phone = formStore.phone || phoneFromURL || "";
-  const direccion = formStore.direccion || "";
-  const ciudad = formStore.ciudad || "";
+  const direccion = formStore.direccion;
+  const ciudad = formStore.ciudad;
 
   useEffect(() => {
     // Verificar que tengamos los datos necesarios

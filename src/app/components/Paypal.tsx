@@ -57,6 +57,13 @@ export default function PayPalButton({
 
                 const { userId, identificacion: identificacionDonante, direccion: direccionDonante } = useFormStore.getState();
 
+                console.log("Datos de la transacción y los que son para enviar al backend:", {
+                  transacction,
+                  userId,
+                  identificacionDonante,
+                  direccionDonante,    
+                });
+
                 await fetch(`${process.env.NEXT_PUBLIC_API_URL}/paypal/capture-order`, {
                   method: "POST",
                   headers: {
@@ -71,7 +78,7 @@ export default function PayPalButton({
                 });
 
                 // Usar router.push en lugar de window.location
-                window.location.href = `/${successUrl}`;
+                //window.location.href = `/${successUrl}`;
               } catch (error) {
                 console.error("Error al procesar el pago:", error);
               }

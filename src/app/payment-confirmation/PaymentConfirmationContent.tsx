@@ -15,13 +15,10 @@ export default function PaymentConfirmationContent() {
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string>("");
 
-  const {
-    direccion,
-    ciudad,
-    isTransactionProcessed,
-    addProcessedTransaction,
-    setPaymentProcessed,
-  } = useFormStore();
+  const formState = useFormStore.getState();
+  
+  const direccion = formState.direccion;
+  const ciudad = formState.ciudad;
 
   useEffect(() => {
     const processPayment = async () => {
@@ -34,15 +31,6 @@ export default function PaymentConfirmationContent() {
         setMessage("Parámetros de transacción inválidos o incompletos");
         return;
       }
-
-      
-      const transactionKey = `${id}-${clientTransactionId}`;
-      
-      if (isTransactionProcessed(id, clientTransactionId)) {
-        router.replace("/thank-you");
-        return;
-      }
-      addProcessedTransaction(id, clientTransactionId, response.amount || 0);
 
       const userId = getOrCreateUserId();
       const numericId = Number(id);
@@ -57,15 +45,6 @@ export default function PaymentConfirmationContent() {
         );
 
         if (response.status === "Approved" || response.status === "Aproved") {
-          // Registrar esta transacción como procesada
-          processedTransactions[transactionKey] = {
-            timestamp: new Date().toISOString(),
-            amount: response.amount || 0,
-          };
-          localStorage.setItem(
-            "processedTransactions",
-            JSON.stringify(processedTransactions)
-          );
 
           // Continuar con el flujo normal
           setStatus("success");
@@ -125,9 +104,6 @@ export default function PaymentConfirmationContent() {
               ¡Pago Exitoso!
             </h1>
             <p className="text-gray-600 mb-4">{message}</p>
-            <p className="text-sm text-gray-500">
-              Redirigiendo a la página de agradecimiento...
-            </p>
           </>
         )}
 
@@ -196,3 +172,4 @@ export default function PaymentConfirmationContent() {
     </div>
   );
 }
+

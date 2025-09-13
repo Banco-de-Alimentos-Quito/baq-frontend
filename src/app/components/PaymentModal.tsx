@@ -9,7 +9,6 @@ import PluxModal from "./PluxModal";
 import { getOrCreateUserId } from "../utils/utils";
 import { useFormStore } from "../store/formStore";
 
-
 interface DeunaForm {
   nombre: string;
   apellido: string;
@@ -289,7 +288,7 @@ export default function PaymentModal({
                 </label>
                 <input
                   type="email"
-                  placeholder="tu@email.com"
+                  placeholder="email.ejemplo@gmail.com"
                   value={ppxUserData.email}
                   onChange={(e) => {
                     setPpxUserData((prev) => ({
@@ -322,7 +321,7 @@ export default function PaymentModal({
                 </label>
                 <input
                   type="tel"
-                  placeholder="0987654321"
+                  placeholder="Ingrresa tu número de teléfono"
                   value={ppxUserData.phone}
                   onChange={(e) => {
                     setPpxUserData((prev) => ({
@@ -348,6 +347,16 @@ export default function PaymentModal({
                   </p>
                 )}
               </div>
+
+              {cantidad >= 50 && (
+                <div className="mb-1">
+                  <p className="text-sm text-gray-700">
+                    <strong>
+                      Para montos mayores o iguales a 50, se requiere realizar la factura con los siguientes datos:
+                    </strong>
+                  </p>
+                </div>
+              )}
 
               {cantidad >= 50 && (
                 <div>
