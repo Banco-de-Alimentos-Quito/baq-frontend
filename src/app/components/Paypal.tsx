@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import Script from "next/script";
-import { getOrCreateUserId } from "../utils/utils";
+import { useFormStore } from "../store/formStore";
 
 interface PayPalButtonProps {
   productDescription?: string;
@@ -54,7 +54,15 @@ export default function PayPalButton({
             onApprove: async function (data: unknown, actions: any) {
               try {
                 const transacction = data;
-                const userId = getOrCreateUserId();
+
+                const { userId, identificacion: identificacionDonante, direccion: direccionDonante } = useFormStore.getState();
+
+                console.log("Datos de la transacción y los que son para enviar al backend:", {
+                  transacction,
+                  userId,
+                  identificacionDonante,
+                  direccionDonante,    
+                });
 
                 await fetch(`${process.env.NEXT_PUBLIC_API_URL}/paypal/capture-order`, {
                   method: "POST",
@@ -64,11 +72,13 @@ export default function PayPalButton({
                   body: JSON.stringify({
                     data: transacction,
                     userId: userId,
+                    identificacionDonante,
+                    direccionDonante,
                   }),
                 });
 
                 // Usar router.push en lugar de window.location
-                window.location.href = `/${successUrl}`;
+                //window.location.href = `/${successUrl}`;
               } catch (error) {
                 console.error("Error al procesar el pago:", error);
               }
@@ -110,9 +120,10 @@ export default function PayPalButton({
           }
         }}
       />
-      <div id="smart-button-container">
+      <div id="smart-button-container" className="relative z-10">
         <div style={{ textAlign: "center" }}>
-          <div ref={containerRef} id="paypal-button-container"></div>
+          {/* Agregar margen suficiente para evitar que el botón quede muy pegado al texto */}
+          <div ref={containerRef} id="paypal-button-container" style={{ margin: "0 auto" }}></div>
         </div>
       </div>
     </>

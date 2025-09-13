@@ -22,7 +22,7 @@ export default function PluxModal({ isOpen, onClose, amount }: PluxModalProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!numeroTarjeta.trim() || !vencimiento.trim() || !cvv.trim() || !cedula.trim()) {
+    if (!numeroTarjeta.trim() || !vencimiento.trim() || !cvv.trim() || !cedula.trim() || !direccion.trim()) {
       alert("Por favor completa todos los campos");
       return;
     }

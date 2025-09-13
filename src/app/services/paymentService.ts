@@ -1,9 +1,11 @@
+import { useFormStore } from "../store/formStore";
 import { getOrCreateUserId } from "../utils/utils";
 
 interface PaymentConfirmRequest {
   id: number;
   clientTransactionId: string;
   userId: string;
+  direccion?: string;
 }
 
 interface PaymentConfirmResponse {
@@ -23,10 +25,11 @@ export class PaymentService {
   static async confirmPayPhoneTransaction(
     id: number,
     clientTransactionId: string,
-    userId: string
+    userId: string,
+    address: string,
+    city?: string
   ): Promise<PaymentConfirmResponse> {
     try {
-
       const response = await fetch(`${this.baseUrl}/payphone/confirm`, {
         method: "POST",
         headers: {
@@ -37,6 +40,8 @@ export class PaymentService {
           id,
           clientTransactionId,
           userId,
+          address,
+          city,
         } as PaymentConfirmRequest),
       });
 
@@ -63,31 +68,38 @@ export class PaymentService {
    */
   static async confirmPagoPluxTransaction(
     email: any,
-    idTransaction:any
+    idTransaction: any,
+    userPhone: string,
+    direccion?: string,
+    ciudad?: string
   ): Promise<PaymentConfirmResponse> {
     try {
 
-      const userId = getOrCreateUserId();
+      // Obtener dirección del sessionStorage si no se proporcionó
+      const formState = useFormStore.getState();
+      const userId = formState.userId;
+      const direccionToUse = direccion || formState.direccion;
+      const cityToSend = ciudad || formState.ciudad;
 
       // Extraer y estructurar los datos que quieres enviar al backend
 
       const dataToSend = {
         id_transaction: idTransaction,
         user_id: userId,
-        email: email
+        email: email,
+        phone: userPhone,
+        direccion: direccionToUse,
+        ciudad: cityToSend,
       };
 
-      await fetch(
-        `${this.baseUrl}/pagoplux/transaccion-pendiente`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: JSON.stringify(dataToSend),
-        }
-      );
+      await fetch(`${this.baseUrl}/pagoplux/transaccion-pendiente`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(dataToSend),
+      });
 
       // if (!reponse.ok) {
       //   const errorText = await reponse.text();

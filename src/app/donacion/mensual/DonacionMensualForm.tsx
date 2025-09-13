@@ -24,16 +24,16 @@ export default function DonacionMensualForm() {
   }, [quiereFactura]);
 
   const [form, setForm] = useState<FormData>({
-    cedula: "",
-    nombres: "",
-    numero: "",
-    correo: "",
-    direccion: "",
-    cuenta: "",
-    tipoCuenta: "",
-    banco: "",
-    otroBanco: "",
-    ciudad: "",
+    cedula: '',
+    nombres: '',
+    numero: '',
+    correo: '',
+    direccion: '',
+    cuenta: '',
+    tipoCuenta: '',
+    banco: '',
+    otroBanco: '',
+    ciudad: '',
     acepta: false,
   });
 
@@ -191,16 +191,16 @@ export default function DonacionMensualForm() {
   const handleCloseSuccessModal = () => {
     setShowSuccessModal(false);
     setForm({
-      cedula: "",
-      nombres: "",
-      numero: "",
-      correo: "",
-      direccion: "",
-      cuenta: "",
-      tipoCuenta: "",
-      banco: "",
-      otroBanco: "",
-      ciudad: "",
+      cedula: '',
+      nombres: '',
+      numero: '',
+      correo: '',
+      direccion: '',
+      cuenta: '',
+      tipoCuenta: '',
+      banco: '',
+      otroBanco: '',
+      ciudad: '',
       acepta: false,
     });
     setTocado({});

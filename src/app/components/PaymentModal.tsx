@@ -7,6 +7,7 @@ import Paypal from "../components/Paypal";
 import { z } from "zod";
 import PluxModal from "./PluxModal";
 import { getOrCreateUserId } from "../utils/utils";
+import { useFormStore } from "../store/formStore";
 
 interface DeunaForm {
   nombre: string;
@@ -63,6 +64,8 @@ export default function PaymentModal({
     email: "",
     phone: "",
   });
+  const [ciudad, setCiudad] = useState("");
+  const [direccion, setDireccion] = useState("");
 
   if (!isOpen) return null;
   const goToDeuna = () => {
@@ -98,14 +101,14 @@ export default function PaymentModal({
 
   const formGoToPagoPlux = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!ppxUserData.email || !ppxUserData.phone) {
       alert("Por favor, completa todos los campos");
       return;
     }
     // 3. Validar los datos con el esquema de Zod
     const result = PpxUserSchema.safeParse(ppxUserData);
-    
+
     if (!result.success) {
       // Si la validación falla, actualiza el estado de errores
       const errors = result.error.flatten().fieldErrors;
@@ -115,16 +118,20 @@ export default function PaymentModal({
       });
       return;
     }
-    
+
     // Si la validación es exitosa, limpia los errores
     setValidationErrors({ email: "", phone: "" });
-    
+
+    useFormStore.setState({
+      direccion,
+      ciudad,
+    });
+
     // Cerrar modales
     setIsPpxFormOpen(false);
     onClose();
-    
-    
-    const userId = getOrCreateUserId();
+
+    const { userId } = useFormStore.getState();
 
     // Redirigir a la página de PagoPlux con los datos validados
     const params = new URLSearchParams({
@@ -132,9 +139,27 @@ export default function PaymentModal({
       email: result.data.email,
       phone: result.data.phone,
       user_id: userId,
+      direccion: encodeURIComponent(direccion),
+      ciudad: encodeURIComponent(ciudad),
     });
     router.push(`/donacion/pagoplux?${params.toString()}`);
   };
+
+  const getPpxUserSchema = (requireAddress: boolean) =>
+    z.object({
+      email: z
+        .string()
+        .email({ message: "Por favor, ingresa un correo válido." }),
+      phone: z
+        .string()
+        .regex(/^\d{10}$/, { message: "El teléfono debe tener 10 dígitos." }),
+      ...(requireAddress && {
+        ciudad: z.string().min(2, { message: "La ciudad es obligatoria." }),
+        direccion: z
+          .string()
+          .min(5, { message: "La dirección es obligatoria." }),
+      }),
+    });
 
   const handleClosePpxForm = () => {
     setIsPpxFormOpen(false);
@@ -162,14 +187,32 @@ export default function PaymentModal({
             Selecciona tu método de pago
           </h2>
           <div className="flex flex-col gap-4">
-            {cantidad > 0 && ( // Solo mostrar si hay un monto válido
-              <Paypal
-                amount={cantidad}
-                productDescription="Donación al Banco de Alimentos de Quito"
-                successUrl="thank-you"
-              />
+            {cantidad >= 50 ? (
+              <button
+                className="flex items-center justify-center gap-2 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-blue-400 text-white font-semibold hover:from-blue-700 hover:to-blue-500 transition"
+                onClick={() => {
+                  onClose();
+                  router.push(`/donacion/paypal?monto=${cantidad}`);
+                }}
+              >
+                <img
+                  src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_74x46.jpg"
+                  alt="PayPal"
+                  className="h-6"
+                />
+                Pagar con PayPal
+              </button>
+            ) : (
+              <div className="flex items-center justify-center py-3">
+                <div style={{ width: "100%" }}>
+                  <Paypal
+                    amount={cantidad}
+                    productDescription={`Donación BAQ - ${cantidad} USD`}
+                    successUrl="thank-you"
+                  />
+                </div>
+              </div>
             )}
-
             {/* <PpxButton data={dynamicPayboxData} /> */}
 
             <button
@@ -238,17 +281,14 @@ export default function PaymentModal({
             <h2 className="text-center text-2xl font-extrabold text-[#2F3388] mb-6">
               Información de Contacto
             </h2>
-            <form
-              onSubmit={formGoToPagoPlux}
-              className="flex flex-col gap-4"
-            >
+            <form onSubmit={formGoToPagoPlux} className="flex flex-col gap-4">
               <div className="flex flex-col">
                 <label className="text-sm font-semibold text-gray-600 mb-1">
                   Correo Electrónico *
                 </label>
                 <input
                   type="email"
-                  placeholder="tu@email.com"
+                  placeholder="email.ejemplo@gmail.com"
                   value={ppxUserData.email}
                   onChange={(e) => {
                     setPpxUserData((prev) => ({
@@ -281,7 +321,7 @@ export default function PaymentModal({
                 </label>
                 <input
                   type="tel"
-                  placeholder="0987654321"
+                  placeholder="Ingrresa tu número de teléfono"
                   value={ppxUserData.phone}
                   onChange={(e) => {
                     setPpxUserData((prev) => ({
@@ -307,6 +347,54 @@ export default function PaymentModal({
                   </p>
                 )}
               </div>
+
+              {cantidad >= 50 && (
+                <div className="mb-1">
+                  <p className="text-sm text-gray-700">
+                    <strong>
+                      Para montos mayores o iguales a 50, se requiere realizar la factura con los siguientes datos:
+                    </strong>
+                  </p>
+                </div>
+              )}
+
+              {cantidad >= 50 && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Ciudad
+                  </label>
+                  <input
+                    type="text"
+                    value={ciudad}
+                    onChange={(e) => setCiudad(e.target.value)}
+                    placeholder="Ingresa tu ciudad"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    required
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Ingresa la ciudad para la factura
+                  </p>
+                </div>
+              )}
+
+              {cantidad >= 50 && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Dirección
+                  </label>
+                  <input
+                    type="text"
+                    value={direccion}
+                    onChange={(e) => setDireccion(e.target.value)}
+                    placeholder="Ingresa tu dirección"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    required
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Ingresa la dirección para la factura
+                  </p>
+                </div>
+              )}
 
               <button
                 type="submit"
