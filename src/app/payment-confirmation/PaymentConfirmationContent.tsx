@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { PaymentService } from "../services/paymentService";
 import { getOrCreateUserId } from "../utils/utils";
+import { useFormStore } from "../store/formStore";
 
 export default function PaymentConfirmationContent() {
   const searchParams = useSearchParams();
@@ -13,6 +14,14 @@ export default function PaymentConfirmationContent() {
   >("processing");
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string>("");
+
+  const {
+    direccion,
+    ciudad,
+    isTransactionProcessed,
+    addProcessedTransaction,
+    setPaymentProcessed,
+  } = useFormStore();
 
   useEffect(() => {
     const processPayment = async () => {
@@ -26,31 +35,25 @@ export default function PaymentConfirmationContent() {
         return;
       }
 
-      // Comprobar si esta transacción ya fue procesada
-      const processedTransactions = JSON.parse(
-        localStorage.getItem("processedTransactions") || "{}"
-      );
+      
       const transactionKey = `${id}-${clientTransactionId}`;
-
-      if (processedTransactions[transactionKey]) {
+      
+      if (isTransactionProcessed(id, clientTransactionId)) {
         router.replace("/thank-you");
         return;
       }
+      addProcessedTransaction(id, clientTransactionId, response.amount || 0);
 
       const userId = getOrCreateUserId();
-
       const numericId = Number(id);
-
-      const direccion = localStorage.getItem("direccionDonador") || "";
-      const ciudad = localStorage.getItem("ciudadDonador") || "";
 
       try {
         const response = await PaymentService.confirmPayPhoneTransaction(
           numericId,
           clientTransactionId,
           userId,
-          direccion,
-          ciudad
+          direccion, // obtener del store
+          ciudad // Obtener del store
         );
 
         if (response.status === "Approved" || response.status === "Aproved") {

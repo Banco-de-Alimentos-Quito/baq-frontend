@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { z } from "zod";
 import Paypal from "../../components/Paypal";
+import { useFormStore } from "../../store/formStore";
 
 // Esquema de validación
 const FormSchema = z.object({
@@ -12,7 +13,8 @@ const FormSchema = z.object({
     .min(5, { message: "La dirección debe tener al menos 5 caracteres" })
     .max(200, { message: "La dirección no puede superar los 200 caracteres" })
     .regex(/^[A-Za-z0-9\s\.,#\-]+$/, {
-        message: "La dirección solo puede contener letras, números, espacios y los caracteres . , # -",
+      message:
+        "La dirección solo puede contener letras, números, espacios y los caracteres . , # -",
     })
     .trim(),
   direccion: z
@@ -113,12 +115,11 @@ export default function PaypalPage() {
     }
 
     // Guardar datos en sessionStorage para uso posterior
-    sessionStorage.setItem("donanteIdentificacion", formData.identificacion);
-    sessionStorage.setItem(
-      "donanteTipoIdentificacion",
-      formData.tipoIdentificacion
-    );
-    sessionStorage.setItem("donanteDireccion", formData.direccion);
+    useFormStore.setState({
+      identificacion: formData.identificacion,
+      tipoIdentificacion: formData.tipoIdentificacion,
+      direccion: formData.direccion,
+    });
 
     // Marcar como enviado para mostrar PayPal
     setFormSubmitted(true);

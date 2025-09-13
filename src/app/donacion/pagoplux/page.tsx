@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import PpxButton from "../../components/PluxButton";
 import { generatePayboxData } from "../../configuration/ppx.data";
 import Image from "next/image";
-import PaymentMaintenanceModal from "@/app/components/PaymentMaintenanceModal";
+import { useFormStore } from "@/app/store/formStore";
 
 function PagoPluxContent() {
   const router = useRouter();
@@ -13,35 +13,47 @@ function PagoPluxContent() {
   const [isLoading, setIsLoading] = useState(true);
   const [payboxData, setPayboxData] = useState(null);
 
-  const monto = searchParams.get("monto");
-  const email = searchParams.get("email");
-  const phone = searchParams.get("phone");
+  const montoFromURL = searchParams.get("monto");
+  const emailFromURL = searchParams.get("email");
+  const phoneFromURL = searchParams.get("phone");
 
   // Recuperar dirección de URL o sessionStorage
-  const direccionFromURL = searchParams.get("direccion");
-  const direccion = direccionFromURL
-    ? decodeURIComponent(direccionFromURL)
-    : sessionStorage.getItem("direccionDonador") || "";
-
-  const ciudadFromURL = searchParams.get("ciudad");
-  const ciudad = ciudadFromURL
-    ? decodeURIComponent(ciudadFromURL)
-    : sessionStorage.getItem("ciudadDonador") || "";
+  const formStore = useFormStore.getState();
 
   useEffect(() => {
-    // Verificar que todos los parámetros estén presentes
+    // Si hay datos en la URL, actualizar el store
+    if (montoFromURL) {
+      formStore.setFormField("monto", montoFromURL);
+    }
+    if (emailFromURL) {
+      formStore.setFormField("email", emailFromURL);
+    }
+    if (phoneFromURL) {
+      formStore.setFormField("phone", phoneFromURL);
+    }
+  }, [montoFromURL, emailFromURL, phoneFromURL, formStore]);
+
+  // Usar los datos del store (con fallback a la URL)
+  const monto = formStore.monto || montoFromURL || "0";
+  const email = formStore.email || emailFromURL || "";
+  const phone = formStore.phone || phoneFromURL || "";
+  const direccion = formStore.direccion || "";
+  const ciudad = formStore.ciudad || "";
+
+  useEffect(() => {
+    // Verificar que tengamos los datos necesarios
     if (!monto || !email || !phone) {
-      //alert("Datos de pago incompletos. Redirigiendo...");
-      //router.push("/donacion");
-      //return;
+      // Opcionalmente redirigir si faltan datos
+      // router.push("/donacion");
+      // return;
     }
 
     // Generar los datos de configuración para PagoPlux
     const data = generatePayboxData(monto, email, phone, direccion, ciudad);
-
     setPayboxData(data);
     setIsLoading(false);
-  }, [monto, email, phone, router]);
+  }, [monto, email, phone, direccion, ciudad, router]);
+
 
   const handleGoBack = () => {
     router.push("/donacion");

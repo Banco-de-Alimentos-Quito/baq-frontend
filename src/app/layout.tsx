@@ -1,16 +1,27 @@
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-import Script from 'next/script';
-import './globals.css';
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import Script from "next/script";
+import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import Header from "@/components/sections/Header";
 import Footer from "@/components/sections/Footer";
 import LoadingWrapper from "@/components/ui/LoadingWrapper";
+import { useEffect } from "react";
+import { useFormStore } from "./store/formStore";
 
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
 });
+
+function StoreInitializer() {
+  useEffect(() => {
+    // Inicializa el userId al cargar la aplicación
+    useFormStore.getState().initUser();
+  }, []);
+
+  return null;
+}
 
 export const metadata: Metadata = {
   title: "Banco de Alimentos de Quito",
@@ -43,7 +54,10 @@ export default function RootLayout({
         */}
       </head>
 
-      <body suppressHydrationWarning className={`${inter.variable} font-sans antialiased`}>
+      <body
+        suppressHydrationWarning
+        className={`${inter.variable} font-sans antialiased`}
+      >
         {/* Google Analytics */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-XJNTP3SK76"
@@ -55,9 +69,10 @@ export default function RootLayout({
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
             gtag('config', 'G-XJNTP3SK76');
-          `}
+            `}
         </Script>
-        
+
+        <StoreInitializer />
         <LoadingWrapper>
           <Header />
           <main>{children}</main>

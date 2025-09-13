@@ -11,6 +11,7 @@ import DonationStreakPopup from "./DonationStreakPopup";
 import DonationStreakMinimized from "./DonationStreakMinimized";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useFormStore } from "../store/formStore";
 
 export default function ThankYou() {
   const router = useRouter();
@@ -186,7 +187,7 @@ export default function ThankYou() {
     const cleanup = preventReturn();
 
     // Limpiar el estado de procesamiento
-    sessionStorage.setItem("paymentProcessed", "true");
+    useFormStore.setState({ paymentProcessed: true });
 
     return cleanup;
   }, [router]);
