@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { z } from "zod";
 import Paypal from "../../components/Paypal";
@@ -31,7 +31,7 @@ const FormSchema = z.object({
 
 type FormData = z.infer<typeof FormSchema>;
 
-export default function PaypalPage() {
+function PaypalPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [monto, setMonto] = useState<number>(0);
@@ -377,5 +377,13 @@ export default function PaypalPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function PaypalPage() {
+  return (
+    <Suspense fallback={<div>Cargando...</div>}>
+      <PaypalPageContent />
+    </Suspense>
   );
 }
