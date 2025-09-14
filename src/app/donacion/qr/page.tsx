@@ -77,8 +77,8 @@ function QRContent() {
       console.log('👤 User ID obtenido:', userId);
 
       console.log('🔧 Creando datos de transacción...');
-      // Crear referencia única para la transacción que incluya el user_id
-      const transactionRef = `BAQ-${userId}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const transactionRef = `BAQ-${(Date.now().toString() + Math.random().
+      toString().substr(2, 6)).substr(0, 15)}`;
       console.log('🆔 Referencia de transacción generada:', transactionRef);
 
       // Crear detalle de la transacción - siempre "Donación BAQ"
