@@ -187,31 +187,63 @@ export default function PaymentModal({
             Selecciona tu método de pago
           </h2>
           <div className="flex flex-col gap-4">
-            {cantidad >= 50 ? (
-              <button
-                className="flex items-center justify-center gap-2 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-blue-400 text-white font-semibold hover:from-blue-700 hover:to-blue-500 transition"
-                onClick={() => {
-                  onClose();
-                  router.push(`/donacion/paypal?monto=${cantidad}`);
-                }}
-              >
-                <img
-                  src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_74x46.jpg"
-                  alt="PayPal"
-                  className="h-6"
-                />
-                Pagar con PayPal
-              </button>
-            ) : (
-              <div className="flex items-center justify-center py-3">
-                <div style={{ width: "100%" }}>
-                  <Paypal
-                    amount={cantidad}
-                    productDescription={`Donación BAQ - ${cantidad} USD`}
-                    successUrl="thank-you"
+            {cantidad >= 1 ? (
+              <>
+                <button
+                  className="flex items-center justify-center gap-2 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-blue-400 text-white font-semibold hover:from-blue-700 hover:to-blue-500 transition"
+                  onClick={() => {
+                    onClose();
+                    router.push(`/donacion/paypal?monto=${cantidad}`);
+                  }}
+                >
+                  <img
+                    src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_74x46.jpg"
+                    alt="PayPal"
+                    className="h-6"
                   />
+                  Pagar con PayPal
+                </button>
+                
+                <button
+                  className="flex items-center justify-center gap-2 py-3 rounded-lg bg-gradient-to-r from-orange-600 to-orange-400 text-white font-semibold hover:from-orange-700 hover:to-orange-500 transition"
+                  onClick={() => {
+                    onClose();
+                    router.push(`/donacion/deuna?monto=${cantidad}`);
+                  }}
+                >
+                  <img
+                    src="https://vectorseek.com/wp-content/uploads/2023/08/Deuna-Wordmark-Logo-Vector.svg-.png"
+                    alt="DeUna"
+                    className="h-6"
+                  />
+                  Pagar con DeUna
+                </button>
+              </>
+            ) : (
+              <>
+                <div className="flex items-center justify-center py-3">
+                  <div style={{ width: "100%" }}>
+                    <Paypal
+                      amount={cantidad}
+                      productDescription={`Donación BAQ - ${cantidad} USD`}
+                      successUrl="thank-you"
+                    />
+                  </div>
                 </div>
-              </div>
+                
+                {/* ✅ NUEVO: Botón DeUna directo para montos < $50 (sin formulario) */}
+                <button
+                  className="flex items-center justify-center gap-2 py-3 rounded-lg bg-gradient-to-r from-orange-600 to-orange-400 text-white font-semibold hover:from-orange-700 hover:to-orange-500 transition"
+                  onClick={goToDeuna}
+                >
+                  <img
+                    src="https://vectorseek.com/wp-content/uploads/2023/08/Deuna-Wordmark-Logo-Vector.svg-.png"
+                    alt="DeUna"
+                    className="h-6"
+                  />
+                  Pagar con DeUna
+                </button>
+              </>
             )}
             {/* <PpxButton data={dynamicPayboxData} /> */}
 
@@ -236,17 +268,6 @@ export default function PaymentModal({
               Pagar con Payphone
             </button>
 
-            <button
-              className="flex items-center justify-center gap-2 py-3 rounded-lg bg-gradient-to-r from-orange-500 to-orange-300 text-white font-semibold hover:from-[#2F3388] hover:to-[#ff7300] transition"
-              onClick={goToDeuna}
-            >
-              <img
-                src="https://vectorseek.com/wp-content/uploads/2023/08/Deuna-Wordmark-Logo-Vector.svg-.png"
-                alt="DeUna"
-                className="h-6"
-              />
-              Pagar con DeUna (QR)
-            </button>
           </div>
           <p className="mt-4 text-center text-sm text-gray-500">
             *DeUna: pagos con QR solo para Ecuador
@@ -348,17 +369,7 @@ export default function PaymentModal({
                 )}
               </div>
 
-              {cantidad >= 50 && (
-                <div className="mb-1">
-                  <p className="text-sm text-gray-700">
-                    <strong>
-                      Para montos mayores o iguales a 50, se requiere realizar la factura con los siguientes datos:
-                    </strong>
-                  </p>
-                </div>
-              )}
-
-              {cantidad >= 50 && (
+              {cantidad >= 1 && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Ciudad
@@ -377,7 +388,7 @@ export default function PaymentModal({
                 </div>
               )}
 
-              {cantidad >= 50 && (
+              {cantidad >= 1 && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Dirección
