@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import Script from "next/script";
-import { getOrCreateUserId } from "../utils/utils";
+import { useFormStore } from "../store/formStore";
 
 interface PayPalButtonProps {
   productDescription?: string;
@@ -54,10 +54,15 @@ export default function PayPalButton({
             onApprove: async function (data: unknown, actions: any) {
               try {
                 const transacction = data;
-                const userId = getOrCreateUserId();
 
-                const identificacionDonante = sessionStorage.getItem("donanteIdentificacion") || "";
-                const direccionDonante = sessionStorage.getItem("donanteDireccion") || "";
+                const { userId, identificacion: identificacionDonante, direccion: direccionDonante } = useFormStore.getState();
+
+                console.log("Datos de la transacción y los que son para enviar al backend:", {
+                  transacction,
+                  userId,
+                  identificacionDonante,
+                  direccionDonante,    
+                });
 
                 await fetch(`${process.env.NEXT_PUBLIC_API_URL}/paypal/capture-order`, {
                   method: "POST",
@@ -73,7 +78,7 @@ export default function PayPalButton({
                 });
 
                 // Usar router.push en lugar de window.location
-                window.location.href = `/${successUrl}`;
+                //window.location.href = `/${successUrl}`;
               } catch (error) {
                 console.error("Error al procesar el pago:", error);
               }

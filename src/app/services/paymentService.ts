@@ -1,3 +1,4 @@
+import { useFormStore } from "../store/formStore";
 import { getOrCreateUserId } from "../utils/utils";
 
 interface PaymentConfirmRequest {
@@ -26,7 +27,7 @@ export class PaymentService {
     clientTransactionId: string,
     userId: string,
     address: string,
-    city?: string,
+    city?: string
   ): Promise<PaymentConfirmResponse> {
     try {
       const response = await fetch(`${this.baseUrl}/payphone/confirm`, {
@@ -70,18 +71,15 @@ export class PaymentService {
     idTransaction: any,
     userPhone: string,
     direccion?: string,
-    ciudad?: string,
+    ciudad?: string
   ): Promise<PaymentConfirmResponse> {
     try {
-      const userId = getOrCreateUserId();
 
       // Obtener dirección del sessionStorage si no se proporcionó
-      const direccionToUse =
-        direccion || sessionStorage.getItem("direccionDonador") || "";
-
-      // Obtener ciudad del sessionStorage si no se proporcionó
-      const cityToSend =
-        ciudad || sessionStorage.getItem("ciudadDonador") || "";
+      const formState = useFormStore.getState();
+      const userId = formState.userId;
+      const direccionToUse = direccion || formState.direccion;
+      const cityToSend = ciudad || formState.ciudad;
 
       // Extraer y estructurar los datos que quieres enviar al backend
 

@@ -7,6 +7,7 @@ import Paypal from "../components/Paypal";
 import { z } from "zod";
 import PluxModal from "./PluxModal";
 import { getOrCreateUserId } from "../utils/utils";
+import { useFormStore } from "../store/formStore";
 
 interface DeunaForm {
   nombre: string;
@@ -121,13 +122,16 @@ export default function PaymentModal({
     // Si la validación es exitosa, limpia los errores
     setValidationErrors({ email: "", phone: "" });
 
-    sessionStorage.setItem("direccionDonador", direccion);
+    useFormStore.setState({
+      direccion,
+      ciudad,
+    });
 
     // Cerrar modales
     setIsPpxFormOpen(false);
     onClose();
 
-    const userId = getOrCreateUserId();
+    const { userId } = useFormStore.getState();
 
     // Redirigir a la página de PagoPlux con los datos validados
     const params = new URLSearchParams({
@@ -305,7 +309,7 @@ export default function PaymentModal({
                 </label>
                 <input
                   type="email"
-                  placeholder="tu@email.com"
+                  placeholder="email.ejemplo@gmail.com"
                   value={ppxUserData.email}
                   onChange={(e) => {
                     setPpxUserData((prev) => ({
@@ -338,7 +342,7 @@ export default function PaymentModal({
                 </label>
                 <input
                   type="tel"
-                  placeholder="0987654321"
+                  placeholder="Ingrresa tu número de teléfono"
                   value={ppxUserData.phone}
                   onChange={(e) => {
                     setPpxUserData((prev) => ({

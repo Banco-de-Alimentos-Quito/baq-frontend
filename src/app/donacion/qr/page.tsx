@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { toast, Toaster } from 'sonner';
 import { getOrCreateUserId } from "@/app/utils/utils";
 import { useMobile } from '@/hooks/use-mobile';
+import { useFormStore } from "@/app/store/formStore";
 
 
 // Componente interno que usa useSearchParams
@@ -439,7 +440,7 @@ function QRContent() {
         });
         console.log('✅ Toast de APPROVED mostrado');
         
-        localStorage.removeItem("direccionDonador"); // <-- Borra la dirección después de enviar al backend
+        useFormStore.getState().clearFormData();
       
         // Cerrar modal de loading ANTES de abrir el modal de confirmación
         setShowLoadingModal(false);

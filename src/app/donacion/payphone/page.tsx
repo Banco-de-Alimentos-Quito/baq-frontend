@@ -4,9 +4,18 @@ import { Suspense, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import PayphoneButton from "../../components/PayPhone";
 import PaymentMaintenanceModal from "@/app/components/PaymentMaintenanceModal";
+import { useFormStore } from "@/app/store/formStore";
 
 // Componente modal para la dirección
-function AddressModal({ isOpen, onClose, direccion, setDireccion, ciudad, setCiudad, onConfirm }) {
+function AddressModal({
+  isOpen,
+  onClose,
+  direccion,
+  setDireccion,
+  ciudad,
+  setCiudad,
+  onConfirm,
+}) {
   if (!isOpen) return null;
 
   return (
@@ -108,8 +117,10 @@ function PayphonePageContent() {
   // Función para confirmar la dirección
   const handleConfirmAddress = () => {
     if (direccion.trim()) {
-      localStorage.setItem("direccionDonador", direccion);
-      localStorage.setItem("ciudadDonador", ciudad);
+      useFormStore.setState({
+        direccion,
+        ciudad,
+      });
       setAddressConfirmed(true);
       setShowAddressModal(false);
     }
