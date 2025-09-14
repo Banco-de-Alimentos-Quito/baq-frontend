@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { z } from "zod";
 
@@ -29,7 +29,8 @@ const FormSchema = z.object({
 
 type FormData = z.infer<typeof FormSchema>;
 
-export default function DeunaPage() {
+// Componente interno que usa useSearchParams
+function DeunaContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [monto, setMonto] = useState<number>(0);
@@ -39,7 +40,6 @@ export default function DeunaPage() {
     direccion: "",
   });
   const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({});
-  const [formSubmitted, setFormSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -309,6 +309,17 @@ export default function DeunaPage() {
           </ul>
         </div>
       </div>
+    </div>
+  );
+}
+
+// Componente principal con Suspense
+export default function DeunaPage() {
+  return (
+    <div style={{ minHeight: "100vh", background: "#f8fafc" }}>
+      <Suspense fallback={<div style={{ paddingTop: 120, textAlign: 'center' }}>Cargando...</div>}>
+        <DeunaContent />
+      </Suspense>
     </div>
   );
 }
