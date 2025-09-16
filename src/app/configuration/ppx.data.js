@@ -3,7 +3,7 @@ import { PaymentService } from "../services/paymentService";
 const generatePayboxData = (amount, userEmail, userPhone, direccion, ciudad) => {
   return {
     /* Requerido. Email de la cuenta PagoPlux del Establecimiento */
-    PayboxRemail: "direccion@baq.ec",
+    PayboxRemail: "administracion@baq.ec",
     /* Requerido. Email del usuario que realiza el pago */
     //userEmail ||
     PayboxSendmail: userEmail,
@@ -27,13 +27,13 @@ const generatePayboxData = (amount, userEmail, userPhone, direccion, ciudad) => 
     * Production: false (Modo Prueba, se realizarán cobros de prueba y no   
     se guardará ni afectará al sistema) 
     */
-    PayboxProduction: false,
+    PayboxProduction: true,
     /* Requerido Ambiente de ejecución 
     * prod: Modo Producción, Se procesarán cobros y se cargarán al sistema,   
     afectará a la tdc. 
     * sandbox: Modo Prueba, se realizarán cobros de prueba 
     */
-    PayboxEnvironment: "sandbox",
+    PayboxEnvironment: "prod",
     /* Requerido. Lenguaje del Paybox
      * Español: es | (string) (Paybox en español)
      */
@@ -68,7 +68,7 @@ const generatePayboxData = (amount, userEmail, userPhone, direccion, ciudad) => 
   Id o nombre exacto del plan registrado en el comercio en la   
   plataforma de pagoplux 
 */
-    PayboxIdPlan: "837",
+    PayboxIdPlan: "1608",
     /** 
 * true -> los cobros se realizan de manera automática según la 
 frecuencia del plan asignado en PAGOPLUX 
