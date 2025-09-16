@@ -190,22 +190,7 @@ export default function PaymentModal({
             {cantidad >= 1 ? (
               <>
                 <button
-                  className="flex items-center justify-center gap-2 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-blue-400 text-white font-semibold hover:from-blue-700 hover:to-blue-500 transition"
-                  onClick={() => {
-                    onClose();
-                    router.push(`/donacion/paypal?monto=${cantidad}`);
-                  }}
-                >
-                  <img
-                    src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_74x46.jpg"
-                    alt="PayPal"
-                    className="h-6"
-                  />
-                  Pagar con PayPal
-                </button>
-                
-                <button
-                  className="flex items-center justify-center gap-2 py-3 rounded-lg bg-gradient-to-r from-orange-600 to-orange-400 text-white font-semibold hover:from-orange-700 hover:to-orange-500 transition"
+                  className="flex items-center justify-center gap-2 py-5 rounded-lg bg-gradient-to-r from-orange-600 to-orange-400 text-white font-semibold hover:from-orange-700 hover:to-orange-500 transition"
                   onClick={() => {
                     onClose();
                     router.push(`/donacion/deuna?monto=${cantidad}`);
@@ -230,7 +215,7 @@ export default function PaymentModal({
                     />
                   </div>
                 </div>
-                
+
                 {/* ✅ NUEVO: Botón DeUna directo para montos < $50 (sin formulario) */}
                 <button
                   className="flex items-center justify-center gap-2 py-3 rounded-lg bg-gradient-to-r from-orange-600 to-orange-400 text-white font-semibold hover:from-orange-700 hover:to-orange-500 transition"
@@ -247,14 +232,6 @@ export default function PaymentModal({
             )}
             {/* <PpxButton data={dynamicPayboxData} /> */}
 
-            <button
-              className="flex items-center justify-center gap-2 py-3 rounded-lg bg-gradient-to-r from-green-600 to-green-400 text-white font-semibold hover:from-green-700 hover:to-green-500 transition"
-              onClick={handlePpxClick}
-            >
-              <img src="pagos-plux.png" className="w-20" />
-              Pagar con Tarjeta (PagoPlux)
-            </button>
-
             {/* Payphone */}
             <button
               className="flex items-center justify-center gap-2 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-blue-400 text-white font-semibold hover:from-blue-700 hover:to-blue-500 transition"
@@ -268,6 +245,28 @@ export default function PaymentModal({
               Pagar con Payphone
             </button>
 
+            <button
+              className="flex items-center justify-center gap-1 py-1 rounded-lg bg-gradient-to-r from-green-600 to-green-400 text-white font-semibold hover:from-green-700 hover:to-green-500 transition"
+              onClick={handlePpxClick}
+            >
+              <img src="pagos-plux.png" className="w-20" />
+              Pagar con Tarjeta (PagoPlux)
+            </button>
+
+            <button
+              className="flex items-center justify-center gap-2 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-blue-400 text-white font-semibold hover:from-blue-700 hover:to-blue-500 transition"
+              onClick={() => {
+                onClose();
+                router.push(`/donacion/paypal?monto=${cantidad}`);
+              }}
+            >
+              <img
+                src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_74x46.jpg"
+                alt="PayPal"
+                className="h-6"
+              />
+              Pagar con PayPal
+            </button>
           </div>
           <p className="mt-4 text-center text-sm text-gray-500">
             *DeUna: pagos con QR solo para Ecuador
