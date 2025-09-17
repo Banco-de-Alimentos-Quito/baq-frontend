@@ -30,9 +30,26 @@ function QRContent() {
   const documento = params.get('documento') || '';
   const comunidad = params.get('comunidad') || '0';
 
-
-
   const router = useRouter();
+
+  // ✅ VALIDACIÓN: Verificar si el usuario pasó por el formulario
+  useEffect(() => {
+    const formularioCompletado = sessionStorage.getItem('formulario_completado');
+    const montoValidado = sessionStorage.getItem('monto_validado');
+    
+    if (!formularioCompletado || montoValidado !== cantidad.toString()) {
+      console.log('❌ Usuario no pasó por el formulario, redirigiendo...');
+      console.log('🔍 Formulario completado:', formularioCompletado);
+      console.log('🔍 Monto validado:', montoValidado);
+      console.log('🔍 Monto actual:', cantidad.toString());
+      
+      // Redirigir al formulario con el monto
+      router.replace(`/donacion/deuna?monto=${cantidad}`);
+      return;
+    }
+    
+    console.log('✅ Usuario validado, puede proceder con QR');
+  }, [cantidad, router]);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [showLoadingModal, setShowLoadingModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -79,7 +96,11 @@ function QRContent() {
       setIsLoadingQR(true);
       setQrError('');
 
-      // ✅ PRIMERO: Verificar si ya existe un QR para este monto en sessionStorage
+      // ✅ GENERAR newTransactionRef PRIMERO para usar en verificación
+      const newTransactionRef = `BAQ-${(Date.now().toString() + Math.random().toString().substr(2, 6)).substr(0, 15)}`;
+      console.log('🆔 Referencia de transacción generada:', newTransactionRef);
+
+      // ✅ NUEVO: Verificar si ya existe un QR para este monto en sessionStorage
       const storageKey = `qr_data_${cantidad}`;
       const storedQRData = sessionStorage.getItem(storageKey);
       const storedTransactionRef = sessionStorage.getItem(`transaction_ref_${cantidad}`);
@@ -96,7 +117,7 @@ function QRContent() {
         if (storedTransactionId) {
           setTransactionId(storedTransactionId);
           console.log('💾 TransactionId restaurado:', storedTransactionId);
-        }
+         }
         
         if (storedDeeplink) {
           setDeeplink(storedDeeplink);
@@ -108,10 +129,6 @@ function QRContent() {
         console.log('🎉 === QR REUTILIZADO EXITOSAMENTE (NO HAY ENVÍO AL BACKEND) ===');
         return; // <-- ✅ SALIR SIN GENERAR NUEVO QR
       }
-
-      // ✅ SOLO SI NO EXISTE: Generar nueva referencia
-      const newTransactionRef = `BAQ-${(Date.now().toString() + Math.random().toString().substr(2, 6)).substr(0, 15)}`;
-      console.log('🆔 Referencia de transacción generada:', newTransactionRef);
 
       console.log('🔧 Obteniendo o creando user_id...');
       // Obtener o crear user_id
@@ -216,7 +233,7 @@ function QRContent() {
         }
 
         // ✅ PREVENIR DUPLICADOS: Solo enviar al backend si NO se ha enviado antes
-        const dataAlreadySent = sessionStorage.getItem(`data_sent_${cantidad}`);
+        const dataAlreadySent = sessionStorage.getItem(`data_sent_${newTransactionRef}`);
         const deunaEmail = sessionStorage.getItem("deunaEmail");
         const deunaTelefono = sessionStorage.getItem("deunaTelefono");
         const deunaDireccion = sessionStorage.getItem("deunaDireccion");
@@ -233,7 +250,7 @@ function QRContent() {
           deunaEmail: sessionStorage.getItem("deunaEmail"),
           deunaTelefono: sessionStorage.getItem("deunaTelefono"),
           deunaDireccion: sessionStorage.getItem("deunaDireccion"),
-          dataSent: sessionStorage.getItem(`data_sent_${cantidad}`)
+          dataSent: sessionStorage.getItem(`data_sent_${newTransactionRef}`)
         });
         
         if (deunaTelefono && deunaDireccion && !dataAlreadySent) {
@@ -254,7 +271,7 @@ function QRContent() {
             });
             
             // ✅ MARCAR COMO ENVIADO para evitar duplicados
-            sessionStorage.setItem(`data_sent_${cantidad}`, 'true');
+            sessionStorage.setItem(`data_sent_${newTransactionRef}`, 'true');
             console.log('✅ Datos de DeUna enviados al backend exitosamente y marcado como enviado');
           } catch (storeError) {
             console.error('❌ Error enviando datos de DeUna al backend:', storeError);
@@ -318,7 +335,7 @@ function QRContent() {
     hasInitialized.current = true;
     console.log('🚀 Primera ejecución, llamando a generateQR()...');
     generateQR();
-  }, [cantidad]);
+  }, [cantidad, generateQR]);
 
   const handleConfirmPayment = async () => {
     console.log('🚀 === INICIANDO CONFIRMACIÓN DE PAGO ===');
