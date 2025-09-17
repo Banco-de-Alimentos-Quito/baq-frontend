@@ -342,7 +342,7 @@ export default function PaymentModal({
                 </label>
                 <input
                   type="tel"
-                  placeholder="Ingrresa tu número de teléfono"
+                  placeholder="Ej. 0987699223"
                   value={ppxUserData.phone}
                   onChange={(e) => {
                     setPpxUserData((prev) => ({
