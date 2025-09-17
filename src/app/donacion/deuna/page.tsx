@@ -20,7 +20,7 @@ const FormSchema = z.object({
   direccion: z
     .string()
     .trim()
-    .min(10, { message: "La dirección debe tener al menos 10 caracteres" })
+    .min(5, { message: "La dirección debe tener al menos 5 caracteres" })
     .max(200, { message: "La dirección no debe exceder 200 caracteres" })
     .regex(/^[a-zA-Z0-9\s.,\-#]+$/, {
       message: "Solo se permiten letras, números, espacios y los caracteres . , - #",
@@ -109,19 +109,40 @@ function DeunaContent() {
       return;
     }
 
-    // ✅ Guardar datos en sessionStorage para uso posterior (igual que PayPal)
+    // ✅ GENERAR transactionReference único para esta sesión (formato más corto)
+          const newTransactionRef = `BAQ-${(Date.now().toString() + Math.random().toString().substr(2, 6)).substr(0, 15)}`;
+
+
+    // ✅ LIMPIAR datos anteriores de QR para forzar nueva generación
+    const keysToRemove = [];
+    for (let i = 0; i < sessionStorage.length; i++) {
+      const key = sessionStorage.key(i);
+      if (key && (key.startsWith('qr_data_') || key.startsWith('transaction_ref_') || key.startsWith('transaction_id_') || key.startsWith('deeplink_')))  {
+        keysToRemove.push(key);
+      }
+    }
+    keysToRemove.forEach(key => sessionStorage.removeItem(key));
+    console.log('🧹 Datos anteriores de QR limpiados:', keysToRemove);
+
+    // ✅ Guardar datos en sessionStorage para uso posterior (siempre frescos)
     sessionStorage.setItem("deunaEmail", formData.email || "");
     sessionStorage.setItem("deunaTelefono", formData.telefono);
     sessionStorage.setItem("deunaDireccion", formData.direccion);
+    
+    // ✅ MARCAR QUE EL USUARIO PASÓ POR EL FORMULARIO
+    sessionStorage.setItem('formulario_completado', 'true');
+    sessionStorage.setItem('monto_validado', monto.toString());
     
     console.log('🔥 === DATOS GUARDADOS EN SESSIONSTORAGE (DEUNA FORM) ===');
     console.log('📧 Email guardado:', formData.email || "");
     console.log('📱 Teléfono guardado:', formData.telefono);
     console.log('🏠 Dirección guardada:', formData.direccion);
+    console.log('✅ Formulario marcado como completado');
+    console.log('💰 Monto validado guardado:', monto.toString());
     console.log('✅ Datos guardados exitosamente, redirigiendo a QR...');
 
-    // ✅ Redirigir a la página QR con los datos en sessionStorage
-    router.push(`/donacion/qr?monto=${monto}`);
+    // ✅ Redirigir a la página QR con transactionRef como parámetro
+    router.push(`/donacion/qr?monto=${monto}&transactionRef=${newTransactionRef}`);
     setLoading(false);
   };
 
