@@ -70,7 +70,7 @@ export default function Footer() {
                 className="text-gray-400 hover:text-primary transition-colors flex items-center gap-2 justify-center sm:justify-start"
               >
                 <Facebook className="w-5 h-5 flex-shrink-0" />
-                <span>bancoalimentosquito</span>
+                <span>baqalimentosquito</span>
               </Link>
               <Link
                 href="https://www.instagram.com/bancoalimentosquito?utm_source=qr"
@@ -78,7 +78,7 @@ export default function Footer() {
                 className="text-gray-400 hover:text-primary transition-colors flex items-center gap-2 justify-center sm:justify-start"
               >
                 <Instagram className="w-5 h-5 flex-shrink-0" />
-                <span>Instagram</span>
+                <span>bancoalimentosquito</span>
               </Link>
               <Link
                 href="https://www.linkedin.com/company/baqalimentosoficial"
@@ -86,7 +86,7 @@ export default function Footer() {
                 className="text-gray-400 hover:text-primary transition-colors flex items-center gap-2 justify-center sm:justify-start"
               >
                 <Linkedin className="w-5 h-5 flex-shrink-0" />
-                <span>baqalimentos</span>
+                <span>baqalimentosoficial</span>
               </Link>
             </div>
           </div>

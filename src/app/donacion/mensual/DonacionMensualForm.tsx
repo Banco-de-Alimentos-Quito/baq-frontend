@@ -5,10 +5,7 @@ import { toast } from "sonner";
 import Link from "next/link";
 import { useFormValidation, FormData } from "./hooks/useFormValidation";
 import { ValidatedInput, ValidatedSelect } from "./components/FormFields";
-import {
-  BANK_OPTIONS,
-  ACCOUNT_TYPE_OPTIONS,
-} from "./constants/formOptions";
+import { BANK_OPTIONS, ACCOUNT_TYPE_OPTIONS } from "./constants/formOptions";
 import { DonationService } from "./services/donationService";
 
 export default function DonacionMensualForm() {
@@ -20,20 +17,24 @@ export default function DonacionMensualForm() {
 
   // Debug: monitorear cambios en quiereFactura
   React.useEffect(() => {
-    console.log("🔄 DEBUG - Estado quiereFactura cambió a:", quiereFactura, typeof quiereFactura);
+    console.log(
+      "🔄 DEBUG - Estado quiereFactura cambió a:",
+      quiereFactura,
+      typeof quiereFactura
+    );
   }, [quiereFactura]);
 
   const [form, setForm] = useState<FormData>({
-    cedula: '',
-    nombres: '',
-    numero: '',
-    correo: '',
-    direccion: '',
-    cuenta: '',
-    tipoCuenta: '',
-    banco: '',
-    otroBanco: '',
-    ciudad: '',
+    cedula: "",
+    nombres: "",
+    numero: "",
+    correo: "",
+    direccion: "",
+    cuenta: "",
+    tipoCuenta: "",
+    banco: "",
+    otroBanco: "",
+    ciudad: "",
     acepta: false,
   });
 
@@ -140,13 +141,20 @@ export default function DonacionMensualForm() {
       console.log("🚀 DEBUG - Valor de quiereFactura:", quiereFactura);
       console.log("🚀 DEBUG - Tipo de quiereFactura:", typeof quiereFactura);
       console.log("🚀 DEBUG - quiereFactura === true:", quiereFactura === true);
-      console.log("🚀 DEBUG - quiereFactura === false:", quiereFactura === false);
+      console.log(
+        "🚀 DEBUG - quiereFactura === false:",
+        quiereFactura === false
+      );
       console.log("🚀 DEBUG - quiereFactura ?? false:", quiereFactura ?? false);
-      
+
       // Asegurar que el valor sea booleano explícito
       const facturaValue = quiereFactura === true ? true : false;
-      console.log("🚀 DEBUG - Valor final facturaValue:", facturaValue, typeof facturaValue);
-      
+      console.log(
+        "🚀 DEBUG - Valor final facturaValue:",
+        facturaValue,
+        typeof facturaValue
+      );
+
       await DonationService.submitDonation(
         form,
         monto,
@@ -191,16 +199,16 @@ export default function DonacionMensualForm() {
   const handleCloseSuccessModal = () => {
     setShowSuccessModal(false);
     setForm({
-      cedula: '',
-      nombres: '',
-      numero: '',
-      correo: '',
-      direccion: '',
-      cuenta: '',
-      tipoCuenta: '',
-      banco: '',
-      otroBanco: '',
-      ciudad: '',
+      cedula: "",
+      nombres: "",
+      numero: "",
+      correo: "",
+      direccion: "",
+      cuenta: "",
+      tipoCuenta: "",
+      banco: "",
+      otroBanco: "",
+      ciudad: "",
       acepta: false,
     });
     setTocado({});
@@ -248,7 +256,7 @@ export default function DonacionMensualForm() {
             Donación mensual
           </h1>
 
-          <div style={{ width: '100%' }}>
+          <div style={{ width: "100%" }}>
             <ValidatedInput
               label="Cédula/RUC/Pasaporte"
               name="cedula"
@@ -262,16 +270,18 @@ export default function DonacionMensualForm() {
               onBlur={handleBlur}
             />
             {documentType && form.cedula && (
-              <div style={{
-                marginTop: '4px',
-                padding: '4px 8px',
-                backgroundColor: '#e6f7ff',
-                border: '1px solid #91d5ff',
-                borderRadius: '4px',
-                fontSize: '12px',
-                color: '#1890ff',
-                fontWeight: '500'
-              }}>
+              <div
+                style={{
+                  marginTop: "4px",
+                  padding: "4px 8px",
+                  backgroundColor: "#e6f7ff",
+                  border: "1px solid #91d5ff",
+                  borderRadius: "4px",
+                  fontSize: "12px",
+                  color: "#1890ff",
+                  fontWeight: "500",
+                }}
+              >
                 ✓ {documentType} detectado
               </div>
             )}
@@ -419,12 +429,20 @@ export default function DonacionMensualForm() {
               <button
                 type="button"
                 onClick={() => {
-                  console.log("✅ DEBUG - Antes: quiereFactura =", quiereFactura);
+                  console.log(
+                    "✅ DEBUG - Antes: quiereFactura =",
+                    quiereFactura
+                  );
                   setQuiereFactura(true);
-                  console.log("✅ DEBUG - Después: setQuiereFactura(true) ejecutado");
+                  console.log(
+                    "✅ DEBUG - Después: setQuiereFactura(true) ejecutado"
+                  );
                   // Verificar después de un pequeño delay
                   setTimeout(() => {
-                    console.log("✅ DEBUG - Estado después del setTimeout:", quiereFactura);
+                    console.log(
+                      "✅ DEBUG - Estado después del setTimeout:",
+                      quiereFactura
+                    );
                   }, 100);
                 }}
                 style={{
@@ -445,12 +463,20 @@ export default function DonacionMensualForm() {
               <button
                 type="button"
                 onClick={() => {
-                  console.log("❌ DEBUG - Antes: quiereFactura =", quiereFactura);
+                  console.log(
+                    "❌ DEBUG - Antes: quiereFactura =",
+                    quiereFactura
+                  );
                   setQuiereFactura(false);
-                  console.log("❌ DEBUG - Después: setQuiereFactura(false) ejecutado");
+                  console.log(
+                    "❌ DEBUG - Después: setQuiereFactura(false) ejecutado"
+                  );
                   // Verificar después de un pequeño delay
                   setTimeout(() => {
-                    console.log("❌ DEBUG - Estado después del setTimeout:", quiereFactura);
+                    console.log(
+                      "❌ DEBUG - Estado después del setTimeout:",
+                      quiereFactura
+                    );
                   }, 100);
                 }}
                 style={{
@@ -685,6 +711,8 @@ export default function DonacionMensualForm() {
             </div>
           )}
         </form>
+
+        <div className="w-full h-24 md:h-15"></div>
       </div>
       <style>{`
         @keyframes spin {
