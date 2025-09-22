@@ -41,14 +41,6 @@ export default function Location() {
             <h3 className="text-2xl font-semibold text-gray-900 mb-4">
               Contactos:
             </h3>
-            <ul className="text-gray-600 mb-4">
-              {phoneList.map((phone, index) => (
-                <li key={index} className="flex items-center gap-2 mb-2">
-                  <Phone className="w-4 h-4 text-orange-500" /> {/* Usé text-orange-500 para coincidir con el tema */}
-                  <span className="font-bold">{phone.type}:</span> {phone.value}
-                </li>
-              ))}
-            </ul>
             <div className="w-2/3 h-0.5 bg-white mb-4 mx-auto"></div>
             {contactList.map((contact, index) => (
               <p key={index} className="text-gray-600 mb-2">

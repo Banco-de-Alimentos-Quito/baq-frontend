@@ -40,7 +40,7 @@ export default function RootLayout({
 
       <body
         suppressHydrationWarning
-        className={`${inter.variable} font-sans antialiased min-h-screen`}
+        className={`${inter.variable} font-sans antialiased min-h-screen flex flex-col`}
       >
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-XJNTP3SK76"
@@ -58,11 +58,9 @@ export default function RootLayout({
         <StoreInitializer />
 
         <LoadingWrapper>
-          <div className="flex flex-col min-h-screen">
-            <Header />
-            <main className="flex-1 w-full overflow-x-hidden">{children}</main>
-            <Footer />
-          </div>
+          <Header />
+          <main className="flex-1 w-full">{children}</main>
+          <Footer />
           <Toaster />
         </LoadingWrapper>
       </body>

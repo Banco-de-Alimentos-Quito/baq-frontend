@@ -44,57 +44,58 @@ export default function Header() {
   }, []);
 
   return (
-    <header className={`sticky top-0 z-50 w-screen transition-all duration-300 ${isScrolled ? 'bg-background/95 shadow-md backdrop-blur-sm' : 'bg-transparent'}`}>
-      <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
-        <Link href="/" className="flex items-center gap-2">
-          <Image
-            src="/icono-logo-naranja.webp"
-            alt="Logo BAQ"
-            width={100}
-            height={100}
-            className="w-auto h-15"
-          />
-          <span className="font-bold text-xl text-orange-400">Banco de Alimentos Quito</span>
-        </Link>
-        <nav className="hidden md:flex items-center gap-6">
-          <NavLinks />
-          <Button 
-            asChild 
-            size="sm" 
-            className="bg-primary text-[#ed6f1d] hover:bg-orange-400 text-primary-foreground"
-            onClick={() => {
-              if (typeof window !== 'undefined' && (window as any).gtag) {
-                (window as any).gtag('event', 'presiono_dono_landing', {
-                  ubicacion: 'header',
-                  tipo_boton: 'donar_ahora'
-                });
-              }
-            }}
-          >
-            <Link href="/donacion">Donar Ahora</Link>
-          </Button>
-        </nav>
-        <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-          <SheetTrigger asChild className="md:hidden">
-            <Button variant="outline" size="icon">
-              <Menu className="h-6 w-6" />
-              <span className="sr-only">Abrir menú</span>
+    <div className="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+      <div className={`w-full ${isScrolled ? 'bg-white/95 shadow-md backdrop-blur-sm' : 'bg-transparent'}`}>
+        <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
+          <Link href="/" className="flex items-center gap-2">
+            <Image
+              src="/icono-logo-naranja.webp"
+              alt="Logo BAQ"
+              width={100}
+              height={100}
+              className="w-auto h-15"
+            />
+            <span className="font-bold text-xl text-orange-400">Banco de Alimentos Quito</span>
+          </Link>
+          <nav className="hidden md:flex items-center gap-6">
+            <NavLinks />
+            <Button 
+              asChild 
+              size="sm" 
+              className="bg-primary text-[#ed6f1d] hover:bg-orange-400 text-primary-foreground"
+              onClick={() => {
+                if (typeof window !== 'undefined' && window.gtag) {
+                  window.gtag('event', 'presiono_dono_landing', {
+                    ubicacion: 'header',
+                    tipo_boton: 'donar_ahora'
+                  });
+                }
+              }}
+            >
+              <Link href="/donacion">Donar Ahora</Link>
             </Button>
-          </SheetTrigger>
-          <SheetContent side="right">
-            <div className="flex flex-col items-start gap-6 p-6">
-              <Link href="/" className="flex items-center gap-2 mb-4" onClick={() => setIsSheetOpen(false)}>
-
-                <span className="font-bold text-xl text-primary">Banco de Alimentos Quito</span>
-              </Link>
-              <NavLinks onClick={() => setIsSheetOpen(false)} />
-              <Button asChild size="sm" className="w-full mt-4 bg-primary hover:bg-primary/90 text-primary-foreground" onClick={() => setIsSheetOpen(false)}>
-                <ScrollLink href="#donate">Donar Ahora</ScrollLink>
+          </nav>
+          <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+            <SheetTrigger asChild className="md:hidden">
+              <Button variant="outline" size="icon">
+                <Menu className="h-6 w-6" />
+                <span className="sr-only">Abrir menú</span>
               </Button>
-            </div>
-          </SheetContent>
-        </Sheet>
+            </SheetTrigger>
+            <SheetContent side="right">
+              <div className="flex flex-col items-start gap-6 p-6">
+                <Link href="/" className="flex items-center gap-2 mb-4" onClick={() => setIsSheetOpen(false)}>
+                  <span className="font-bold text-xl text-primary">Banco de Alimentos Quito</span>
+                </Link>
+                <NavLinks onClick={() => setIsSheetOpen(false)} />
+                <Button asChild size="sm" className="w-full mt-4 bg-primary hover:bg-primary/90 text-primary-foreground" onClick={() => setIsSheetOpen(false)}>
+                  <ScrollLink href="#donate">Donar Ahora</ScrollLink>
+                </Button>
+              </div>
+            </SheetContent>
+          </Sheet>
+        </div>
       </div>
-    </header>
+    </div>
   );
 }
