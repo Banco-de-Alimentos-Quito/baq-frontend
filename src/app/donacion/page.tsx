@@ -240,17 +240,9 @@ export default function DonacionPage() {
   };
 
   return (
-    <div className="bg-white min-h-screen">
-      {/* Espacio para header fijo (si existe) */}
-
-      {/* Puedes agregar logo o mensaje de bienvenida aquí */}
-      {/* <div className="w-screen flex flex-col items-center justify-center mb-8 pt-32 pb-2">
-        
-        
-      </div> */}
-
+    <div className="bg-white min-h-screen overflow-x-hidden">
       <div
-        className="w-screen flex flex-col lg:flex-row justify-center items-start gap-12 px-4 lg:px-0 relative"
+        className="w-full flex flex-col lg:flex-row justify-center items-start gap-4 sm:gap-6 lg:gap-12 px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16 relative"
         style={{
           backgroundImage:
             "linear-gradient(rgba(255, 255, 255, 0.90), rgba(255, 255, 255, 0.90)), url('background.png')",
@@ -261,55 +253,40 @@ export default function DonacionPage() {
         }}
       >
         {/* Sección izquierda */}
-        <div className="flex-1 max-w-md min-w-[320px] flex flex-col items-center">
-          <div className="bg-white rounded-2xl p-4 sm:p-6 md:p-[44px_36px_36px_36px] w-full max-w-xs sm:max-w-sm md:max-w-md shadow-[0_8px_32px_rgba(255,140,0,0.13)] flex flex-col items-center">
-            <h1 className="bg-gradient-to-r from-[#ff7300] to-[#FF6347] bg-clip-text text-transparent text-3xl font-extrabold text-center mb-4">
+        <div className="w-full lg:w-1/2 max-w-md lg:max-w-lg flex flex-col items-center">
+          <div className="bg-white rounded-xl lg:rounded-2xl p-4 sm:p-6 lg:p-8 w-full shadow-[0_8px_32px_rgba(255,140,0,0.13)] flex flex-col items-center">
+            <h1 className="bg-gradient-to-r from-[#ff7300] to-[#FF6347] bg-clip-text text-transparent text-xl sm:text-2xl lg:text-3xl font-extrabold text-center mb-3 sm:mb-4">
               A un <strong>clic</strong> para alimentar
             </h1>
-            <p className="text-center text-lg font-medium text-orange-500 mb-2">
+            <p className="text-center text-sm sm:text-base lg:text-lg font-medium text-orange-500 mb-2">
               Tu aporte ayuda a transformar vidas.
             </p>
-            <p className="text-center text-lg font-medium text-orange-700 mb-5">
-              Elige el <strong>tipo</strong> y <strong>monto</strong> de tu
-              donación:
+            <p className="text-center text-sm sm:text-base lg:text-lg font-medium text-orange-700 mb-4 sm:mb-5">
+              Elige el <strong>tipo</strong> y <strong>monto</strong> de tu donación:
             </p>
 
-            <div className="flex justify-center gap-4 w-full">
+            {/* Botones de tipo responsive */}
+            <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-4 w-full mb-4 sm:mb-6">
               <button
-                className={`flex items-center gap-2 px-6 py-2 rounded-full font-bold text-lg transition-transform ${
+                className={`flex items-center justify-center gap-2 px-4 sm:px-6 py-2 sm:py-3 rounded-full font-bold text-sm sm:text-base lg:text-lg transition-transform ${
                   tipo === "unica"
                     ? "bg-gradient-to-r from-[#2F3388] to-[#1D2394] text-white shadow-lg scale-105"
                     : "bg-gray-200 text-gray-700 shadow-md hover:bg-[#2F3388] hover:text-white"
                 }`}
                 onClick={() => setTipo("unica")}
               >
-                {/* Ícono corazón */}
-                <svg
-                  width="32"
-                  height="32"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  className="mr-2"
-                >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="sm:mr-2">
                   <path
-                    d="M17.5 8.5c-1.2-1.1-2.7-1.2-3.5-1.2-.8 0-2.3.1-3.5 1.2C8.1
-               9.7 7 11.5 7 13.7c0 2.2 1.2 4.3 3.1 5.1.7.3
-               1.4.4 2.1.4.7 0 1.4-.1 2.1-.4 1.9-.8
-               3.1-2.9 3.1-5.1 0-2.2-1.1-4-2.9-5.2z"
-                    fill={tipo === "unica" ? "#fff" : "#ff7300"}
-                  />
-                  <path
-                    d="M12.5 6.5c.6-.7 1.2-1.7 1.2-2.7
-               0-.2-.2-.3-.3-.3-.7 0-1.6.5-2.1 1.1-.5.6-.9
-               1.4-.9 2.2 0 .2.2.3.3.3.7 0 1.5-.4 2-1.1z"
+                    d="M17.5 8.5c-1.2-1.1-2.7-1.2-3.5-1.2-.8 0-2.3.1-3.5 1.2C8.1 9.7 7 11.5 7 13.7c0 2.2 1.2 4.3 3.1 5.1.7.3 1.4.4 2.1.4.7 0 1.4-.1 2.1-.4 1.9-.8 3.1-2.9 3.1-5.1 0-2.2-1.1-4-2.9-5.2z"
                     fill={tipo === "unica" ? "#fff" : "#ff7300"}
                   />
                 </svg>
-                Única vez
+                <span className="hidden sm:inline">Única vez</span>
+                <span className="sm:hidden">Única</span>
               </button>
 
               <button
-                className={`flex items-center gap-2 px-6 py-2 rounded-full font-bold text-lg transition-transform ${
+                className={`flex items-center justify-center gap-2 px-4 sm:px-6 py-2 sm:py-3 rounded-full font-bold text-sm sm:text-base lg:text-lg transition-transform ${
                   tipo === "mensual"
                     ? "bg-gradient-to-r from-[#2F3388] to-[#1D2394] text-white shadow-lg scale-105"
                     : "bg-gray-200 text-gray-700 shadow-md hover:bg-[#2F3388] hover:text-white"
@@ -324,63 +301,23 @@ export default function DonacionPage() {
                   }
                 }}
               >
-                {/* Ícono calendario */}
-                <svg
-                  width="22"
-                  height="22"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  className="mr-1"
-                >
-                  <rect
-                    x="3"
-                    y="4"
-                    width="18"
-                    height="17"
-                    rx="3"
-                    fill={tipo === "mensual" ? "#fff" : "#ff7300"}
-                    fillOpacity="0.15"
-                  />
-                  <rect
-                    x="3"
-                    y="8"
-                    width="18"
-                    height="13"
-                    rx="2"
-                    fill={tipo === "mensual" ? "#fff" : "#ff7300"}
-                  />
-                  <rect
-                    x="7"
-                    y="2"
-                    width="2"
-                    height="4"
-                    rx="1"
-                    fill={tipo === "mensual" ? "#fff" : "#ff7300"}
-                  />
-                  <rect
-                    x="15"
-                    y="2"
-                    width="2"
-                    height="4"
-                    rx="1"
-                    fill={tipo === "mensual" ? "#fff" : "#ff7300"}
-                  />
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="sm:mr-1">
+                  <rect x="3" y="4" width="18" height="17" rx="3" fill={tipo === "mensual" ? "#fff" : "#ff7300"} fillOpacity="0.15"/>
+                  <rect x="3" y="8" width="18" height="13" rx="2" fill={tipo === "mensual" ? "#fff" : "#ff7300"}/>
                 </svg>
                 Mensual
               </button>
             </div>
 
-            <div className="mt-6 w-full flex justify-start"></div>
-
-            {/* Montos predefinidos */}
-            <div className="grid grid-cols-2 gap-4 mb-6 w-full">
+            {/* Montos predefinidos responsive */}
+            <div className="grid grid-cols-2 gap-2 sm:gap-4 mb-4 sm:mb-6 w-full">
               {MONTOS_DONACION.map((m) => (
                 <button
                   key={m}
-                  className={`flex flex-col items-center rounded-lg px-7 py-4 font-bold text-lg shadow-md transition-transform ${
+                  className={`flex flex-col items-center rounded-lg px-3 sm:px-6 lg:px-7 py-3 sm:py-4 font-bold text-base sm:text-lg shadow-md transition-transform ${
                     cantidad === m && !otroActivo
-                      ? "bg-gradient-to-r from-orange-400 to-orange-500 text-white shadow-lg scale-105 filter brightness-95 contrast-125"
-                      : "bg-white text-orange-600 opacity-95 hover:brightness-110"
+                      ? "bg-gradient-to-r from-orange-400 to-orange-500 text-white shadow-lg scale-105"
+                      : "bg-white text-orange-600 hover:brightness-110"
                   }`}
                   onClick={() => {
                     handleCantidad(m);
@@ -393,16 +330,16 @@ export default function DonacionPage() {
                     }
                   }}
                 >
-                  <span className="text-sm">USD</span>
-                  <span className="text-xl">{m}</span>
+                  <span className="text-xs sm:text-sm">USD</span>
+                  <span className="text-lg sm:text-xl">{m}</span>
                 </button>
               ))}
             </div>
 
-            {/* Otro monto manual */}
-            <div className="flex w-full mb-6">
+            {/* Input otro monto responsive */}
+            <div className="flex w-full mb-4 sm:mb-6">
               <button
-                className={`rounded-l-lg px-6 py-4 font-bold text-lg shadow-md transition-transform ${
+                className={`rounded-l-lg px-3 sm:px-6 py-3 sm:py-4 font-bold text-sm sm:text-base lg:text-lg shadow-md transition-transform ${
                   otroActivo
                     ? "bg-gradient-to-r from-orange-500 to-orange-300 text-white shadow-lg scale-105"
                     : "bg-gradient-to-r from-orange-500 to-orange-300 text-white shadow-md"
@@ -422,10 +359,10 @@ export default function DonacionPage() {
                 Otro
               </button>
               <input
-                type="text" // permitir edición libre (evita problemas de cursor)
+                type="text"
                 inputMode="decimal"
                 pattern="^\d+(\.\d{0,2})?$"
-                placeholder="Ingresa el monto (ej. 2.50)"
+                placeholder="Monto"
                 value={otroActivo ? otro : ""}
                 onFocus={handleOtroFocus}
                 onChange={(e) => {
@@ -475,12 +412,12 @@ export default function DonacionPage() {
                     rounded % 1 === 0 ? rounded.toFixed(0) : rounded.toFixed(2)
                   );
                 }}
-                step="0.01"
-                className="flex-1 rounded-r-lg p-2 sm:p-3 md:p-4 font-bold text-sm sm:text-base md:text-lg bg-white shadow-md focus:outline-none"
+                className="flex-1 rounded-r-lg p-2 sm:p-3 lg:p-4 font-bold text-sm sm:text-base lg:text-lg bg-white shadow-md focus:outline-none"
               />
             </div>
+
             <button
-              className="w-full bg-[#ED6F1D] text-white rounded-full py-3 font-black text-xl shadow-lg transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-[#ED6F1D] text-white rounded-full py-3 sm:py-4 font-black text-lg sm:text-xl shadow-lg transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={cantidad < 1 || (otroActivo && (!otro || otro === "")) || isLoadingMensual}
               onClick={handleDonarAhora}
             >
@@ -489,23 +426,20 @@ export default function DonacionPage() {
           </div>
         </div>
 
-        {/* Sección derecha: puzzle y contador */}
-        <div className="flex-1 max-w-md min-w-[320px] flex flex-col items-center">
-          <div className="bg-gradient-to-r from-[#ffb347] to-[#ff7300] rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 w-full max-w-xs sm:max-w-sm md:max-w-md mx-auto shadow-lg sm:shadow-xl md:shadow-2xl flex flex-col items-center mb-6 sm:mb-8 animate-[fadeInBounce_1.2s_cubic-bezier(.68,-.55,.27,1.55)]">
-            <h1 className="text-white text-2xl sm:text-3xl md:text-4xl font-extrabold text-center mb-4">
-              Tu eres la <strong>pieza</strong> que falta para{" "}
-              <strong>acabar</strong> con la desnutrición
+        {/* Sección derecha - Puzzle responsive */}
+        <div className="w-full lg:w-1/2 max-w-md lg:max-w-lg flex flex-col items-center mt-8 lg:mt-0">
+          <div className="bg-gradient-to-r from-[#ffb347] to-[#ff7300] rounded-xl p-4 sm:p-6 lg:p-8 w-full shadow-lg flex flex-col items-center mb-6 sm:mb-8">
+            <h1 className="text-white text-lg sm:text-xl lg:text-2xl xl:text-3xl font-extrabold text-center mb-4">
+              Tu eres la <strong>pieza</strong> que falta para <strong>acabar</strong> con la desnutrición
             </h1>
-            <div className="relative w-80 max-w-full">
-              {/* Imagen base - cambia según el tipo */}
+            <div className="relative w-full max-w-xs sm:max-w-sm lg:max-w-md">
               <Image
                 src={puzzleConfig.backgroundImage}
                 alt={puzzleConfig.alt}
-                width={800}
-                height={800}
+                width={400}
+                height={400}
                 className="w-full h-auto opacity-20 rounded-lg"
               />
-
               {/* Piezas del puzzle - renderiza según el tipo */}
               {puzzleConfig.pieces.map((piece) => {
                 const show = puzzleConfig.activePieces.includes(piece.key);
@@ -534,53 +468,43 @@ export default function DonacionPage() {
         </div>
       </div>
 
-      {/* Linea de separacion*/}
-      <div className="w-full h-8 bg-white"></div>
+      {/* Secciones informativas responsive */}
+      <div className="w-full h-4 sm:h-8 bg-white"></div>
 
-      {/* Sección Informativa Horizontal */}
       <section
-        className="relative w-screen bg-cover bg-center mb-8 px-4 py-12"
+        className="relative w-full bg-cover bg-center mb-4 sm:mb-8 px-4 sm:px-6 lg:px-8 py-8 sm:py-12"
         style={{ backgroundImage: "url('/beneficiarios.webp')" }}
       >
-        {/* Overlay negro semitransparente que envuelve el texto */}
-        <div className="bg-black/60 p-8 rounded-lg max-w-2xl mx-auto">
+        <div className="bg-black/60 p-4 sm:p-6 lg:p-8 rounded-lg max-w-xl sm:max-w-2xl mx-auto">
           <div className="text-center text-white">
-            <h2 className="text-3xl md:text-4xl font-extrabold mb-4">
+            <h2 className="text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-extrabold mb-3 sm:mb-4">
               ¿Qué hacemos con tus donaciones?
             </h2>
-            <p className="text-lg font-medium mb-8">
-              Sus contribuciones son utilizadas para{" "}
-              <b>adquirir alimentos de alto valor nutricional</b> y cubrir la
-              logística que asegure una buena gestión y calidad de los
-              alimentos.
+            <p className="text-sm sm:text-base lg:text-lg font-medium mb-6 sm:mb-8">
+              Sus contribuciones son utilizadas para <b>adquirir alimentos de alto valor nutricional</b> y cubrir la logística que asegure una buena gestión y calidad de los alimentos.
             </p>
-            <hr className="border-t-2 border-white mx-auto w-3/5 mb-8" />
-            <h2 className="text-3xl md:text-4xl font-extrabold mb-4">
+            <hr className="border-t-2 border-white mx-auto w-3/5 mb-6 sm:mb-8" />
+            <h2 className="text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-extrabold mb-3 sm:mb-4">
               ¿Cómo lo hacemos?
             </h2>
-            <p className="text-lg font-medium">
-              Los alimentos gestionados por diferentes fuentes de supermercados,
-              centrales y otros, son complementados con los adquiridos por
-              donaciones y enviados a través de un sistema integral de
-              organizaciones sociales que garantizan trazabilidad y reportería
-              para nuestros benefactores.
+            <p className="text-sm sm:text-base lg:text-lg font-medium">
+              Los alimentos gestionados por diferentes fuentes de supermercados, centrales y otros, son complementados con los adquiridos por donaciones y enviados a través de un sistema integral de organizaciones sociales que garantizan trazabilidad y reportería para nuestros benefactores.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Sección de Impacto */}
-      <section className="w-screen bg-gradient-to-r from-[#fff7ed] to-[#ffe0c3] flex flex-col items-center py-16">
-        <h2 className="text-4xl font-extrabold bg-gradient-to-r from-[#ff7300] to-[#FF6347] bg-clip-text text-transparent mb-8">
+      <section className="w-full bg-gradient-to-r from-[#fff7ed] to-[#ffe0c3] flex flex-col items-center py-8 sm:py-12 lg:py-16 px-4 sm:px-6 lg:px-8">
+        <h2 className="text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-extrabold bg-gradient-to-r from-[#ff7300] to-[#FF6347] bg-clip-text text-transparent mb-6 sm:mb-8 text-center">
           Conoce el impacto que genera tu donación
         </h2>
-        <div className="flex justify-center">
+        <div className="flex justify-center w-full">
           <Image
             src="/que-hacemos.webp"
             alt="Impacto de tu donación"
-            width={800} // Añadido width
-            height={800} // Añadido height
-            className="w-[99vw] max-w-[900px] rounded-2xl object-cover"
+            width={800}
+            height={800}
+            className="w-full max-w-sm sm:max-w-md lg:max-w-2xl xl:max-w-4xl rounded-xl lg:rounded-2xl object-cover"
           />
         </div>
       </section>
@@ -791,18 +715,18 @@ function PersonasAlimentadas({
   }, [cantidad]);
 
   return (
-    <div className="bg-white rounded-xl p-6 flex flex-col items-center shadow-md">
-      <div className="text-[#FF7E15] text-3xl font-extrabold mb-1">
+    <div className="bg-white rounded-xl p-4 sm:p-6 flex flex-col items-center shadow-md w-full">
+      <div className="text-[#FF7E15] text-2xl sm:text-3xl font-extrabold mb-1">
         {personas}
       </div>
-      <div className="text-[#b85c00] text-lg font-bold mb-2 text-center">
+      <div className="text-[#b85c00] text-sm sm:text-base lg:text-lg font-bold mb-2 text-center">
         {personas === 1 ? "persona alimentada" : "Personas alimentadas"}
       </div>
-      <div className="text-gray-500 text-sm text-center">
+      <div className="text-gray-500 text-xs sm:text-sm text-center">
         Con un solo $1 alimentas a una persona durante todo un día.
       </div>
       {tipo === "mensual" && (
-        <div className="text-transparent bg-gradient-to-r from-[#2F3388] to-[#ff7300] bg-clip-text font-extrabold text-lg mt-4 animate-[fadeInUpBounce_1s_cubic-bezier(.68,-.55,.27,1.55)]">
+        <div className="text-transparent bg-gradient-to-r from-[#2F3388] to-[#ff7300] bg-clip-text font-extrabold text-sm sm:text-base lg:text-lg mt-4 animate-[fadeInUpBounce_1s_cubic-bezier(.68,-.55,.27,1.55)] text-center">
           Proyección anual: {personas * 12} personas alimentadas al año
         </div>
       )}

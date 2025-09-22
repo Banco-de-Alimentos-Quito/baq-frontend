@@ -162,3 +162,64 @@
 .grey-placeholder:-ms-input-placeholder {
   color: #999 !important;
 }
+
+/* Responsive utilities */
+@layer utilities {
+  .container-responsive {
+    @apply w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  .text-responsive {
+    @apply text-sm sm:text-base lg:text-lg;
+  }
+  
+  .heading-responsive {
+    @apply text-xl sm:text-2xl lg:text-3xl xl:text-4xl;
+  }
+  
+  .padding-responsive {
+    @apply px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8;
+  }
+}
+
+/* Prevent horizontal scroll */
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+}
+
+/* Mobile-first responsive breakpoints */
+@media (max-width: 640px) {
+  .mobile-only {
+    display: block;
+  }
+  
+  .desktop-only {
+    display: none;
+  }
+  
+  /* Ensure buttons are touch-friendly */
+  button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+@media (min-width: 641px) {
+  .mobile-only {
+    display: none;
+  }
+  
+  .desktop-only {
+    display: block;
+  }
+}
+
+/* Fix for modals on mobile */
+@media (max-width: 640px) {
+  .modal-content {
+    margin: 1rem;
+    max-height: calc(100vh - 2rem);
+    overflow-y: auto;
+  }
+}

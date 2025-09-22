@@ -14,7 +14,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Banco de Alimentos de Quito",
+  title: "Banco de Alimentos Quito",
   description:
     "Con tu ayuda, llevamos alimento a quienes más lo necesitan en Quito. Dona alimentos o dinero y sé parte del cambio.",
 };
@@ -27,28 +27,21 @@ export default function RootLayout({
   return (
     <html lang="es">
       <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
         <Script
           src="https://code.jquery.com/jquery-3.4.1.min.js"
           strategy="beforeInteractive"
         />
-        {/* Usar la versión de sandbox o producción según corresponda */}
         <Script
           src="https://sandbox-paybox.pagoplux.com/paybox/index_angular.js"
           strategy="beforeInteractive"
         />
-        {/* Para producción, descomenta esta línea y comenta la anterior
-        <Script
-          src="https://paybox.pagoplux.com/paybox/index_angular.js"
-          strategy="beforeInteractive"
-        />
-        */}
       </head>
 
       <body
         suppressHydrationWarning
-        className={`${inter.variable} font-sans antialiased`}
+        className={`${inter.variable} font-sans antialiased min-h-screen`}
       >
-        {/* Google Analytics */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-XJNTP3SK76"
           strategy="afterInteractive"
@@ -65,9 +58,11 @@ export default function RootLayout({
         <StoreInitializer />
 
         <LoadingWrapper>
-          <Header />
-          <main>{children}</main>
-          <Footer />
+          <div className="flex flex-col min-h-screen">
+            <Header />
+            <main className="flex-1 w-full overflow-x-hidden">{children}</main>
+            <Footer />
+          </div>
           <Toaster />
         </LoadingWrapper>
       </body>
