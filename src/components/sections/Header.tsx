@@ -49,13 +49,12 @@ export default function Header() {
         <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
           <Link href="/" className="flex items-center gap-2">
             <Image
-              src="/icono-logo-naranja.webp"
+              src="/logo2.png"
               alt="Logo BAQ"
-              width={100}
-              height={100}
-              className="w-auto h-15"
+              width={120}
+              height={120}
+              className="w-auto h-12"
             />
-            <span className="font-bold text-xl text-orange-400">Banco de Alimentos Quito</span>
           </Link>
           <nav className="hidden md:flex items-center gap-6">
             <NavLinks />
@@ -85,7 +84,13 @@ export default function Header() {
             <SheetContent side="right">
               <div className="flex flex-col items-start gap-6 p-6">
                 <Link href="/" className="flex items-center gap-2 mb-4" onClick={() => setIsSheetOpen(false)}>
-                  <span className="font-bold text-xl text-primary">Banco de Alimentos Quito</span>
+                  <Image
+                    src="/logo.webp"
+                    alt="Logo BAQ"
+                    width={120}
+                    height={120}
+                    className="w-auto h-12"
+                  />
                 </Link>
                 <NavLinks onClick={() => setIsSheetOpen(false)} />
                 <Button asChild size="sm" className="w-full mt-4 bg-primary hover:bg-primary/90 text-primary-foreground" onClick={() => setIsSheetOpen(false)}>
