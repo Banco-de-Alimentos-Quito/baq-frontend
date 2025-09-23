@@ -557,7 +557,7 @@ function QRContent() {
   };
 
   return (
-    <div style={{ paddingTop: 120, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+    <div style={{ paddingTop: 120, paddingBottom: 120, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
       <div style={{
         background: '#fff',
         borderRadius: 24,
