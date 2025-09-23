@@ -818,18 +818,31 @@ export default function DonacionMensualForm() {
                 <circle cx="12" cy="12" r="10"></circle>
               </svg>
             </div>
-            <h3 className="text-xl font-bold text-white/90 mb-2">
-              ¡Revisa tu correo ahora!
+            <h3 className="text-xl font-bold text-[#2F3388] mb-2">
+              ¡Contrato enviado a tu correo!
             </h3>
-            <p className="text-gray-600 mb-6">
-              Estás a un paso de ser un héroe contra el hambre
+            <p className="text-gray-700 mb-4">
+              Hemos enviado el enlace para firmar tu contrato a
+              {" "}
+              <span className="font-semibold text-gray-900">{form.correo || 'tu correo'}</span>.
             </p>
-            <button
-              onClick={handleCloseSuccessModal}
-              className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold py-4 px-6 rounded-xl shadow-lg transition-all duration-200 hover:scale-105"
-            >
-              Entendido
-            </button>
+            <p className="text-gray-500 text-sm mb-6">
+              Revisa tu bandeja de entrada y la carpeta de spam. Sigue las instrucciones del correo para completar el proceso.
+            </p>
+            <div className="grid grid-cols-1 gap-3">
+              <a
+                href={`mailto:${form.correo || ''}`}
+                className="w-full bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-semibold py-3 px-6 rounded-xl transition-all"
+              >
+                Abrir cliente de correo
+              </a>
+              <button
+                onClick={handleCloseSuccessModal}
+                className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition-all duration-200 hover:scale-105"
+              >
+                Entendido
+              </button>
+            </div>
           </div>
         </div>
       )}
