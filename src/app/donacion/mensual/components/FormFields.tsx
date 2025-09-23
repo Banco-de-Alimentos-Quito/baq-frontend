@@ -34,8 +34,10 @@ export function ValidatedInput({
   const shouldHaveGreyPlaceholder = greyPlaceholderFields.includes(name);
 
   return (
-    <label className="form-label" style={{ width: '100%', marginBottom: 8 }}>
-      {label}
+    <div style={{ width: '100%', marginBottom: 8 }}>
+      <label className="form-label" style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#2F3388' }}>
+        {label}
+      </label>
       <div style={{ position: 'relative', width: '100%' }}>
         <input
           type={type}
@@ -51,7 +53,6 @@ export function ValidatedInput({
             padding: 12,
             borderRadius: 8,
             border: '1px solid #ddd',
-            marginTop: 4,
             fontSize: 16,
             color: '#222',
             paddingRight: validation !== null ? 50 : 12,
@@ -67,17 +68,19 @@ export function ValidatedInput({
           <ValidationIcon type="error" />
         )}
       </div>
-      {touched && !value && required && (
-        <span style={{ color: '#e53e3e', fontSize: 13 }}>
-          Falta completar este campo
-        </span>
-      )}
-      {error && (
-        <span style={{ color: '#e53e3e', fontSize: 13 }}>
-          {error}
-        </span>
-      )}
-    </label>
+      <div style={{ marginTop: 2, minHeight: 14 }}>
+        {touched && !value && required && (
+          <span style={{ color: '#e53e3e', fontSize: 11 }}>
+            Falta completar este campo
+          </span>
+        )}
+        {error && (
+          <span style={{ color: '#e53e3e', fontSize: 11 }}>
+            {error}
+          </span>
+        )}
+      </div>
+    </div>
   );
 }
 
@@ -107,8 +110,10 @@ export function ValidatedSelect({
   onBlur
 }: ValidatedSelectProps) {
   return (
-    <label className="form-label" style={{ width: '100%', marginBottom: 8 }}>
-      {label}
+    <div style={{ width: '100%', marginBottom: 8 }}>
+      <label className="form-label" style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#2F3388' }}>
+        {label}
+      </label>
       <select
         name={name}
         required={required}
@@ -120,7 +125,6 @@ export function ValidatedSelect({
           padding: 12,
           borderRadius: 8,
           border: '1px solid #ddd',
-          marginTop: 4,
           fontSize: 16,
           background: '#fff',
           color: value ? '#222' : '#bbb',
@@ -136,17 +140,19 @@ export function ValidatedSelect({
           </option>
         ))}
       </select>
-      {touched && !value && required && (
-        <span style={{ color: '#e53e3e', fontSize: 13 }}>
-          Falta completar este campo
-        </span>
-      )}
-      {error && (
-        <span style={{ color: '#e53e3e', fontSize: 13 }}>
-          {error}
-        </span>
-      )}
-    </label>
+      <div style={{ marginTop: 2, minHeight: 14 }}>
+        {touched && !value && required && (
+          <span style={{ color: '#e53e3e', fontSize: 11 }}>
+            Falta completar este campo
+          </span>
+        )}
+        {error && (
+          <span style={{ color: '#e53e3e', fontSize: 11 }}>
+            {error}
+          </span>
+        )}
+      </div>
+    </div>
   );
 }
 

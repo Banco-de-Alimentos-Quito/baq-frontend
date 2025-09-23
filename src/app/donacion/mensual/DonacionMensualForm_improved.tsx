@@ -192,7 +192,7 @@ export default function DonacionMensualForm() {
           />
 
           <ValidatedInput
-            label="Nombres Completos"
+            label="Nombres completos"
             name="nombres"
             value={form.nombres}
             placeholder="Ej: Juan Carlos Pérez González"
