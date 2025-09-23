@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import Link from "next/link";
 import { useFormValidation, FormData } from "./hooks/useFormValidation";
@@ -10,6 +10,7 @@ import { DonationService } from "./services/donationService";
 
 export default function DonacionMensualForm() {
   const params = useSearchParams();
+  const router = useRouter();
   const monto = Number(params.get("monto")) || 0;
 
   // Añadir estado para la factura
@@ -215,6 +216,9 @@ export default function DonacionMensualForm() {
     setTermsChecked(false);
     setQuiereFactura(null);
     clearValidation();
+    
+    // Redirigir a la página de inicio
+    router.push("/");
   };
 
   return (
