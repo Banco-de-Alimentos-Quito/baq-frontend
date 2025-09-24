@@ -506,6 +506,7 @@ export default function DonacionMensualForm() {
                         validation={validationState.cedula}
                         error={errors.cedula}
                         touched={tocado.cedula}
+                        documentType={documentType}
                         onChange={handleChange}
                         onBlur={handleBlur}
                       />
@@ -600,6 +601,7 @@ export default function DonacionMensualForm() {
                       <ValidatedInput
                         label="Número de cuenta bancario del donador"
                         name="cuenta"
+                        type="tel"
                         value={form.cuenta}
                         placeholder="Ej: 1234567890"
                         required

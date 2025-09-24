@@ -8,8 +8,11 @@ export interface DocumentValidator {
 // Validador de Cédula Ecuatoriana
 export class CedulaValidator implements DocumentValidator {
   validate(cedula: string): boolean {
-    // Limpiar la cédula
-    const cleanCedula = cedula.replace(/\D/g, '');
+    // Verificar que solo contenga dígitos
+    if (!/^\d+$/.test(cedula.trim())) return false;
+    
+    // Limpiar la cédula (solo espacios, ya que verificamos que solo tenga dígitos)
+    const cleanCedula = cedula.replace(/\s/g, '');
     
     // Verificar longitud
     if (cleanCedula.length !== 10) return false;
@@ -53,8 +56,11 @@ export class CedulaValidator implements DocumentValidator {
 // Validador de RUC Ecuatoriano
 export class RucValidator implements DocumentValidator {
   validate(ruc: string): boolean {
-    // Limpiar el RUC
-    const cleanRuc = ruc.replace(/\D/g, '');
+    // Verificar que solo contenga dígitos
+    if (!/^\d+$/.test(ruc.trim())) return false;
+    
+    // Limpiar el RUC (solo espacios, ya que verificamos que solo tenga dígitos)
+    const cleanRuc = ruc.replace(/\s/g, '');
     
     // Verificar longitud
     if (cleanRuc.length !== 13) return false;
@@ -173,24 +179,29 @@ export class DocumentValidationContext {
 // Factory para determinar el tipo de documento automáticamente
 export class DocumentValidatorFactory {
   static getValidator(document: string): DocumentValidator | null {
-    const cleanDocument = document.replace(/\D/g, '');
+    const trimmedDocument = document.trim();
     
-    // Si tiene 10 dígitos y cumple patrón de cédula
-    if (cleanDocument.length === 10) {
-      const cedulaValidator = new CedulaValidator();
-      if (cedulaValidator.getPattern().test(cleanDocument)) {
-        return cedulaValidator;
+    // Si solo contiene dígitos (y posibles espacios)
+    if (/^\d+$/.test(trimmedDocument.replace(/\s/g, ''))) {
+      const cleanDocument = trimmedDocument.replace(/\s/g, '');
+      
+      // Si tiene 10 dígitos y cumple patrón de cédula
+      if (cleanDocument.length === 10) {
+        const cedulaValidator = new CedulaValidator();
+        if (cedulaValidator.getPattern().test(cleanDocument)) {
+          return cedulaValidator;
+        }
+      }
+      
+      // Si tiene 13 dígitos, es RUC
+      if (cleanDocument.length === 13) {
+        return new RucValidator();
       }
     }
     
-    // Si tiene 13 dígitos, es RUC
-    if (cleanDocument.length === 13) {
-      return new RucValidator();
-    }
-    
-    // Si no es numérico o tiene longitud diferente, podría ser pasaporte
-    if (!/^\d+$/.test(document.replace(/\s/g, '')) || 
-        (document.replace(/\s/g, '').length >= 8 && document.replace(/\s/g, '').length <= 9)) {
+    // Si no es completamente numérico, podría ser pasaporte
+    if (!/^\d+$/.test(trimmedDocument.replace(/\s/g, '')) && 
+        (trimmedDocument.replace(/\s/g, '').length >= 8 && trimmedDocument.replace(/\s/g, '').length <= 9)) {
       return new PassportValidator();
     }
     
