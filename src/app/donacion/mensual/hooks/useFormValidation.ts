@@ -80,10 +80,20 @@ export function useFormValidation() {
 
       case 'correo':
         if (value) {
+          // Validación mejorada de correo electrónico
           const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-          isValid = emailRegex.test(value);
+          const hasMultipleAt = (value.match(/@/g) || []).length > 1;
+          const hasValidDomain = value.includes('@') && value.split('@')[1] && value.split('@')[1].includes('.');
+          
+          isValid = emailRegex.test(value) && !hasMultipleAt && hasValidDomain;
           if (!isValid) {
-            errorMessage = 'Formato de correo electrónico inválido.';
+            if (hasMultipleAt) {
+              errorMessage = 'El correo no puede contener múltiples símbolos @.';
+            } else if (!hasValidDomain) {
+              errorMessage = 'El dominio del correo debe incluir un punto.';
+            } else {
+              errorMessage = 'Formato de correo electrónico inválido.';
+            }
           }
         }
         break;

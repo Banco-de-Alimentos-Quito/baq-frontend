@@ -62,18 +62,18 @@ export class DonationService {
     quiereFactura: boolean
   ): DonationPayload {
     return {
-      cedula_ruc: form.cedula,
-      nombres_completos: form.nombres,
-      numero_telefono: form.numero.replace(/\D/g, ''),
-      correo_electronico: form.correo,
-      direccion: form.direccion,
-      numero_cuenta: form.cuenta.replace(/\D/g, ''),
-      tipo_cuenta: form.tipoCuenta as 'Ahorros' | 'Corriente',
-      banco_cooperativa: form.banco === 'Otra' ? form.otroBanco : form.banco,
+      cedula_ruc: form.cedula.trim(),
+      nombres_completos: form.nombres.trim(),
+      numero_telefono: form.numero.trim().replace(/\D/g, ''),
+      correo_electronico: form.correo.trim(),
+      direccion: form.direccion.trim(),
+      numero_cuenta: form.cuenta.trim().replace(/\D/g, ''),
+      tipo_cuenta: form.tipoCuenta.trim() as 'Ahorros' | 'Corriente',
+      banco_cooperativa: form.banco === 'Otra' ? form.otroBanco.trim() : form.banco.trim(),
       monto_donar: monto,
       acepta_aporte_voluntario: form.acepta,
       acepta_tratamiento_datos: termsChecked,
-      ciudad: form.ciudad,
+      ciudad: form.ciudad.trim(),
       requiere_factura: quiereFactura
     };
   }

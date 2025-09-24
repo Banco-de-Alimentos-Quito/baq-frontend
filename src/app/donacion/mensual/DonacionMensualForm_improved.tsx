@@ -271,7 +271,7 @@ export default function DonacionMensualForm() {
           />
 
           <ValidatedInput
-            label="Número de cuenta del donador"
+            label="Número de cuenta bancario del donador"
             name="cuenta"
             value={form.cuenta}
             placeholder="Ej: 1234567890"

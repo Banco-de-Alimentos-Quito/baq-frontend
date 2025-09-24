@@ -33,6 +33,40 @@ export function ValidatedInput({
   const greyPlaceholderFields = ['cedula', 'nombres', 'numero', 'correo', 'direccion', 'ciudad', 'cuenta'];
   const shouldHaveGreyPlaceholder = greyPlaceholderFields.includes(name);
 
+  // Campos que no deben admitir espacios
+  const noSpaceFields = ['numero', 'cedula', 'cuenta'];
+  const shouldRestrictSpaces = noSpaceFields.includes(name);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let inputValue = e.target.value;
+    
+    // Restringir espacios en campos específicos
+    if (shouldRestrictSpaces) {
+      inputValue = inputValue.replace(/\s/g, '');
+    } else {
+      // Para otros campos, limitar espacios consecutivos muy largos
+      inputValue = inputValue.replace(/\s{4,}/g, '   '); // Máximo 3 espacios consecutivos
+    }
+
+    // Validación mejorada para correo
+    if (name === 'correo') {
+      // Prevenir múltiples @ consecutivos
+      inputValue = inputValue.replace(/@@+/g, '@');
+      // Limitar caracteres especiales después del dominio
+      const parts = inputValue.split('@');
+      if (parts.length > 2) {
+        // Si hay más de un @, mantener solo los primeros dos
+        inputValue = parts[0] + '@' + parts.slice(1).join('');
+      }
+    }
+
+    // Modificar directamente el valor del target
+    e.target.value = inputValue;
+    
+    // Llamar al onChange original
+    onChange(e);
+  };
+
   return (
     <div style={{ width: '100%', marginBottom: 8 }}>
       <label className="form-label" style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#2F3388' }}>
@@ -45,7 +79,7 @@ export function ValidatedInput({
           required={required}
           readOnly={readOnly}
           value={value}
-          onChange={onChange}
+          onChange={handleInputChange}
           onBlur={onBlur}
           className={shouldHaveGreyPlaceholder ? 'grey-placeholder' : ''}
           style={{

@@ -598,7 +598,7 @@ export default function DonacionMensualForm() {
                       </div>
 
                       <ValidatedInput
-                        label="Número de cuenta del donador"
+                        label="Número de cuenta bancario del donador"
                         name="cuenta"
                         value={form.cuenta}
                         placeholder="Ej: 1234567890"
@@ -665,9 +665,9 @@ export default function DonacionMensualForm() {
                           <button
                             type="button"
                             onClick={() => setQuiereFactura(true)}
-                            className={`p-4 border-2 rounded-lg transition-all ${quiereFactura === true
-                              ? 'border-orange-500 bg-orange-50 text-orange-700'
-                              : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                            className={`p-4 border-2 rounded-lg transition-all duration-300 transform hover:scale-105 active:scale-95 cursor-pointer ${quiereFactura === true
+                              ? 'border-orange-500 bg-orange-50 text-orange-700 selected-glow'
+                              : 'border-gray-200 bg-white text-gray-600 hover:border-orange-300 hover:bg-orange-25 hover:shadow-md pulse-on-hover'
                               }`}
                           >
                             <div className="flex items-center justify-center gap-2">
@@ -680,9 +680,9 @@ export default function DonacionMensualForm() {
                           <button
                             type="button"
                             onClick={() => setQuiereFactura(false)}
-                            className={`p-4 border-2 rounded-lg transition-all ${quiereFactura === false
-                              ? 'border-orange-500 bg-orange-50 text-orange-700'
-                              : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                            className={`p-4 border-2 rounded-lg transition-all duration-300 transform hover:scale-105 active:scale-95 cursor-pointer ${quiereFactura === false
+                              ? 'border-orange-500 bg-orange-50 text-orange-700 selected-glow'
+                              : 'border-gray-200 bg-white text-gray-600 hover:border-orange-300 hover:bg-orange-25 hover:shadow-md pulse-on-hover'
                               }`}
                           >
                             <div className="flex items-center justify-center gap-2">
@@ -902,6 +902,50 @@ export default function DonacionMensualForm() {
           </div>
         </div>
       )}
+      
+      {/* Estilos CSS para efectos de cursor */}
+      <style jsx>{`
+        /* Efectos de cursor para botones de factura */
+        .cursor-pointer {
+          cursor: pointer !important;
+        }
+        
+        .cursor-pointer:hover {
+          cursor: pointer !important;
+        }
+        
+        /* Animación de pulso para botones no seleccionados */
+        .pulse-on-hover:hover {
+          animation: gentle-pulse 1.5s infinite;
+        }
+        
+        @keyframes gentle-pulse {
+          0% {
+            box-shadow: 0 0 0 0 rgba(255, 115, 0, 0.4);
+          }
+          70% {
+            box-shadow: 0 0 0 10px rgba(255, 115, 0, 0);
+          }
+          100% {
+            box-shadow: 0 0 0 0 rgba(255, 115, 0, 0);
+          }
+        }
+        
+        /* Efecto glow para botones seleccionados */
+        .selected-glow {
+          box-shadow: 0 0 20px rgba(255, 115, 0, 0.5), 0 4px 15px rgba(255, 115, 0, 0.3);
+          animation: glow-pulse 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow-pulse {
+          from {
+            box-shadow: 0 0 15px rgba(255, 115, 0, 0.4), 0 4px 15px rgba(255, 115, 0, 0.3);
+          }
+          to {
+            box-shadow: 0 0 25px rgba(255, 115, 0, 0.6), 0 4px 20px rgba(255, 115, 0, 0.4);
+          }
+        }
+      `}</style>
     </div>
   );
 }
