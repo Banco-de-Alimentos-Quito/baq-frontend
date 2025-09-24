@@ -3,6 +3,7 @@
 import { Suspense, useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { z } from "zod";
+import { useFormStore } from "@/app/store/formStore";
 
 // Esquema de validación para DeUna
 const FormSchema = z.object({
@@ -23,7 +24,8 @@ const FormSchema = z.object({
     .min(5, { message: "La dirección debe tener al menos 5 caracteres" })
     .max(200, { message: "La dirección no debe exceder 200 caracteres" })
     .regex(/^[a-zA-Z0-9\s.,\-#]+$/, {
-      message: "Solo se permiten letras, números, espacios y los caracteres . , - #",
+      message:
+        "Solo se permiten letras, números, espacios y los caracteres . , - #",
     }),
 });
 
@@ -39,8 +41,11 @@ function DeunaContent() {
     telefono: "",
     direccion: "",
   });
-  const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({});
+  const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>(
+    {}
+  );
   const [loading, setLoading] = useState(false);
+  const { setEmail, setFormField } = useFormStore();
 
   useEffect(() => {
     const montoParam = searchParams.get("monto");
@@ -51,9 +56,7 @@ function DeunaContent() {
     }
   }, [searchParams, router]);
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -110,39 +113,49 @@ function DeunaContent() {
     }
 
     // ✅ GENERAR transactionReference único para esta sesión (formato más corto)
-          const newTransactionRef = `BAQ-${(Date.now().toString() + Math.random().toString().substr(2, 6)).substr(0, 15)}`;
-
+    const newTransactionRef = `BAQ-${(
+      Date.now().toString() + Math.random().toString().substr(2, 6)
+    ).substr(0, 15)}`;
 
     // ✅ LIMPIAR datos anteriores de QR para forzar nueva generación
     const keysToRemove = [];
     for (let i = 0; i < sessionStorage.length; i++) {
       const key = sessionStorage.key(i);
-      if (key && (key.startsWith('qr_data_') || key.startsWith('transaction_ref_') || key.startsWith('transaction_id_') || key.startsWith('deeplink_')))  {
+      if (
+        key &&
+        (key.startsWith("qr_data_") ||
+          key.startsWith("transaction_ref_") ||
+          key.startsWith("transaction_id_") ||
+          key.startsWith("deeplink_"))
+      ) {
         keysToRemove.push(key);
       }
     }
-    keysToRemove.forEach(key => sessionStorage.removeItem(key));
-    console.log('🧹 Datos anteriores de QR limpiados:', keysToRemove);
+    keysToRemove.forEach((key) => sessionStorage.removeItem(key));
+    console.log("🧹 Datos anteriores de QR limpiados:", keysToRemove);
 
     // ✅ Guardar datos en sessionStorage para uso posterior (siempre frescos)
-    sessionStorage.setItem("deunaEmail", formData.email || "");
-    sessionStorage.setItem("deunaTelefono", formData.telefono);
-    sessionStorage.setItem("deunaDireccion", formData.direccion);
-    
+    setEmail(formData.email || "");
+    setFormField("phone", formData.telefono);
+    setFormField("direccion", formData.direccion);
+    setFormField("monto", monto.toString());
+
     // ✅ MARCAR QUE EL USUARIO PASÓ POR EL FORMULARIO
-    sessionStorage.setItem('formulario_completado', 'true');
-    sessionStorage.setItem('monto_validado', monto.toString());
-    
-    console.log('🔥 === DATOS GUARDADOS EN SESSIONSTORAGE (DEUNA FORM) ===');
-    console.log('📧 Email guardado:', formData.email || "");
-    console.log('📱 Teléfono guardado:', formData.telefono);
-    console.log('🏠 Dirección guardada:', formData.direccion);
-    console.log('✅ Formulario marcado como completado');
-    console.log('💰 Monto validado guardado:', monto.toString());
-    console.log('✅ Datos guardados exitosamente, redirigiendo a QR...');
+    sessionStorage.setItem("formulario_completado", "true");
+    sessionStorage.setItem("monto_validado", monto.toString());
+
+    console.log("🔥 === DATOS GUARDADOS EN SESSIONSTORAGE (DEUNA FORM) ===");
+    console.log("📧 Email guardado:", formData.email || "");
+    console.log("📱 Teléfono guardado:", formData.telefono);
+    console.log("🏠 Dirección guardada:", formData.direccion);
+    console.log("✅ Formulario marcado como completado");
+    console.log("💰 Monto validado guardado:", monto.toString());
+    console.log("✅ Datos guardados exitosamente, redirigiendo a QR...");
 
     // ✅ Redirigir a la página QR con transactionRef como parámetro
-    router.push(`/donacion/qr?monto=${monto}&transactionRef=${newTransactionRef}`);
+    router.push(
+      `/donacion/qr?monto=${monto}&transactionRef=${newTransactionRef}`
+    );
     setLoading(false);
   };
 
@@ -180,7 +193,6 @@ function DeunaContent() {
         {/* Contenido principal */}
         <div className="bg-white rounded-xl shadow-lg p-6">
           <form onSubmit={handleSubmit} className="space-y-4">
-            
             <div>
               <label className="block text-gray-700 font-medium mb-1">
                 Email <span className="text-red-500">*</span>
@@ -338,7 +350,13 @@ function DeunaContent() {
 export default function DeunaPage() {
   return (
     <div style={{ minHeight: "100vh", background: "#f8fafc" }}>
-      <Suspense fallback={<div style={{ paddingTop: 120, textAlign: 'center' }}>Cargando...</div>}>
+      <Suspense
+        fallback={
+          <div style={{ paddingTop: 120, textAlign: "center" }}>
+            Cargando...
+          </div>
+        }
+      >
         <DeunaContent />
       </Suspense>
     </div>

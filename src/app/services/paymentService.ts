@@ -30,6 +30,23 @@ export class PaymentService {
     city?: string
   ): Promise<PaymentConfirmResponse> {
     try {
+      const emailResponse = await fetch(`${this.baseUrl}/payphone/email`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({ id, clientTxId: clientTransactionId }),
+      });
+
+      const emailData = await emailResponse.json();
+
+      if (emailData?.email) {
+        // Usar directamente el store sin destructuring
+        useFormStore.getState().setEmail(emailData.email);
+        console.log("📧 Email obtenido del backend:", emailData.email);
+      }
+
       const response = await fetch(`${this.baseUrl}/payphone/confirm`, {
         method: "POST",
         headers: {
@@ -51,8 +68,7 @@ export class PaymentService {
       }
 
       //TODO: Aqui colocar un verficicador porque da un error
-      //Error: Failed to execute 'json' on 'Response': Unexpected end of JSON input
-      //try
+      
       const data = await response.json();
 
       return data;
@@ -74,7 +90,6 @@ export class PaymentService {
     ciudad?: string
   ): Promise<PaymentConfirmResponse> {
     try {
-
       // Obtener dirección del sessionStorage si no se proporcionó
       const formState = useFormStore.getState();
       const userId = formState.userId;

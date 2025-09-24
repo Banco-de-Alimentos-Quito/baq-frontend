@@ -1,5 +1,6 @@
 'use client';
 
+import { useFormStore } from "@/app/store/formStore";
 import { getOrCreateUserId } from "@/app/utils/utils";
 
 export interface StreakApiResponseSuccess {
@@ -39,7 +40,7 @@ class StreakService {
 
   public async getStreak(): Promise<StreakData> {
     try {
-      const userId = getOrCreateUserId();
+      const email = useFormStore.getState().email;
 
       const response = await fetch(this.baseUrl, {
         method: 'POST',
@@ -47,7 +48,7 @@ class StreakService {
           'Content-Type': 'application/json',
         },
         // enviar ambos nombres por compatibilidad backend
-        body: JSON.stringify({ userId, user_id: userId }),
+        body: JSON.stringify({ email: email}),
       });
 
       // intentar parsear JSON aunque sea un error
