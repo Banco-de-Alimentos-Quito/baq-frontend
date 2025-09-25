@@ -528,6 +528,8 @@ json' -d '${JSON.stringify(statusPayload)}'`;
         // Cerrar modal de loading ANTES de abrir el modal de confirmación
         setShowLoadingModal(false);
 
+        router.push("/thank-you");
+
         // Abrir modal de datos complementarios
         console.log("🚪 Abriendo modal de datos complementarios...");
         console.log("✅ Modal abierto");
