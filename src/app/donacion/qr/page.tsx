@@ -252,9 +252,7 @@ function QRContent() {
           dataSent: sessionStorage.getItem(`data_sent_${newTransactionRef}`)
         });
         
-        if (deunaTelefono && deunaDireccion && !dataAlreadySent) {
-          console.log('📋 Datos de DeUna encontrados, enviando al backend (PRIMERA VEZ)...');
-          try {
+         try {
             await fetch(`https://api.baq.ec/api/baq/deuna/store-user-data`, {
               method: 'POST',
               headers: {
@@ -263,9 +261,9 @@ function QRContent() {
               body: JSON.stringify({
                 internalTransactionReference: newTransactionRef,
                 userId: userId,
-                email: deunaEmail || '',
-                telefono: deunaTelefono,
-                direccion: deunaDireccion,
+                email: email,
+                telefono: phone,
+                direccion: direccion,
               }),
             });
             
@@ -276,15 +274,6 @@ function QRContent() {
             console.error('❌ Error enviando datos de DeUna al backend:', storeError);
             // No fallar la generación del QR por este error
           }
-        } else if (dataAlreadySent) {
-          console.log('⏭️ Datos ya fueron enviados previamente, saltando envío al backend');
-        } else if (!deunaTelefono || !deunaDireccion) {
-          console.log('⚠️ No hay datos completos de DeUna para enviar (teléfono o dirección faltante)');
-          console.log('📱 Teléfono presente:', !!deunaTelefono);
-          console.log('🏠 Dirección presente:', !!deunaDireccion);
-        } else {
-          console.log('⚠️ Condición desconocida para no enviar datos');
-        }
         
         console.log('✅ QR configurado exitosamente');
       } else {
@@ -585,11 +574,6 @@ function QRContent() {
   //     setShowLoadingModal(false);
   //   }
   // };
-
-  const handleCloseSuccessModal = () => {
-    setShowSuccessModal(false);
-    router.push('/thank-you');
-  };
 
   return (
     <div style={{ paddingTop: 120, paddingBottom: 120, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
