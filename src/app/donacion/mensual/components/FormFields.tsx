@@ -11,6 +11,7 @@ interface ValidatedInputProps {
   validation?: boolean | null;
   error?: string;
   touched?: boolean;
+  documentType?: string | null; // Para manejar el tipo de documento detectado
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onBlur: (e: React.FocusEvent<HTMLInputElement>) => void;
 }
@@ -26,12 +27,67 @@ export function ValidatedInput({
   validation,
   error,
   touched,
+  documentType,
   onChange,
   onBlur
 }: ValidatedInputProps) {
   // Campos que deben tener placeholder más gris
   const greyPlaceholderFields = ['cedula', 'nombres', 'numero', 'correo', 'direccion', 'ciudad', 'cuenta'];
   const shouldHaveGreyPlaceholder = greyPlaceholderFields.includes(name);
+
+  // Campos que no deben admitir espacios
+  const noSpaceFields = ['numero', 'cedula', 'cuenta'];
+  const shouldRestrictSpaces = noSpaceFields.includes(name);
+
+  // Campos que solo deben permitir números
+  const numericOnlyFields = ['numero', 'cuenta'];
+  const shouldBeNumericOnly = numericOnlyFields.includes(name);
+
+  // Para el campo cedula, depende del tipo de documento detectado
+  const shouldRestrictCedulaToNumbers = name === 'cedula' && documentType && documentType !== 'Pasaporte';
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let inputValue = e.target.value;
+    
+    // Restringir a solo números en campos específicos
+    if (shouldBeNumericOnly) {
+      inputValue = inputValue.replace(/[^0-9]/g, '');
+    }
+    
+    // Para cédula, restringir según el tipo de documento
+    if (shouldRestrictCedulaToNumbers) {
+      inputValue = inputValue.replace(/[^0-9]/g, '');
+    } else if (name === 'cedula' && documentType === 'Pasaporte') {
+      // Para pasaportes, permitir letras y números, pero sin espacios ni caracteres especiales
+      inputValue = inputValue.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+    }
+    
+    // Restringir espacios en campos específicos (excepto cuando ya se procesó la cédula como pasaporte)
+    if (shouldRestrictSpaces && !shouldBeNumericOnly && !(name === 'cedula' && documentType === 'Pasaporte')) {
+      inputValue = inputValue.replace(/\s/g, '');
+    } else if (!shouldBeNumericOnly && !(name === 'cedula' && documentType === 'Pasaporte')) {
+      // Para otros campos, limitar espacios consecutivos muy largos
+      inputValue = inputValue.replace(/\s{4,}/g, '   '); // Máximo 3 espacios consecutivos
+    }
+
+    // Validación mejorada para correo
+    if (name === 'correo') {
+      // Prevenir múltiples @ consecutivos
+      inputValue = inputValue.replace(/@@+/g, '@');
+      // Limitar caracteres especiales después del dominio
+      const parts = inputValue.split('@');
+      if (parts.length > 2) {
+        // Si hay más de un @, mantener solo los primeros dos
+        inputValue = parts[0] + '@' + parts.slice(1).join('');
+      }
+    }
+
+    // Modificar directamente el valor del target
+    e.target.value = inputValue;
+    
+    // Llamar al onChange original
+    onChange(e);
+  };
 
   return (
     <div style={{ width: '100%', marginBottom: 8 }}>
@@ -45,7 +101,7 @@ export function ValidatedInput({
           required={required}
           readOnly={readOnly}
           value={value}
-          onChange={onChange}
+          onChange={handleInputChange}
           onBlur={onBlur}
           className={shouldHaveGreyPlaceholder ? 'grey-placeholder' : ''}
           style={{
