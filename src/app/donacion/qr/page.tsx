@@ -50,11 +50,8 @@ function QRContent() {
     
     console.log('✅ Usuario validado, puede proceder con QR');
   }, [cantidad, router]);
-  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [showLoadingModal, setShowLoadingModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
-  const [streakEnabled, setStreakEnabled] = useState(false);
   const [correoModal, setCorreoModal] = useState('');
   const [qrData, setQrData] = useState<string>('');
   const [isLoadingQR, setIsLoadingQR] = useState(true);
@@ -464,7 +461,6 @@ function QRContent() {
 
         // Abrir modal de datos complementarios
         console.log('🚪 Abriendo modal de datos complementarios...');
-        setShowConfirmationModal(true);
         console.log('✅ Modal abierto');
       } else {
         console.log('❓ Estado desconocido:', result.status, '- Mostrando mensaje de estado no válido');
@@ -508,48 +504,47 @@ function QRContent() {
     }
   };
 
-  const handleSubmitDonation = async () => {
-    setShowConfirmationModal(false);
-    setShowLoadingModal(true);
+  // const handleSubmitDonation = async () => {
+  //   setShowLoadingModal(true);
 
-    try {
-      // Reutilizar el mismo user_id que se usó para generar el QR
-      const user_id = await getOrCreateUserId();
-      const payload = {
-        correo_electronico: correoModal || correo || 'anonimo@baq.ec', // Email opcional, usar valor por defecto si no se proporciona
-        monto_donar: cantidad,
-        user_id: user_id,
-      };
+  //   try {
+  //     // Reutilizar el mismo user_id que se usó para generar el QR
+  //     const user_id = await getOrCreateUserId();
+  //     const payload = {
+  //       correo_electronico: correoModal || correo || 'anonimo@baq.ec', // Email opcional, usar valor por defecto si no se proporciona
+  //       monto_donar: cantidad,
+  //       user_id: user_id,
+  //     };
 
-      const response = await fetch('https://api.baq.ec/api/baq/donaciones/donador-simple', {
-        method: 'POST',
-        headers: {
-          'accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload)
-      });
+  //     const response = await fetch('https://api.baq.ec/api/baq/donaciones/donador-simple', {
+  //       method: 'POST',
+  //       headers: {
+  //         'accept': 'application/json',
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify(payload)
+  //     });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Error response:', errorText);
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+  //     if (!response.ok) {
+  //       const errorText = await response.text();
+  //       console.error('Error response:', errorText);
+  //       throw new Error(`HTTP error! status: ${response.status}`);
+  //     }
 
-      await response.json();
+  //     await response.json();
 
-      setShowLoadingModal(false);
-      setShowSuccessModal(true);
+  //     setShowLoadingModal(false);
+  //     setShowSuccessModal(true);
 
-    } catch (error) {
-      console.error('Error submitting donation:', error);
-      toast.error('Error al registrar la donación', {
-        description: 'Hubo un problema al procesar tu donación. Por favor, intenta nuevamente.',
-        duration: 4000,
-      });
-      setShowLoadingModal(false);
-    }
-  };
+  //   } catch (error) {
+  //     console.error('Error submitting donation:', error);
+  //     toast.error('Error al registrar la donación', {
+  //       description: 'Hubo un problema al procesar tu donación. Por favor, intenta nuevamente.',
+  //       duration: 4000,
+  //     });
+  //     setShowLoadingModal(false);
+  //   }
+  // };
 
   const handleCloseSuccessModal = () => {
     setShowSuccessModal(false);
@@ -677,119 +672,6 @@ function QRContent() {
         </button>
       </div>
 
-      {/* Modal de confirmación */}
-      {showConfirmationModal && (
-        <div style={{
-          position: 'fixed',
-          inset: 0,
-          zIndex: 9999,
-          background: 'rgba(0,0,0,0.25)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>
-          <div style={{
-            background: '#fff',
-            borderRadius: 18,
-            boxShadow: '0 4px 24px #0002',
-            padding: '32px',
-            minWidth: 320,
-            maxWidth: 400,
-            textAlign: 'center',
-            position: 'relative',
-          }}>
-            <div style={{ fontSize: 20, fontWeight: 900, color: '#2F3388', marginBottom: 16 }}>
-              ¿Deseas recibir notificaciones del BAQ?
-            </div>
-            <div style={{ fontSize: 16, color: '#555', marginBottom: 20 }}>
-              Mantén una racha de donaciones y recibe actualizaciones sobre nuestro trabajo.
-            </div>
-
-            <div style={{ marginBottom: 16 }}>
-              <label style={{ display: 'block', marginBottom: 8, color: '#2F3388', fontWeight: 600, fontSize: 14 }}>
-                Correo electrónico (opcional)
-              </label>
-              <input
-                type="email"
-                value={correoModal}
-                onChange={(e) => setCorreoModal(e.target.value)}
-                placeholder="tucorreo@email.com"
-                style={{
-                  width: '100%',
-                  padding: 10,
-                  borderRadius: 6,
-                  border: '1px solid #ddd',
-                  fontSize: 14,
-                  color: '#222',
-                  boxSizing: 'border-box'
-                }}
-              />
-              <div style={{ fontSize: 12, color: '#666', marginTop: 4 }}>
-                Para recibir notificaciones y mantener tu racha de donaciones
-              </div>
-            </div>
-
-            <div style={{ marginBottom: 16 }}>
-              <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 8 }}>
-                <input
-                  type="checkbox"
-                  checked={notificationsEnabled}
-                  onChange={(e) => setNotificationsEnabled(e.target.checked)}
-                  style={{ marginRight: 8 }}
-                />
-                <span>Recibir notificaciones del BAQ</span>
-              </label>
-            </div>
-
-            <div style={{ marginBottom: 24 }}>
-              <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <input
-                  type="checkbox"
-                  checked={streakEnabled}
-                  onChange={(e) => setStreakEnabled(e.target.checked)}
-                  style={{ marginRight: 8 }}
-                />
-                <span>Mantener racha de donaciones</span>
-              </label>
-            </div>
-
-            <div style={{ display: 'flex', gap: 12 }}>
-              <button
-                onClick={() => setShowConfirmationModal(false)}
-                style={{
-                  flex: 1,
-                  background: '#f3f3f3',
-                  color: '#555',
-                  fontWeight: 'bold',
-                  fontSize: 16,
-                  border: 'none',
-                  borderRadius: 8,
-                  padding: 12,
-                  cursor: 'pointer',
-                }}
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={handleSubmitDonation}
-                style={{
-                  flex: 1,
-                  background: 'linear-gradient(90deg, #ff7300, #ffb347)',
-                  color: '#fff',
-                  fontWeight: 'bold',
-                  fontSize: 16,
-                  border: 'none',
-                  borderRadius: 8,
-                  padding: 12,
-                  cursor: 'pointer',
-                }}
-              >
-                Confirmar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Modal de carga */}
       {showLoadingModal && (
