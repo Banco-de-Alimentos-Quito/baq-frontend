@@ -65,6 +65,8 @@ function QRContent() {
   // Hook para detectar si es dispositivo móvil
   const isMobile = useMobile();
 
+  const { email, phone, direccion } = useFormStore();
+
   // Función para generar el QR dinámicamente
   const generateQR = useCallback(async () => {
     console.log('🚀 === INICIANDO GENERACIÓN DE QR ===');
@@ -423,7 +425,44 @@ function QRContent() {
       console.log('- TransactionId:', result.idTransaction || 'No disponible');
       console.log('- Otros campos:', Object.keys(result).filter(key => key !== 'status' && key !== 'idTransaction'));
       console.log('========================================');
+      
+      try {
 
+        const payload = {
+          transaction_id: transactionId,
+          email: email,
+          direccion: direccion,
+          numero_telefono: phone,
+        };
+
+        const response = await fetch('https://api.baq.ec/api/baq/donaciones/transaccion-pendiente', {
+          method: 'POST',
+          headers: {
+            'accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('Error response:', errorText);
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        await response.json();
+
+        setShowLoadingModal(false);
+        setShowSuccessModal(true);
+
+      } catch (error) {
+        console.error('Error submitting donation:', error);
+        toast.error('Error al registrar la donación', {
+          description: 'Hubo un problema al procesar tu donación. Por favor, intenta nuevamente.',
+          duration: 4000,
+        });
+        setShowLoadingModal(false);
+      }
 
 
       setShowLoadingModal(false);
@@ -454,14 +493,15 @@ function QRContent() {
         });
         console.log('✅ Toast de APPROVED mostrado');
         
-        useFormStore.getState().clearFormData();
       
         // Cerrar modal de loading ANTES de abrir el modal de confirmación
         setShowLoadingModal(false);
 
         // Abrir modal de datos complementarios
-        console.log('🚪 Abriendo modal de datos complementarios...');
-        console.log('✅ Modal abierto');
+          console.log('🚀 Redirigiendo a /thank-you...');
+          setTimeout(() => {
+            router.push('/thank-you');
+          }, 1500); // 1.5 segundos de delay para mostrar el toast
       } else {
         console.log('❓ Estado desconocido:', result.status, '- Mostrando mensaje de estado no válido');
         // Otros estados (REJECTED, etc.)
