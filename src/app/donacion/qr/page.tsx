@@ -298,49 +298,32 @@ function QRContent() {
           dataSent: sessionStorage.getItem(`data_sent_${newTransactionRef}`),
         });
 
-        if (email && phone && direccion) {
-          console.log(
-            "📋 Datos de DeUna encontrados, enviando al backend (PRIMERA VEZ)..."
-          );
-          try {
-            await fetch(`https://api.baq.ec/api/baq/deuna/store-user-data`, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                internalTransactionReference: newTransactionRef,
-                userId: userId,
-                email: email || "",
-                telefono: phone,
-                direccion: direccion,
-              }),
-            });
+        try {
+          await fetch(`https://api.baq.ec/api/baq/deuna/store-user-data`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              internalTransactionReference: newTransactionRef,
+              userId: userId,
+              email: email || "",
+              telefono: phone,
+              direccion: direccion,
+            }),
+          });
 
-            // ✅ MARCAR COMO ENVIADO para evitar duplicados
-            sessionStorage.setItem(`data_sent_${newTransactionRef}`, "true");
-            console.log(
-              "✅ Datos de DeUna enviados al backend exitosamente y marcado como enviado"
-            );
-          } catch (storeError) {
-            console.error(
-              "❌ Error enviando datos de DeUna al backend:",
-              storeError
-            );
-            // No fallar la generación del QR por este error
-          }
-        } else if (dataAlreadySent) {
+          // ✅ MARCAR COMO ENVIADO para evitar duplicados
+          sessionStorage.setItem(`data_sent_${newTransactionRef}`, "true");
           console.log(
-            "⏭️ Datos ya fueron enviados previamente, saltando envío al backend"
+            "✅ Datos de DeUna enviados al backend exitosamente y marcado como enviado"
           );
-        } else if (!deunaTelefono || !deunaDireccion) {
-          console.log(
-            "⚠️ No hay datos completos de DeUna para enviar (teléfono o dirección faltante)"
+        } catch (storeError) {
+          console.error(
+            "❌ Error enviando datos de DeUna al backend:",
+            storeError
           );
-          console.log("📱 Teléfono presente:", !!deunaTelefono);
-          console.log("🏠 Dirección presente:", !!deunaDireccion);
-        } else {
-          console.log("⚠️ Condición desconocida para no enviar datos");
+          // No fallar la generación del QR por este error
         }
 
         console.log("✅ QR configurado exitosamente");
