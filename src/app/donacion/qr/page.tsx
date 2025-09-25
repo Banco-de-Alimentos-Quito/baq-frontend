@@ -303,7 +303,7 @@ function QRContent() {
             "📋 Datos de DeUna encontrados, enviando al backend (PRIMERA VEZ)..."
           );
           try {
-            await fetch(`http://localhost:3001/api/baq/deuna/store-user-data`, {
+            await fetch(`https://api.baq.ec/api/baq/deuna/store-user-data`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
