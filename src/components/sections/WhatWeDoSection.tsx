@@ -14,8 +14,8 @@ export default function WhatWeDoSection() {
         </div>
         <div className="grid md:grid-cols-2 gap-8 items-center">
           <div className="flex justify-center animate-in fade-in-0 slide-in-from-left-10 duration-700 delay-100">
-            <Image
-              src="https://www.baq.ec/wp-content/uploads/2025/05/wb-que-hace-baq-v2-1.webp"
+            <img
+              src="what_we_do.jpg"
               alt="Voluntarios organizando alimentos"
               width={600}
               height={400}
