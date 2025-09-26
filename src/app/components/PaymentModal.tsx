@@ -234,9 +234,8 @@ export default function PaymentModal({
 
             {/* Payphone */}
             <button
-              className="flex items-center justify-center gap-2 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-blue-400 text-white font-semibold opacity-50 cursor-not-allowed transition"
+              className="flex items-center justify-center gap-2 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-blue-400 text-white font-semibold hover:from-blue-700 hover:to-blue-500 transition"
               onClick={goToPayphone}
-              disabled
             >
               <img
                 src="https://oneclic.app/tutoriales/payphone/assets/img/payphone.png"
