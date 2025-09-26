@@ -1,6 +1,8 @@
+"use client";
+
 import React, { useState } from "react";
 import { z } from "zod";
-import dotenv from "dotenv";
+
 
 // Schema de validación con Zod
 const DonacionAlimentosSchema = z.object({
