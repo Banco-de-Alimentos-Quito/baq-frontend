@@ -87,7 +87,7 @@ Cada entrega viene con:
 
 ## 🔄 Modelo de sostenibilidad
 
-![Voluntarios cosechando](https://images.unsplash.com/photo-1577308856968-1a9d3b33b30b?auto=format&fit=crop&w=1050&q=80)
+![Voluntarios cosechando](https://live.staticflickr.com/65535/53027062212_c93ffd34a8_b.jpg)
 
 * Cada kilo recuperado cuesta solo **\$0.23** operativamente.
 * Financiado parcialmente por el BAQ y el resto por **aliados estratégicos**.
