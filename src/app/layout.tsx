@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { Lexend_Deca } from "next/font/google";
+import { Playfair_Display } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
@@ -11,6 +13,18 @@ import StoreInitializer from "./components/StoreInitializer";
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
+});
+
+const lexend = Lexend_Deca({
+  subsets: ["latin"],
+  variable: "--font-lexend",
+});
+
+// Usando Playfair Display como alternativa elegante similar a Queens
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  variable: "--font-queens",
+  weight: ["400", "700"],
 });
 
 export const metadata: Metadata = {
@@ -40,7 +54,7 @@ export default function RootLayout({
 
       <body
         suppressHydrationWarning
-        className={`${inter.variable} font-sans antialiased min-h-screen flex flex-col`}
+        className={`${inter.variable} ${lexend.variable} ${playfair.variable} font-sans antialiased min-h-screen flex flex-col`}
       >
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-XJNTP3SK76"

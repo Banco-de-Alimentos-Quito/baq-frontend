@@ -1,11 +1,11 @@
 ---
 title: "Nutrición Infantil: La Base del Futuro de Ecuador"
-author: "Dr. Patricia Mendoza"
-author_avatar: "/blog/authors/patricia-mendoza.jpg"
+author: "Ing. Patricia Peréz"
+author_avatar: "/blog/authors/patricia-perez.jpg"
 author_bio: "Nutricionista especializada en pediatría. Coordinadora del programa de nutrición infantil del BAQ."
 published_at: "2025-01-08"
 last_modified: "2025-01-08"
-cover_image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1050&q=80"
+cover_image: "https://live.staticflickr.com/65535/54270739922_13e97d8b49_b.jpg"
 tags: ["Nutrición", "Infancia", "Salud", "Desarrollo"]
 read_time: 7
 excerpt: "La nutrición en los primeros años de vida determina el desarrollo físico y cognitivo. Descubre cómo estamos combatiendo la desnutrición infantil en Ecuador."
@@ -13,7 +13,7 @@ excerpt: "La nutrición en los primeros años de vida determina el desarrollo f�
 
 # 🥕 Nutrición Infantil: La Base del Futuro de Ecuador
 
-![Niños comiendo frutas](https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1050&q=80)
+![Niños comiendo frutas](https://live.staticflickr.com/65535/54270739922_13e97d8b49_b.jpg)
 
 ## 📊 La Realidad de la Nutrición Infantil en Ecuador
 

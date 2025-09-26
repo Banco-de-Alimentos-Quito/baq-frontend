@@ -1,11 +1,11 @@
 ---
 title: "El Poder del Voluntariado: Transformando Vidas en Quito"
-author: "María González"
-author_avatar: "/blog/authors/maria-gonzalez.jpg"
+author: "Ing. Patricia Peréz"
+author_avatar: "/blog/authors/patricia-perez.jpg"
 author_bio: "Coordinadora de Voluntariado del Banco de Alimentos Quito. Apasionada por conectar personas con causas sociales."
 published_at: "2025-01-10"
 last_modified: "2025-01-10"
-cover_image: "https://images.unsplash.com/photo-1559027615-cd4628902d4a?auto=format&fit=crop&w=1050&q=80"
+cover_image: "https://live.staticflickr.com/65535/53028132438_b369ce236f_b.jpg"
 tags: ["Voluntariado", "Comunidad", "Impacto Social", "Solidaridad"]
 read_time: 6
 excerpt: "Descubre cómo nuestros voluntarios están cambiando la realidad de miles de familias en Quito a través de su compromiso y dedicación."
@@ -13,7 +13,7 @@ excerpt: "Descubre cómo nuestros voluntarios están cambiando la realidad de mi
 
 # 🤝 El Poder del Voluntariado: Transformando Vidas en Quito
 
-![Voluntarios trabajando juntos](https://images.unsplash.com/photo-1559027615-cd4628902d4a?auto=format&fit=crop&w=1050&q=80)
+![Voluntarios trabajando juntos](https://live.staticflickr.com/65535/53028132438_b369ce236f_b.jpg)
 
 ## 💫 Una Historia de Solidaridad
 

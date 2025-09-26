@@ -42,7 +42,11 @@ const nextConfig: NextConfig = {
         pathname: '/v1/create-qr-code/**',
       },
     ],
-    domains: ['www.baq.ec'],
+    domains: [
+      'www.baq.ec',
+      'live.staticflickr.com',
+      'images.unsplash.com',
+    ],
   },
 };
 
