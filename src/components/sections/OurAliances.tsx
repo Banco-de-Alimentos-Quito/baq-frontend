@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 const OurAliances: React.FC = () => {
   return (
@@ -15,29 +15,29 @@ const OurAliances: React.FC = () => {
         {/* Grid de logos de aliados */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center justify-items-center max-w-4xl mx-auto">
           {/* The Global Food Banking Network */}
-          <div className="flex items-center justify-center p-6 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
+          <div className="flex items-center justify-center p-6">
             <img
-              src="/images/logos/global-food-banking-network.png"
+              src="https://www.foodbanking.org/wp-content/uploads/2023/05/GFN_Logo_Teal.png"
               alt="The Global Food Banking Network"
-              className="h-16 w-auto object-contain"
+              className="h-32 w-auto object-contain"
             />
           </div>
 
           {/* Diálogos Vitales */}
-          <div className="flex items-center justify-center p-6 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
+          <div className="flex items-center justify-center p-6">
             <img
-              src="/images/logos/dialogos-vitales.png"
+              src="https://robertosalasguzman.cl/wp-content/uploads/2020/09/Logo.jpg"
               alt="Diálogos Vitales"
-              className="h-16 w-auto object-contain"
+              className="h-32 w-auto object-contain"
             />
           </div>
 
           {/* Pontificia Universidad Javeriana */}
-          <div className="flex items-center justify-center p-6 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
+          <div className="flex items-center justify-center p-6">
             <img
-              src="/images/logos/pontificia-javeriana.png"
+              src="https://webhistorico.epn.edu.ec/wp-content/uploads/2022/08/logo-epn-vertical.png"
               alt="Escuela Politecnica Nacional"
-              className="h-16 w-auto object-contain"
+              className="h-32 w-auto object-contain"
             />
           </div>
         </div>
