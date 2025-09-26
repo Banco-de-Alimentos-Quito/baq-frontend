@@ -1,11 +1,11 @@
 ---
 title: "Sostenibilidad Ambiental: El Impacto Verde del Banco de Alimentos Quito"
-author: "Lic. Andrea Torres"
-author_avatar: "/blog/authors/andrea-torres.jpg"
+author: "Ing. Patricia Peréz"
+author_avatar: "/blog/authors/patricia-perez.jpg"
 author_bio: "Coordinadora de Sostenibilidad Ambiental del BAQ. Especialista en gestión de residuos y economía circular."
 published_at: "2025-01-03"
 last_modified: "2025-01-03"
-cover_image: "https://images.unsplash.com/photo-1473341304170-971d4b5e3c5f?auto=format&fit=crop&w=1050&q=80"
+cover_image: "https://live.staticflickr.com/65535/54271844923_e0d3bcd089_b.jpg"
 tags: ["Sostenibilidad", "Medio Ambiente", "Economía Circular", "Cambio Climático"]
 read_time: 9
 excerpt: "Descubre cómo el BAQ está combatiendo el cambio climático a través de la reducción del desperdicio alimentario y prácticas sostenibles."
@@ -13,7 +13,7 @@ excerpt: "Descubre cómo el BAQ está combatiendo el cambio climático a través
 
 # 🌱 Sostenibilidad Ambiental: El Impacto Verde del Banco de Alimentos Quito
 
-![Agricultura sostenible](https://images.unsplash.com/photo-1473341304170-971d4b5e3c5f?auto=format&fit=crop&w=1050&q=80)
+![Agricultura sostenible](https://live.staticflickr.com/65535/54271844923_e0d3bcd089_b.jpg)
 
 ## 🌍 El Desperdicio Alimentario y el Cambio Climático
 

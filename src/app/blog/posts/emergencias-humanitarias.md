@@ -1,11 +1,11 @@
 ---
 title: "Respuesta a Emergencias: El BAQ en Tiempos de Crisis"
-author: "Cpt. Roberto Méndez"
-author_avatar: "/blog/authors/roberto-mendez.jpg"
+author: "Ing. Patricia Peréz"
+author_avatar: "/blog/authors/patricia-perez.jpg"
 author_bio: "Director de Respuesta a Emergencias del BAQ. Experto en logística humanitaria y gestión de crisis."
 published_at: "2024-12-28"
 last_modified: "2024-12-28"
-cover_image: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1050&q=80"
+cover_image: "https://live.staticflickr.com/65535/54271857468_0e2759fda4_b.jpg"
 tags: ["Emergencias", "Humanitario", "Crisis", "Ayuda"]
 read_time: 7
 excerpt: "Descubre cómo el BAQ responde rápidamente a emergencias humanitarias, proporcionando alimentos y esperanza en los momentos más difíciles."
@@ -13,7 +13,7 @@ excerpt: "Descubre cómo el BAQ responde rápidamente a emergencias humanitarias
 
 # 🚨 Respuesta a Emergencias: El BAQ en Tiempos de Crisis
 
-![Ayuda humanitaria](https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1050&q=80)
+![BAQ_2024-139](https://live.staticflickr.com/65535/54271857468_0e2759fda4_b.jpg)
 
 ## ⚡ La Importancia de la Respuesta Rápida
 
@@ -235,4 +235,4 @@ En situaciones de emergencia, **cada minuto cuenta**. El Banco de Alimentos Quit
 
 ---
 
-*"En tiempos de crisis, la solidaridad se convierte en esperanza."* 🚨❤️ 
+*"En tiempos de crisis, la solidaridad se convierte en esperanza."* 🚨❤️

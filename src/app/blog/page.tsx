@@ -11,7 +11,7 @@ export default function BlogPage() {
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Blog del BAQ
+            <span style={{ color: '#EB711B' }}>Blog</span>
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             Descubre las historias, proyectos y logros del Banco de Alimentos Quito

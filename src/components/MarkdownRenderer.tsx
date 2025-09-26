@@ -1,3 +1,5 @@
+'use client';
+
 import React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -20,10 +22,30 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
           // Personaliza la renderización de imágenes
           img: ({ node, ...props }) => {
             const { src, alt } = props;
-            if (!src) return null;
+            if (!src || typeof src !== 'string') return null;
             
-            // Eliminamos por completo el div envolvente para evitar errores de hidratación
-            // y aplicamos los mismos estilos directamente a la imagen
+            // Para imágenes externas, usar img regular
+            const isExternalImage = src.startsWith("http");
+            
+            if (isExternalImage) {
+              return (
+                <img 
+                  src={src} 
+                  alt={alt || ''} 
+                  className="rounded-lg object-cover my-6 w-full max-w-3xl mx-auto"
+                  style={{ maxHeight: '450px' }}
+                  onError={(e) => {
+                    console.error('Error loading image:', src);
+                    // Imagen de fallback simple
+                    const target = e.currentTarget as HTMLImageElement;
+                    target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjQ1MCIgdmlld0JveD0iMCAwIDgwMCA0NTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwMCIgaGVpZ2h0PSI0NTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSI0MDAiIHk9IjIyNSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzk5OTk5OSI+SW1hZ2VuIG5vIGRpc3BvbmlibGU8L3RleHQ+PC9zdmc+';
+                    target.alt = 'Imagen no disponible';
+                  }}
+                />
+              );
+            }
+            
+            // Para imágenes internas, usar Next.js Image
             return (
               <Image 
                 src={src} 
@@ -31,7 +53,6 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
                 width={800} 
                 height={450} 
                 className="rounded-lg object-cover my-6"
-                unoptimized={src.startsWith("http")}
               />
             );
           },
@@ -66,8 +87,9 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
             </td>
           ),
           // Personaliza los bloques de código
-          code: ({ node, inline, className, children, ...props }) =>
-            inline ? (
+          code: ({ node, className, children, ...props }) => {
+            const isInline = !className || !className.startsWith('language-');
+            return isInline ? (
               <code className="px-1 py-0.5 bg-gray-100 rounded text-orange-700 text-sm">
                 {children}
               </code>
@@ -77,7 +99,8 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
                   {children}
                 </code>
               </pre>
-            ),
+            );
+          },
           // Asegurar que los párrafos no intenten renderizar elementos no válidos
           p: ({ node, children, ...props }) => {
             // Verificar si hay hijos que sean objetos y no texto simple

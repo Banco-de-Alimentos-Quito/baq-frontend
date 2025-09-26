@@ -1,11 +1,11 @@
 ---
 title: "Tecnología al Servicio de la Solidaridad: La Transformación Digital del BAQ"
-author: "Ing. Carlos Ramírez"
-author_avatar: "/blog/authors/carlos-ramirez.jpg"
+author: "Ing. Patricia Peréz"
+author_avatar: "/blog/authors/patricia-perez.jpg"
 author_bio: "Director de Tecnología del Banco de Alimentos Quito. Especialista en sistemas de gestión para organizaciones sin fines de lucro."
 published_at: "2025-01-05"
 last_modified: "2025-01-05"
-cover_image: "https://images.unsplash.com/photo-1518709268805-4e9042af2176?auto=format&fit=crop&w=1050&q=80"
+cover_image: "https://live.staticflickr.com/65535/54271846139_bdc6272311_b.jpg"
 tags: ["Tecnología", "Innovación", "Digitalización", "Eficiencia"]
 read_time: 8
 excerpt: "Descubre cómo la tecnología está revolucionando nuestras operaciones, mejorando la eficiencia y ampliando nuestro impacto en la comunidad."
@@ -13,7 +13,7 @@ excerpt: "Descubre cómo la tecnología está revolucionando nuestras operacione
 
 # 💻 Tecnología al Servicio de la Solidaridad: La Transformación Digital del BAQ
 
-![Tecnología y solidaridad](https://images.unsplash.com/photo-1518709268805-4e9042af2176?auto=format&fit=crop&w=1050&q=80)
+![Tecnología y solidaridad](https://live.staticflickr.com/65535/54271846139_bdc6272311_b.jpg)
 
 ## 🚀 La Revolución Digital en el Sector Social
 

@@ -1,11 +1,11 @@
 ---
 title: "REAGRO 2025 – Alimentamos personas. Salvamos alimentos. Protegemos el planeta."
-author: "Equipo BAQ"
-author_avatar: "/blog/authors/baq-team.jpg"
+author: "Ing. Patricia Peréz"
+author_avatar: "/blog/authors/patricia-perez.jpg"
 author_bio: "Equipo del Banco de Alimentos Quito comprometido con la lucha contra el hambre y el desperdicio alimentario."
 published_at: "2025-01-15"
 last_modified: "2025-01-15"
-cover_image: "https://images.unsplash.com/photo-1578574577315-3fbeb0cecdc6?auto=format&fit=crop&w=1050&q=80"
+cover_image: "https://live.staticflickr.com/65535/54271839959_7c784f3c9f_b.jpg"
 tags: ["Agricultura", "Sostenibilidad", "Comunidad", "REAGRO"]
 read_time: 8
 excerpt: "Descubre cómo REAGRO está transformando el desperdicio alimentario en esperanza para miles de familias ecuatorianas."
@@ -13,7 +13,7 @@ excerpt: "Descubre cómo REAGRO está transformando el desperdicio alimentario e
 
 # 🥕 REAGRO 2025 – Alimentamos personas. Salvamos alimentos. Protegemos el planeta.
 
-![Agricultura y sostenibilidad](https://images.unsplash.com/photo-1578574577315-3fbeb0cecdc6?auto=format&fit=crop&w=1050&q=80)
+![Agricultura y sostenibilidad](https://live.staticflickr.com/65535/54271839959_7c784f3c9f_b.jpg)
 
 ## 📍 ¿Por qué nace REAGRO?
 
