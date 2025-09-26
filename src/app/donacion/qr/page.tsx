@@ -523,8 +523,6 @@ json' -d '${JSON.stringify(statusPayload)}'`;
         });
         console.log("✅ Toast de APPROVED mostrado");
 
-        useFormStore.getState().clearFormData();
-
         // Cerrar modal de loading ANTES de abrir el modal de confirmación
         setShowLoadingModal(false);
 
