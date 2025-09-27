@@ -28,6 +28,9 @@ const NavLinks = ({ onClick }: { onClick?: () => void }) => (
     <Link href="/blog" className="text-sm font-medium hover:text-primary transition-colors" onClick={onClick}>
       Blog
     </Link>
+    <Link href="/ambassadors" className="text-sm font-medium hover:text-primary transition-colors" onClick={onClick}>
+      Héroes Contra el Hambre
+    </Link>
   </>
 );
 

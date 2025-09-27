@@ -9,6 +9,7 @@ import FloatingDonationButton from "@/components/ui/floating-donation-button";
 import Location from "@/components/sections/Location";
 import ImpactStories from "@/components/sections/ImpactStories";
 import OurAliances from "@/components/sections/OurAliances";
+import AmbassadorsSection from "@/components/sections/Ambassadors";
 
 export default function Home() {
   return (
@@ -20,6 +21,7 @@ export default function Home() {
       <DonationSection />
       <FloatingDonationButton />
       <TestimonialsSection />
+      <AmbassadorsSection />
       <ImpactStories />
       <Location />
     </div>
