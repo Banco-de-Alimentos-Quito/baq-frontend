@@ -4,19 +4,19 @@ import Image from 'next/image';
 const heroes = [
   {
     id: 1,
-    name: "María González",
+    name: "Emily Montalvo",
     image: "/ambassadors/1679526502702.jpg",
     quote: "Cada día es una oportunidad de cambiar vidas a través de la alimentación."
   },
   {
     id: 2,
-    name: "Carlos Rodríguez",
+    name: "Luis Guerrero",
     image: "/ambassadors/1750481236230.jpg",
     quote: "La verdadera riqueza está en poder compartir lo que tenemos con quienes más lo necesitan."
   },
   {
     id: 3,
-    name: "Ana Martínez",
+    name: "Alejandro Llanganate",
     image: "/ambassadors/1753395799462.jpg",
     quote: "Un plato de comida puede ser la diferencia entre la esperanza y la desesperanza."
   }
