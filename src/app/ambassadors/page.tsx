@@ -16,7 +16,7 @@ const heroes = [
   {
     id: 2,
     name: "Luis",
-    fullname: "Luis Martínez",
+    fullname: "Luis Guerrero",
     title: "Desarrollador de Software",
     image: "/ambassadors/1750481236230.jpg",
     quote: "La verdadera riqueza está en poder compartir lo que tenemos con quienes más lo necesitan.",
@@ -34,12 +34,12 @@ const heroes = [
   // Nuevo embajador de ejemplo
   {
     id: 4,
-    name: "Sofía",
-    fullname: "Sofía Ramírez",
-    title: "Voluntaria Social",
-    image: "/ambassadors/sofia.jpg",
+    name: "Alexis",
+    fullname: "Alexis Sotomayor",
+    title: "Desarrollador de Software",
+    image: "/ambassadors/1712598357022.jpeg",
     quote: "Ayudar a otros es la mejor forma de encontrarse a uno mismo.",
-    instagram: "https://www.instagram.com/sofia.ramirez"
+    instagram: "https://www.instagram.com/alexis541721"
   }
 ];
 
@@ -70,7 +70,7 @@ export default function HeroesContraElHambrePage() {
                         hover:bg-white w-full max-w-xs mx-auto"
             >
               {/* Hero Image sin Overlay ni blur */}
-              <div className="relative h-32 overflow-hidden group">
+              <div className="relative h-70 overflow-hidden group">
                 <Image
                   src={hero.image}
                   alt={hero.name}
