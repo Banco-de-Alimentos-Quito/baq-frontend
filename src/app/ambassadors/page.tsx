@@ -6,6 +6,15 @@ import Image from 'next/image';
 const heroes = [
   {
     id: 1,
+    name: "Jeremy",
+    fullname: "Jeremy Erazo",
+    title: "Ethical Hacker",
+    image: "/ambassadors/1836183642.jpg",
+    quote: "El cambio empieza con una acción, por pequeña que sea.",
+    instagram: "https://www.instagram.com/alexis541721",
+  },
+  {
+    id: 2,
     name: "Emily",
     fullname: "Emily Montalvo",
     title: "Ingeniera de Software",
@@ -14,7 +23,7 @@ const heroes = [
     instagram: "https://www.instagram.com/emily.montalvo"
   },
   {
-    id: 2,
+    id: 3,
     name: "Luis",
     fullname: "Luis Guerrero",
     title: "Desarrollador de Software",
@@ -23,7 +32,7 @@ const heroes = [
     instagram: "https://www.instagram.com/laghie993"
   },
   {
-    id: 3,
+    id: 4,
     name: "Alejandro",
     fullname: "Alejandro Llangante",
     title: "Ingeniero de Software",
@@ -31,9 +40,8 @@ const heroes = [
     quote: "Un plato de comida puede ser la diferencia entre la esperanza y la desesperanza.",
     instagram: "https://www.instagram.com/alejandro_llanganate_"
   },
-  // Nuevo embajador de ejemplo
   {
-    id: 4,
+    id: 5,
     name: "Alexis",
     fullname: "Alexis Sotomayor",
     title: "Desarrollador de Software",
@@ -53,7 +61,7 @@ export default function HeroesContraElHambrePage() {
             <span style={{ color: '#EB711B' }}>Embajadores </span> contra el hambre
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Conoce a las personas extraordinarias que dedican su tiempo y esfuerzo a combatir el hambre en nuestra comunidad
+            Conoce a las personas extraordinarias que donan mensualmente y ponen su esfuerzo a combatir el hambre en nuestra comunidad
           </p>
         </div>
 
@@ -146,7 +154,13 @@ export default function HeroesContraElHambrePage() {
               ¿Quieres ser un <span style={{ color: '#EB711B' }}>Embajador</span> también?
             </h2>
             <p className="text-lg text-gray-600 mb-6">
-              Únete a nuestro equipo de voluntarios o realiza una donación mensual para aumentar tu impacto y ayudar a cambiar más vidas cada día.
+              ¿Eres donador recurrente y quieres aparecer en esta sección? <br />Escríbenos a&nbsp;
+              <a
+                href="mailto:tecnologia@baq.ec"
+                className="text-orange-600 underline hover:text-orange-700"
+              >
+                tecnologia@baq.ec
+              </a>
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
