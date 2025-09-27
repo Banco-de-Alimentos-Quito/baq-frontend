@@ -29,7 +29,22 @@ const NavLinks = ({ onClick }: { onClick?: () => void }) => (
       Blog
     </Link>
     <Link href="/ambassadors" className="text-sm font-medium hover:text-primary transition-colors" onClick={onClick}>
-      Embajadores contra el hambre
+      <span
+        className="relative inline-block text-[#EB711B] font-bold"
+        style={{
+          animation: 'colorPulseJump 2s infinite'
+        }}
+      >
+        Embajadores <span className="inline-block">contra el hambre</span>
+        <style jsx>{`
+          @keyframes colorPulseJump {
+            0% { color: #EB711B; text-shadow: 0 0 0px #EB711B33; transform: translateY(0);}
+            20% { color: #ff9800; text-shadow: 0 0 8px #EB711B99; transform: translateY(-4px);}
+            40% { color: #EB711B; text-shadow: 0 0 0px #EB711B33; transform: translateY(0);}
+            100% { color: #EB711B; text-shadow: 0 0 0px #EB711B33; transform: translateY(0);}
+          }
+        `}</style>
+      </span>
     </Link>
   </>
 );

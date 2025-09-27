@@ -30,6 +30,16 @@ const heroes = [
     image: "/ambassadors/1753395799462.jpg",
     quote: "Un plato de comida puede ser la diferencia entre la esperanza y la desesperanza.",
     instagram: "https://www.instagram.com/alejandro_llanganate_"
+  },
+  // Nuevo embajador de ejemplo
+  {
+    id: 4,
+    name: "Sofía",
+    fullname: "Sofía Ramírez",
+    title: "Voluntaria Social",
+    image: "/ambassadors/sofia.jpg",
+    quote: "Ayudar a otros es la mejor forma de encontrarse a uno mismo.",
+    instagram: "https://www.instagram.com/sofia.ramirez"
   }
 ];
 
@@ -48,7 +58,7 @@ export default function HeroesContraElHambrePage() {
         </div>
 
         {/* Heroes Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {heroes.map((hero, index) => (
             <motion.div
               key={hero.id}
@@ -57,11 +67,10 @@ export default function HeroesContraElHambrePage() {
               transition={{ delay: index * 0.2 }}
               className="bg-white/80 backdrop-blur-sm rounded-lg shadow-lg overflow-hidden 
                         hover:shadow-xl transition-all duration-500 transform hover:scale-105 
-                        hover:bg-white"
+                        hover:bg-white w-full max-w-xs mx-auto"
             >
-              {/* Hero Image with Overlay */}
-              <div className="relative h-48 overflow-hidden group">
-                <div className="absolute inset-0 bg-black/40 z-10 group-hover:bg-black/0 transition-all duration-500"></div>
+              {/* Hero Image sin Overlay ni blur */}
+              <div className="relative h-32 overflow-hidden group">
                 <Image
                   src={hero.image}
                   alt={hero.name}
@@ -69,53 +78,50 @@ export default function HeroesContraElHambrePage() {
                   className="object-cover transition-all duration-500 group-hover:scale-105"
                 />
               </div>
-
               {/* Content */}
-              <div className="p-4 backdrop-blur-sm bg-white/70 transition-colors duration-500">
+              <div className="p-3 backdrop-blur-sm bg-white/70 transition-colors duration-500">
                 {/* Nombre y Título en la parte superior */}
-                <div className="flex justify-between items-start mb-2">
+                <div className="flex justify-between items-start mb-1">
                   {/* Nombre a la izquierda */}
                   <div>
-                    <h2 className="text-xl font-bold text-gray-900 text-left">
+                    <h2 className="text-base font-bold text-gray-900 text-left">
                       {hero.name}
                     </h2>
-                    <p className="text-sm text-gray-600 text-left">
+                    <p className="text-xs text-gray-600 text-left">
                       {hero.fullname}
                     </p>
                   </div>
                   {/* Título a la derecha */}
-                  <p className="text-sm text-orange-700 font-semibold text-right mt-1 ml-4">
+                  <p className="text-xs text-orange-700 font-semibold text-right mt-1 ml-2">
                     {hero.title}
                   </p>
                 </div>
-
                 {/* Quote */}
                 <motion.blockquote 
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: index * 0.3 + 0.2 }}
-                  className="text-gray-600 text-center italic text-base" 
+                  className="text-gray-600 text-center italic text-xs" 
                 >
-                  <span className="text-orange-600 text-xl">&ldquo;</span>
+                  <span className="text-orange-600 text-lg">&ldquo;</span>
                   {hero.quote}
-                  <span className="text-orange-600 text-xl">&rdquo;</span>
+                  <span className="text-orange-600 text-lg">&rdquo;</span>
                 </motion.blockquote>
-
                 {/* Instagram Icono al final derecha */}
-                <div className="flex justify-end mt-4">
+                <div className="flex justify-end mt-2">
                   <a
                     href={hero.instagram}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-10 h-10 flex items-center justify-center rounded-full bg-gradient-to-tr from-pink-500 via-red-500 to-yellow-500 hover:scale-110 transition-transform"
+                    className="w-8 h-8 flex items-center justify-center rounded-full bg-gradient-to-tr from-pink-500 via-red-500 to-yellow-500 hover:scale-110 transition-transform"
                     aria-label="Instagram"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="white"
                       viewBox="0 0 24 24"
-                      width="24"
-                      height="24"
+                      width="18"
+                      height="18"
                     >
                       <circle cx="12" cy="12" r="5" />
                       <rect x="2" y="2" width="20" height="20" rx="6" fill="none" stroke="white" strokeWidth="2"/>
