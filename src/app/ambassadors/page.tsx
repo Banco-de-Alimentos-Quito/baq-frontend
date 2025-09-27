@@ -1,22 +1,24 @@
+"use client"
+import { motion } from 'framer-motion';
 import Image from 'next/image';
 
 // Datos hardcodeados de los héroes
 const heroes = [
   {
     id: 1,
-    name: "María González",
+    name: "Emily",
     image: "/ambassadors/1679526502702.jpg",
     quote: "Cada día es una oportunidad de cambiar vidas a través de la alimentación."
   },
   {
     id: 2,
-    name: "Carlos Rodríguez",
+    name: "Luis",
     image: "/ambassadors/1750481236230.jpg",
     quote: "La verdadera riqueza está en poder compartir lo que tenemos con quienes más lo necesitan."
   },
   {
     id: 3,
-    name: "Ana Martínez",
+    name: "Alejandro",
     image: "/ambassadors/1753395799462.jpg",
     quote: "Un plato de comida puede ser la diferencia entre la esperanza y la desesperanza."
   }
@@ -38,42 +40,58 @@ export default function HeroesContraElHambrePage() {
 
         {/* Heroes Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {heroes.map((hero) => (
-            <div
+          {heroes.map((hero, index) => (
+            <motion.div
               key={hero.id}
-              className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 transform hover:scale-105"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.2 }}
+              className="bg-white/80 backdrop-blur-sm rounded-lg shadow-lg overflow-hidden 
+                        hover:shadow-xl transition-all duration-500 transform hover:scale-105 
+                        hover:bg-white"
             >
-              {/* Hero Image */}
-              <div className="relative h-64 overflow-hidden">
+              {/* Hero Image with Overlay */}
+              <div className="relative h-64 overflow-hidden group">
+                <div className="absolute inset-0 bg-black/40 z-10 group-hover:bg-black/0 transition-all duration-500"></div>
                 <Image
                   src={hero.image}
                   alt={hero.name}
                   fill
-                  className="object-cover"
+                  className="object-cover transition-all duration-500 group-hover:scale-105"
                 />
               </div>
 
               {/* Content */}
-              <div className="p-6">
+              <div className="p-6 backdrop-blur-sm bg-white/70 transition-colors duration-500">
                 {/* Name */}
                 <h2 className="text-2xl font-bold text-gray-900 mb-4 text-center">
                   {hero.name}
                 </h2>
 
                 {/* Quote */}
-                <blockquote className="text-gray-600 text-center italic">
+                <motion.blockquote 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: index * 0.3 + 0.2 }}
+                  className="text-gray-600 text-center italic"
+                >
                   <span className="text-orange-600 text-2xl">&ldquo;</span>
                   {hero.quote}
                   <span className="text-orange-600 text-2xl">&rdquo;</span>
-                </blockquote>
+                </motion.blockquote>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
 
         {/* Call to Action */}
         <div className="text-center mt-16">
-          <div className="bg-white rounded-lg shadow-lg p-8 max-w-3xl mx-auto">
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8 }}
+            className="bg-white/90 backdrop-blur-sm rounded-lg shadow-lg p-8 max-w-3xl mx-auto"
+          >
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
               ¿Quieres ser un <span style={{ color: '#EB711B' }}>héroe</span> también?
             </h2>
@@ -83,7 +101,7 @@ export default function HeroesContraElHambrePage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
                 href="/donacion"
-                className="inline-flex items-center px-6 py-3 bg-orange-600 text-white font-medium rounded-lg hover:bg-orange-700 transition-colors duration-200"
+                className="inline-flex items-center px-6 py-3 bg-orange-600 text-white font-medium rounded-lg hover:bg-orange-700 transition-colors duration-300 hover:scale-105 transform"
               >
                 Donar Ahora
                 <svg
@@ -102,7 +120,7 @@ export default function HeroesContraElHambrePage() {
               </a>
               <a
                 href="/volunteering"
-                className="inline-flex items-center px-6 py-3 border-2 border-orange-600 text-orange-600 font-medium rounded-lg hover:bg-orange-600 hover:text-white transition-colors duration-200"
+                className="inline-flex items-center px-6 py-3 border-2 border-orange-600 text-orange-600 font-medium rounded-lg hover:bg-orange-600 hover:text-white transition-all duration-300 hover:scale-105 transform"
               >
                 Dona Alimento
                 <svg
@@ -120,7 +138,7 @@ export default function HeroesContraElHambrePage() {
                 </svg>
               </a>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </div>
