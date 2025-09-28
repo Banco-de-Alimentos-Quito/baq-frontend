@@ -1164,7 +1164,7 @@ export default function DonacionPage() {
 
             <div className="aspect-video w-full">
               <iframe
-                src="https://www.youtube.com/embed/BTVJFee_U64"
+                src="https://www.youtube.com/embed/BTVJFee_U64?autoplay=1"
                 title="Video Explicativo"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
