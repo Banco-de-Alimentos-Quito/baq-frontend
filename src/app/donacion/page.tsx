@@ -108,6 +108,7 @@ export default function DonacionPage() {
   // const [showTipoButtons, setShowTipoButtons] = useState(false);
   // const [showInversionModal, setShowInversionModal] = useState(false);
   const [showWhatsAppModal, setShowWhatsAppModal] = useState(false);
+  const [showVideoModal, setShowVideoModal] = useState(true);
 
   const [deunaForm, setDeunaForm] = useState({
     nombre: "",
@@ -263,7 +264,7 @@ export default function DonacionPage() {
   // Función para generar el mensaje de WhatsApp
   const generateWhatsAppMessage = () => {
     const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
-    const message = `¡Únete a mí para acabar con la desnutrición! 🍽️✨\n\nCada $1 alimenta a una persona durante todo un día. Tu ayuda puede transformar vidas.\n\n👉 Dona aquí: ${currentUrl}\n\n#ContraLaDesnutricion #DonaConImpacto`;
+    const message = `¡Únete a mí para acabar con la desnutrición! 🍽️✨\n\nCada $1 alimenta a una persona durante todo el día. Tu ayuda puede transformar vidas.\n\n👉 Dona aquí: ${currentUrl}\n\n#ContraLaDesnutricion #DonaConImpacto`;
     return encodeURIComponent(message);
   };
 
@@ -675,6 +676,14 @@ export default function DonacionPage() {
             <p className="text-sm sm:text-base lg:text-lg font-medium">
               Los alimentos gestionados por diferentes fuentes de supermercados, centrales y otros, son complementados con los adquiridos por donaciones y enviados a través de un sistema integral de organizaciones sociales que garantizan trazabilidad y reportería para nuestros benefactores.
             </p>
+
+            {/* Botón para video explicativo */}
+            <button
+              onClick={() => setShowVideoModal(true)}
+              className="mt-4 bg-[#ED6F1D] hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-lg transition-all duration-200 hover:scale-105"
+            >
+              Ver Video Explicativo
+            </button>
           </div>
         </div>
       </section>
@@ -955,6 +964,45 @@ export default function DonacionPage() {
                 ))}
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Video */}
+      {showVideoModal && (
+        <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl p-4 sm:p-6 max-w-4xl w-full shadow-2xl relative">
+            {/* Botón de cerrar */}
+            <button
+              onClick={() => setShowVideoModal(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors z-10"
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+
+            {/* Título y mensaje reflexivo */}
+            <div className="text-center mb-6">
+              <h3 className="text-2xl font-bold text-[#ED6F1D] mb-3">
+                Tu impacto es importante
+              </h3>
+              <p className="text-gray-700 text-lg italic">
+                No te apresures, piensa un momento en porqué donar
+              </p>
+            </div>
+
+            <div className="aspect-video w-full">
+              <iframe
+                src="/video/Why_donate.mp4"
+                title="Video Explicativo"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="w-full h-full rounded-lg"
+              ></iframe>
+            </div>
           </div>
         </div>
       )}
