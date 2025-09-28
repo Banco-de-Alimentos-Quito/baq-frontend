@@ -1,6 +1,6 @@
-"use client"
-import { motion } from 'framer-motion';
-import Image from 'next/image';
+"use client";
+import { motion } from "framer-motion";
+import Image from "next/image";
 
 // Datos hardcodeados de los héroes
 const heroes = [
@@ -18,18 +18,20 @@ const heroes = [
     name: "Emily",
     fullname: "Emily Montalvo",
     title: "Ingeniera de Software",
-    image: "/ambassadors/1679526502702.jpg",
-    quote: "Cada día es una oportunidad de cambiar vidas a través de la alimentación.",
-    instagram: "https://www.instagram.com/emily.montalvo"
+    image: "/ambassadors/18136134581.jpg",
+    quote:
+      "Cada día es una oportunidad de cambiar vidas a través de la alimentación.",
+    instagram: "https://www.instagram.com/emily.montalvo",
   },
   {
     id: 3,
     name: "Luis",
     fullname: "Luis Guerrero",
     title: "Desarrollador de Software",
-    image: "/ambassadors/1750481236230.jpg",
-    quote: "La verdadera riqueza está en poder compartir lo que tenemos con quienes más lo necesitan.",
-    instagram: "https://www.instagram.com/laghie993"
+    image: "/ambassadors/19371728451.jpg",
+    quote:
+      "La verdadera riqueza está en poder compartir lo que tenemos con quienes más lo necesitan.",
+    instagram: "https://www.instagram.com/laghie993",
   },
   {
     id: 4,
@@ -37,8 +39,9 @@ const heroes = [
     fullname: "Alejandro Llangante",
     title: "Ingeniero de Software",
     image: "/ambassadors/1753395799462.jpg",
-    quote: "Un plato de comida puede ser la diferencia entre la esperanza y la desesperanza.",
-    instagram: "https://www.instagram.com/alejandro_llanganate_"
+    quote:
+      "Un plato de comida puede ser la diferencia entre la esperanza y la desesperanza.",
+    instagram: "https://www.instagram.com/alejandro_llanganate_",
   },
   {
     id: 5,
@@ -47,8 +50,17 @@ const heroes = [
     title: "Desarrollador de Software",
     image: "/ambassadors/1712598357022.jpeg",
     quote: "Ayudar a otros es la mejor forma de encontrarse a uno mismo.",
-    instagram: "https://www.instagram.com/alexis541721"
-  }
+    instagram: "https://www.instagram.com/alexis541721",
+  },
+  {
+    id: 6,
+    name: "Julian",
+    fullname: "Julian Narvaez",
+    title: "Desarrollador de Software",
+    image: "/ambassadors/1812671787328.jpeg",
+    quote: "El arte de dar es el arte de vivir.",
+    instagram: "https://www.instagram.com/julian.narvaez",
+  },
 ];
 
 export default function HeroesContraElHambrePage() {
@@ -58,11 +70,17 @@ export default function HeroesContraElHambrePage() {
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            <span style={{ color: '#EB711B' }}>Embajadores </span> contra el hambre
+            <span style={{ color: "#EB711B" }}>Embajadores </span> contra el
+            hambre
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Conoce a las personas extraordinarias que donan mensualmente y ponen su esfuerzo a combatir el hambre en nuestra comunidad
-          </p>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Conoce a las personas extraordinarias que{" "}
+            <span className="font-bold text-orange-600">
+              donan mensualmente
+            </span>{" "}
+            y ponen su esfuerzo a combatir el hambre en
+            nuestra comunidad
+            </p>
         </div>
 
         {/* Heroes Cards Grid */}
@@ -105,11 +123,11 @@ export default function HeroesContraElHambrePage() {
                   </p>
                 </div>
                 {/* Quote */}
-                <motion.blockquote 
+                <motion.blockquote
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: index * 0.3 + 0.2 }}
-                  className="text-gray-600 text-center italic text-xs" 
+                  className="text-gray-600 text-center italic text-xs"
                 >
                   <span className="text-orange-600 text-lg">&ldquo;</span>
                   {hero.quote}
@@ -132,8 +150,17 @@ export default function HeroesContraElHambrePage() {
                       height="18"
                     >
                       <circle cx="12" cy="12" r="5" />
-                      <rect x="2" y="2" width="20" height="20" rx="6" fill="none" stroke="white" strokeWidth="2"/>
-                      <circle cx="18" cy="6" r="1.2" fill="white"/>
+                      <rect
+                        x="2"
+                        y="2"
+                        width="20"
+                        height="20"
+                        rx="6"
+                        fill="none"
+                        stroke="white"
+                        strokeWidth="2"
+                      />
+                      <circle cx="18" cy="6" r="1.2" fill="white" />
                     </svg>
                   </a>
                 </div>
@@ -144,24 +171,16 @@ export default function HeroesContraElHambrePage() {
 
         {/* Call to Action */}
         <div className="text-center mt-16">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8 }}
             className="bg-white/90 backdrop-blur-sm rounded-lg shadow-lg p-8 max-w-3xl mx-auto"
           >
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              ¿Quieres ser un <span style={{ color: '#EB711B' }}>Embajador</span> también?
+            <h2 className="text-3xl font-bold text-gray-900 mb-6">
+              ¿Quieres ser un{" "}
+              <span style={{ color: "#EB711B" }}>Embajador</span> también?
             </h2>
-            <p className="text-lg text-gray-600 mb-6">
-              ¿Eres donador recurrente y quieres aparecer en esta sección? <br />Escríbenos a&nbsp;
-              <a
-                href="mailto:tecnologia@baq.ec"
-                className="text-orange-600 underline hover:text-orange-700"
-              >
-                tecnologia@baq.ec
-              </a>
-            </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
                 href="/donacion"
@@ -183,6 +202,18 @@ export default function HeroesContraElHambrePage() {
                 </svg>
               </a>
             </div>
+            <div className="my-6" />
+            <p className="text-lg text-gray-600 mb-6">
+              ¿Eres donador recurrente y quieres aparecer en esta sección?{" "}
+              <br />
+              Escríbenos a&nbsp;
+              <a
+                href="mailto:tecnologia@baq.ec"
+                className="text-orange-600 underline hover:text-orange-700"
+              >
+                tecnologia@baq.ec
+              </a>
+            </p>
           </motion.div>
         </div>
       </div>
