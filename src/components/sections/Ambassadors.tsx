@@ -6,12 +6,12 @@ import { ArrowRight } from 'lucide-react';
 const ambassadors = [
   {
     name: "Emily Montalvo ",
-    image: "/ambassadors/1679526502702.jpg",
+    image: "/ambassadors/18136134581.jpg",
     quote: "Cada día es una oportunidad de cambiar vidas a través de la alimentación.",
   },
   {
     name: "Luis  Guerrero ", 
-    image: "/ambassadors/1750481236230.jpg",
+    image: "/ambassadors/19371728451.jpg",
     quote: "La verdadera riqueza está en poder compartir lo que tenemos con quienes más lo necesitan.",
   },
   {
