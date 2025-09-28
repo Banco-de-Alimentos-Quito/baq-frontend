@@ -52,15 +52,6 @@ const heroes = [
     quote: "Ayudar a otros es la mejor forma de encontrarse a uno mismo.",
     instagram: "https://www.instagram.com/alexis541721",
   },
-  {
-    id: 6,
-    name: "Julian",
-    fullname: "Julian Narvaez",
-    title: "Desarrollador de Software",
-    image: "/ambassadors/1812671787328.jpeg",
-    quote: "El arte de dar es el arte de vivir.",
-    instagram: "https://www.instagram.com/julian.narvaez",
-  },
 ];
 
 export default function HeroesContraElHambrePage() {
