@@ -10,12 +10,14 @@ import Location from "@/components/sections/Location";
 import ImpactStories from "@/components/sections/ImpactStories";
 import OurAliances from "@/components/sections/OurAliances";
 import AmbassadorsSection from "@/components/sections/Ambassadors";
+import WhyWeDoExist from "@/components/sections/WhyWeDoExist";
 
 export default function Home() {
   return (
     <div className="min-h-screen">
       <HeroSection />
       <WhatWeDoSection />
+      <WhyWeDoExist />
       <OurAliances />
       <HowToHelpSection />
       <DonationSection />
