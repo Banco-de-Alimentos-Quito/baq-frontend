@@ -63,7 +63,7 @@ export default function Footer() {
             <h4 className="text-lg font-semibold text-gray-100 mb-3">
               Nuestras redes sociales
             </h4>
-            <div className="flex flex-col space-y-3">
+            <div className="flex flex-col space-y-3 mb-6">
               <Link
                 href="https://www.facebook.com/baqalimentosquito/?locale=es_LA"
                 aria-label="Facebook"
@@ -87,6 +87,19 @@ export default function Footer() {
               >
                 <Linkedin className="w-5 h-5 flex-shrink-0" />
                 <span>baqalimentosoficial</span>
+              </Link>
+            </div>
+            
+            {/* Enlaces legales */}
+            <div>
+              <h4 className="text-lg font-semibold text-gray-100 mb-3">
+                Información legal
+              </h4>
+              <Link
+                href="/politicas"
+                className="text-gray-400 hover:text-primary transition-colors text-sm underline decoration-dotted"
+              >
+                Políticas de Privacidad
               </Link>
             </div>
           </div>
