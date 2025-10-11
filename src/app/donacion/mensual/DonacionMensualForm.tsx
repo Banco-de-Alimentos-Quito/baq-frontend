@@ -8,6 +8,7 @@ import { ValidatedInput, ValidatedSelect } from "./components/FormFields";
 import { CitySelector } from "./components/CitySelector";
 import { BankSelector } from "./components/BankSelector";
 import { AccountTypeSelector } from "./components/AccountTypeSelector";
+import { GestorDonacionSelector } from "./components/GestorDonacionSelector";
 import { BANK_OPTIONS, ACCOUNT_TYPE_OPTIONS } from "./constants/formOptions";
 import { DonationService } from "./services/donationService";
 
@@ -257,6 +258,7 @@ export default function DonacionMensualForm() {
     otroBanco: "",
     ciudad: "Quito", // Quito como ciudad por defecto
     acepta: false,
+    gestorDonacion: "BAQ", // BAQ como gestor por defecto
   });
 
   const [enviado, setEnviado] = useState(false);
@@ -314,7 +316,7 @@ export default function DonacionMensualForm() {
 
   // Validación para el paso 2
   const isStep2Valid = () => {
-    const baseValid = form.cuenta && form.tipoCuenta && form.banco && form.acepta && termsChecked && quiereFactura !== null;
+    const baseValid = form.cuenta && form.tipoCuenta && form.banco && form.acepta && termsChecked && quiereFactura !== null && form.gestorDonacion;
     if (form.banco === "Otra") {
       return baseValid && form.otroBanco;
     }
@@ -409,6 +411,7 @@ export default function DonacionMensualForm() {
       otroBanco: "",
       ciudad: "Quito", // Reset to Quito
       acepta: false,
+      gestorDonacion: "BAQ", // Reset to BAQ  
     });
     setTocado({});
     setTermsChecked(false);
@@ -658,6 +661,17 @@ export default function DonacionMensualForm() {
                           ${monto}
                         </div>
                       </div>
+
+                      <GestorDonacionSelector
+                        label="Gestor de donación"
+                        name="gestorDonacion"
+                        value={form.gestorDonacion}
+                        required
+                        error={errors.gestorDonacion}
+                        touched={tocado.gestorDonacion}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                      />
 
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-3">

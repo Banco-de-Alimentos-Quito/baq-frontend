@@ -14,6 +14,7 @@ export interface DonationPayload {
   acepta_tratamiento_datos: boolean;
   ciudad: string;
   requiere_factura: boolean;
+  gestor_donacion: string;
 }
 
 export class DonationService {
@@ -22,7 +23,7 @@ export class DonationService {
         'cedula_ruc', 'nombres_completos', 'numero_telefono', 'correo_electronico',
         'direccion', 'numero_cuenta', 'tipo_cuenta', 'banco_cooperativa',
         'monto_donar', 'acepta_aporte_voluntario', 'acepta_tratamiento_datos',
-        'ciudad', 'requiere_factura'
+        'ciudad', 'requiere_factura', 'gestor_donacion'
       ];    const missingFields = requiredFields.filter(field => {
       const value = payload[field as keyof DonationPayload];
       // Especial handling para booleanos
@@ -74,7 +75,8 @@ export class DonationService {
       acepta_aporte_voluntario: form.acepta,
       acepta_tratamiento_datos: termsChecked,
       ciudad: form.ciudad.trim(),
-      requiere_factura: quiereFactura
+      requiere_factura: quiereFactura,
+      gestor_donacion: form.gestorDonacion.trim()
     };
   }
 

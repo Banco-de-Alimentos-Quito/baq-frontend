@@ -13,6 +13,7 @@ export type FormData = {
   otroBanco: string;
   ciudad: string;
   acepta: boolean;
+  gestorDonacion: string;
 };
 
 export type ValidationState = {
@@ -141,6 +142,15 @@ export function useFormValidation() {
           isValid = value.trim().length >= 2;
           if (!isValid) {
             errorMessage = 'Debe tener al menos 2 caracteres.';
+          }
+        }
+        break;
+
+      case 'gestorDonacion':
+        if (value) {
+          isValid = value.trim().length >= 2;
+          if (!isValid) {
+            errorMessage = 'Debe seleccionar un gestor de donación.';
           }
         }
         break;
