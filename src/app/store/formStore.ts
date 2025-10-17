@@ -12,6 +12,7 @@ interface FormState {
   email: string;
   phone: string;
   monto: string;
+  gestorDonacion: string;
 
   // Estado de procesamiento
   paymentProcessed: boolean;
@@ -51,6 +52,7 @@ export const useFormStore = create<FormState>()(
       email: "",
       phone: "",
       monto: "",
+      gestorDonacion: "DonaYa",
       paymentProcessed: false,
       processedTransactions: {},
 
@@ -95,6 +97,7 @@ export const useFormStore = create<FormState>()(
           ciudad: "",
           email: "",
           phone: "",
+          gestorDonacion: "BAQ",
         }),
     }),
     {

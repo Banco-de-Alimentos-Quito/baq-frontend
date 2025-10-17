@@ -11,7 +11,8 @@ function PagoPluxContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(true);
-  const [payboxData, setPayboxData] = useState(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [payboxData, setPayboxData] = useState<Record<string, any> | null>(null);
 
   const montoFromURL = searchParams.get("monto");
   const emailFromURL = searchParams.get("email");
@@ -39,6 +40,7 @@ function PagoPluxContent() {
   const phone = formStore.phone || phoneFromURL || "";
   const direccion = formStore.direccion;
   const ciudad = formStore.ciudad;
+  const gestorDonacion = formStore.gestorDonacion;
 
   useEffect(() => {
     // Verificar que tengamos los datos necesarios
@@ -49,10 +51,10 @@ function PagoPluxContent() {
     }
 
     // Generar los datos de configuración para PagoPlux
-    const data = generatePayboxData(monto, email, phone, direccion, ciudad);
+    const data = generatePayboxData(monto, email, phone, direccion, ciudad, gestorDonacion);
     setPayboxData(data);
     setIsLoading(false);
-  }, [monto, email, phone, direccion, ciudad, router]);
+  }, [monto, email, phone, direccion, ciudad, gestorDonacion, router]);
 
 
   const handleGoBack = () => {
@@ -102,6 +104,9 @@ function PagoPluxContent() {
           </h3>
           <p className="text-sm text-gray-600">📧 {email}</p>
           <p className="text-sm text-gray-600">📱 {phone}</p>
+          {gestorDonacion && (
+            <p className="text-sm text-gray-600">🏛️ Conociste BAQ por: {gestorDonacion}</p>
+          )}
         </div>
 
         {/* Botón de PagoPlux */}

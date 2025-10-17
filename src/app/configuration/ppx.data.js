@@ -1,6 +1,6 @@
 import { PaymentService } from "../services/paymentService";
 
-const generatePayboxData = (amount, userEmail, userPhone, direccion, ciudad) => {
+const generatePayboxData = (amount, userEmail, userPhone, direccion, ciudad, gestorDonacion) => {
   return {
     /* Requerido. Email de la cuenta PagoPlux del Establecimiento */
     PayboxRemail: "administracion@baq.ec",
@@ -97,7 +97,8 @@ false -> no se realizará ningún cobro de prueba
             response.detail.id_transaccion,
             userPhone,
             direccion,
-            ciudad
+            ciudad,
+            gestorDonacion
           );
 
           setTimeout(() => {

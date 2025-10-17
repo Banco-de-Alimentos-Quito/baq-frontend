@@ -8,6 +8,7 @@ import { z } from "zod";
 import PluxModal from "./PluxModal";
 import { getOrCreateUserId } from "../utils/utils";
 import { useFormStore } from "../store/formStore";
+import { GestorDonacionSelector } from "../donacion/mensual/components/GestorDonacionSelector";
 
 interface DeunaForm {
   nombre: string;
@@ -23,6 +24,7 @@ const PpxUserSchema = z.object({
   phone: z
     .string()
     .regex(/^\d{10}$/, { message: "El teléfono debe tener 10 dígitos." }),
+  gestorDonacion: z.string().min(1, { message: "Selecciona un gestor de donación." }),
 });
 
 interface PaymentModalProps {
@@ -57,12 +59,14 @@ export default function PaymentModal({
   const [ppxUserData, setPpxUserData] = useState({
     email: "",
     phone: "",
+    gestorDonacion: "BAQ",
   });
 
   // 2. Añadir estado para los errores de validación
   const [validationErrors, setValidationErrors] = useState({
     email: "",
     phone: "",
+    gestorDonacion: "",
   });
   const [ciudad, setCiudad] = useState("");
   const [direccion, setDireccion] = useState("");
@@ -115,16 +119,18 @@ export default function PaymentModal({
       setValidationErrors({
         email: errors.email?.[0] || "",
         phone: errors.phone?.[0] || "",
+        gestorDonacion: errors.gestorDonacion?.[0] || "",
       });
       return;
     }
 
     // Si la validación es exitosa, limpia los errores
-    setValidationErrors({ email: "", phone: "" });
+    setValidationErrors({ email: "", phone: "", gestorDonacion: "" });
 
     useFormStore.setState({
       direccion,
       ciudad,
+      gestorDonacion: ppxUserData.gestorDonacion,
     });
 
     // Cerrar modales
@@ -163,7 +169,7 @@ export default function PaymentModal({
 
   const handleClosePpxForm = () => {
     setIsPpxFormOpen(false);
-    setPpxUserData({ email: "", phone: "" });
+    setPpxUserData({ email: "", phone: "", gestorDonacion: "BAQ" });
   };
 
   return (
@@ -406,6 +412,28 @@ export default function PaymentModal({
                   </p>
                 </div>
               )}
+
+              <div>
+                <GestorDonacionSelector
+                  label="¿Cómo conociste al Banco de Alimentos?"
+                  name="gestorDonacion"
+                  value={ppxUserData.gestorDonacion}
+                  required
+                  error={validationErrors.gestorDonacion}
+                  touched={true}
+                  onChange={(e) => {
+                    setPpxUserData((prev) => ({
+                      ...prev,
+                      gestorDonacion: e.target.value,
+                    }));
+                    // Limpiar el error al escribir
+                    if (validationErrors.gestorDonacion) {
+                      setValidationErrors((prev) => ({ ...prev, gestorDonacion: "" }));
+                    }
+                  }}
+                  onBlur={() => {}}
+                />
+              </div>
 
               <button
                 type="submit"

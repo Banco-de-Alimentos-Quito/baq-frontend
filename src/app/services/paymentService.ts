@@ -87,7 +87,8 @@ export class PaymentService {
     idTransaction: any,
     userPhone: string,
     direccion?: string,
-    ciudad?: string
+    ciudad?: string,
+    gestorDonacion?: string
   ): Promise<PaymentConfirmResponse> {
     try {
       // Obtener dirección del sessionStorage si no se proporcionó
@@ -97,6 +98,7 @@ export class PaymentService {
       const cityToSend = ciudad || formState.ciudad;
 
       // Extraer y estructurar los datos que quieres enviar al backend
+      const gestorToSend = gestorDonacion || formState.gestorDonacion;
 
       const dataToSend = {
         id_transaction: idTransaction,
@@ -105,6 +107,7 @@ export class PaymentService {
         phone: userPhone,
         direccion: direccionToUse,
         ciudad: cityToSend,
+        gestor_donacion: gestorToSend,
       };
 
       await fetch(`${this.baseUrl}/pagoplux/transaccion-pendiente`, {
