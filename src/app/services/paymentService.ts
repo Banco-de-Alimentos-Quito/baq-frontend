@@ -6,6 +6,8 @@ interface PaymentConfirmRequest {
   clientTransactionId: string;
   userId: string;
   direccion?: string;
+  city?: string;
+  gestorDonacion?: string;
 }
 
 interface PaymentConfirmResponse {
@@ -27,7 +29,8 @@ export class PaymentService {
     clientTransactionId: string,
     userId: string,
     address: string,
-    city?: string
+    city?: string,
+    gestorDonacion?: string
   ): Promise<PaymentConfirmResponse> {
     try {
       const emailResponse = await fetch(`${this.baseUrl}/payphone/email`, {
@@ -57,8 +60,9 @@ export class PaymentService {
           id,
           clientTransactionId,
           userId,
-          address,
+          direccion: address,
           city,
+          gestor_donacion: gestorDonacion,
         } as PaymentConfirmRequest),
       });
 

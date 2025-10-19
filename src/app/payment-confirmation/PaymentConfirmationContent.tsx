@@ -19,6 +19,7 @@ export default function PaymentConfirmationContent() {
   
   const direccion = formState.direccion;
   const ciudad = formState.ciudad;
+  const gestorDonacion = formState.gestorDonacion;
 
   useEffect(() => {
     const processPayment = async () => {
@@ -41,7 +42,8 @@ export default function PaymentConfirmationContent() {
           clientTransactionId,
           userId,
           direccion, // obtener del store
-          ciudad // Obtener del store
+          ciudad, // Obtener del store
+          gestorDonacion // Obtener del store
         );
 
         if (response.status === "Approved" || response.status === "Aproved") {

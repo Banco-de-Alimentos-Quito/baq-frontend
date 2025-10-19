@@ -14,31 +14,56 @@ function AddressModal({
   setDireccion,
   ciudad,
   setCiudad,
+  gestorDonacion,
+  setGestorDonacion,
   onConfirm,
 }) {
   if (!isOpen) return null;
+
+  const GESTORES_DONACION = ['BAQ', 'DonaYa', 'Redes Sociales'];
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-xl shadow-lg p-6 max-w-md w-full">
         <h2 className="text-xl font-semibold mb-4 text-[#2F3388]">
-          Dirección para factura
+          Información adicional
         </h2>
         <p className="text-gray-600 mb-4">
           Para montos desde USD 50, necesitamos tu dirección para la factura.
         </p>
+        
         <input
           className="border rounded-lg px-3 py-2 w-full mb-4"
           placeholder="Dirección para factura"
           value={direccion}
           onChange={(e) => setDireccion(e.target.value)}
         />
+        
         <input
           className="border rounded-lg px-3 py-2 w-full mb-4"
           placeholder="Ciudad"
           value={ciudad}
           onChange={(e) => setCiudad(e.target.value)}
         />
+
+        <div className="mb-4">
+          <label className="block text-sm font-semibold text-gray-600 mb-2">
+            ¿Cómo conociste al Banco de Alimentos? *
+          </label>
+          <select
+            value={gestorDonacion}
+            onChange={(e) => setGestorDonacion(e.target.value)}
+            className="border rounded-lg px-3 py-2 w-full border-gray-300 focus:border-blue-500 focus:outline-none"
+          >
+            <option value="">Selecciona una opción</option>
+            {GESTORES_DONACION.map((gestor) => (
+              <option key={gestor} value={gestor}>
+                {gestor}
+              </option>
+            ))}
+          </select>
+        </div>
+
         <div className="flex justify-end space-x-3">
           <button
             onClick={onClose}
@@ -48,9 +73,9 @@ function AddressModal({
           </button>
           <button
             onClick={onConfirm}
-            disabled={!direccion.trim()}
+            disabled={!direccion.trim() || !gestorDonacion}
             className={`rounded-lg px-4 py-2 text-white ${
-              direccion.trim()
+              direccion.trim() && gestorDonacion
                 ? "bg-orange-600 hover:bg-blue-700"
                 : "bg-orange-300 cursor-not-allowed"
             } transition`}
@@ -70,6 +95,7 @@ function PayphonePageContent() {
   const [reference, setReference] = useState<string>("");
   const [direccion, setDireccion] = useState("");
   const [ciudad, setCiudad] = useState("");
+  const [gestorDonacion, setGestorDonacion] = useState("BAQ");
   // Estado para controlar la visibilidad del modal
   const [showAddressModal, setShowAddressModal] = useState(false);
   // Estado para saber si ya se confirmó la dirección
@@ -116,10 +142,11 @@ function PayphonePageContent() {
 
   // Función para confirmar la dirección
   const handleConfirmAddress = () => {
-    if (direccion.trim()) {
+    if (direccion.trim() && gestorDonacion) {
       useFormStore.setState({
         direccion,
         ciudad,
+        gestorDonacion,
       });
       setAddressConfirmed(true);
       setShowAddressModal(false);
@@ -182,6 +209,8 @@ function PayphonePageContent() {
           setDireccion={setDireccion}
           ciudad={ciudad}
           setCiudad={setCiudad}
+          gestorDonacion={gestorDonacion}
+          setGestorDonacion={setGestorDonacion}
           onConfirm={handleConfirmAddress}
         />
 
@@ -199,7 +228,7 @@ function PayphonePageContent() {
               <PayphoneButton
                 amount={monto}
                 reference={reference || `Donación BAQ - ${monto} USD`}
-                metadata={{ direccion, ciudad }}
+                metadata={{ direccion, ciudad, gestorDonacion }}
                 onSuccess={handleSuccess}
                 onError={handleError}
               />
