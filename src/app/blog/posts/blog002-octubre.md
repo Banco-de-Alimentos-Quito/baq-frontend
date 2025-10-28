@@ -5,15 +5,15 @@ author_avatar: "/blog/authors/patricia-perez.jpg"
 author_bio: "Directora de Programas del Banco de Alimentos Quito. Especialista en seguridad alimentaria y sistemas de distribución sostenible."
 published_at: "2025-10-24"
 last_modified: "2025-10-24"
-cover_image: "https://live.staticflickr.com/65535/54271857468_0e2759fda4_b.jpg"
+cover_image: "/IMG_7155.jpg"
 tags: ["Seguridad alimentaria", "Desperdicio", "Sostenibilidad", "Banco de Alimentos"]
-read_time: 7
+read_time: 6
 excerpt: "La seguridad alimentaria es un derecho: aquí explicamos sus pilares, desafíos en Ecuador y cómo el Banco de Alimentos Quito contribuye a reducir el desperdicio y garantizar acceso a alimentos nutritivos."
 ---
 
 # 🍽️ La importancia de la seguridad alimentaria: un compromiso con el presente y el futuro
 
-![Seguridad Alimentaria](https://live.staticflickr.com/65535/54271857468_0e2759fda4_b.jpg)
+![Seguridad Alimentaria](/IMG_7155.jpg)
 
 En octubre ponemos la mirada en la seguridad alimentaria: cifras que muestran retos persistentes en Ecuador y oportunidades para actuar. El Banco de Alimentos Quito rescata excedentes, reduce desperdicio y acerca alimentos nutritivos a las familias que más lo necesitan.
 

@@ -5,15 +5,15 @@ author_avatar: "/blog/authors/patricia-perez.jpg"
 author_bio: "Directora de Programas del Banco de Alimentos Quito. Especialista en seguridad alimentaria y políticas públicas de nutrición."
 published_at: "2025-10-16"
 last_modified: "2025-10-16"
-cover_image: "https://live.staticflickr.com/65535/54270739922_13e97d8b49_b.jpg"
+cover_image: "/IMG_1385.JPG"
 tags: ["Seguridad alimentaria", "Desnutrición", "Banco de Alimentos", "Donación"]
-read_time: 8
+read_time: 6
 excerpt: "En el Día Mundial de la Alimentación reflexionamos sobre la seguridad alimentaria en Ecuador y el papel del Banco de Alimentos Quito para reducir la desnutrición y el desperdicio."
 ---
 
 # 🌾 16 de octubre: Un día para reafirmar el derecho a una alimentación adecuada
 
-![Día Mundial de la Alimentación](https://live.staticflickr.com/65535/54270739922_13e97d8b49_b.jpg)
+![Día Mundial de la Alimentación](/IMG_1385.JPG)
 
 Cada octubre renovamos el compromiso con el derecho a una alimentación adecuada. En este artículo repasamos el panorama nacional, las causas de la inseguridad alimentaria y las acciones concretas que el Banco de Alimentos Quito propone para reducir la malnutrición y el desperdicio.
 
