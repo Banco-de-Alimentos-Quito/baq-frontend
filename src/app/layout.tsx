@@ -9,6 +9,7 @@ import Header from "@/components/sections/Header";
 import Footer from "@/components/sections/Footer";
 import LoadingWrapper from "@/components/ui/LoadingWrapper";
 import StoreInitializer from "./components/StoreInitializer";
+import ImpactPopup from "@/components/ImpactPopup";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -70,6 +71,7 @@ export default function RootLayout({
         </Script>
 
         <StoreInitializer />
+        <ImpactPopup />
 
         <LoadingWrapper>
           <Header />
