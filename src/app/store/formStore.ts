@@ -13,6 +13,9 @@ interface FormState {
   phone: string;
   monto: string;
   gestorDonacion: string;
+  banco?: string;
+  cuenta?: string;
+  tipoCuenta?: string;
 
   // Estado de procesamiento
   paymentProcessed: boolean;
@@ -62,7 +65,6 @@ export const useFormStore = create<FormState>()(
         set({ userId });
       },
 
-
       setEmail: (email: string) => set({ email }),
 
       // Acciones
@@ -98,6 +100,9 @@ export const useFormStore = create<FormState>()(
           email: "",
           phone: "",
           gestorDonacion: "BAQ",
+          banco: "",
+          cuenta: "",
+          tipoCuenta: "Ahorros",
         }),
     }),
     {
