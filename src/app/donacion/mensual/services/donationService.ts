@@ -42,7 +42,7 @@ export class DonationService {
         console.log(
           "🔍 DEBUG - Validando requiere_factura:",
           value,
-          typeof value
+          typeof value,
         );
         return typeof value !== "boolean";
       }
@@ -55,7 +55,7 @@ export class DonationService {
 
     if (typeof payload.monto_donar !== "number" || payload.monto_donar < 0.99) {
       throw new Error(
-        "Monto must be a number greater than or equal to 0.99 USD"
+        "Monto must be a number greater than or equal to 0.99 USD",
       );
     }
 
@@ -77,7 +77,7 @@ export class DonationService {
     form: FormData,
     monto: number,
     termsChecked: boolean,
-    quiereFactura: boolean
+    quiereFactura: boolean,
   ): DonationPayload {
     return {
       cedula_ruc: form.cedula.trim(),
@@ -102,26 +102,26 @@ export class DonationService {
     form: FormData,
     monto: number,
     termsChecked: boolean,
-    quiereFactura: boolean
+    quiereFactura: boolean,
   ): Promise<any> {
     console.log(
       "🔍 DEBUG - Parámetro quiereFactura recibido:",
       quiereFactura,
-      typeof quiereFactura
+      typeof quiereFactura,
     );
 
     const payload = this.transformFormData(
       form,
       monto,
       termsChecked,
-      quiereFactura
+      quiereFactura,
     );
 
     console.log("📦 DEBUG - Payload completo:", payload);
     console.log(
       "📝 DEBUG - requiere_factura en payload:",
       payload.requiere_factura,
-      typeof payload.requiere_factura
+      typeof payload.requiere_factura,
     );
 
     this.validatePayload(payload);
@@ -136,7 +136,7 @@ export class DonationService {
     console.log("🌐 DEBUG - Endpoint:", endpoint);
     console.log(
       "📤 DEBUG - JSON que se va a enviar:",
-      JSON.stringify(payload, null, 2)
+      JSON.stringify(payload, null, 2),
     );
 
     const response = await fetch(endpoint, {
@@ -160,7 +160,7 @@ export class DonationService {
         errorText = await response.text();
       }
       throw new Error(
-        `HTTP error! status: ${response.status}, message: ${errorText}`
+        `HTTP error! status: ${response.status}, message: ${errorText}`,
       );
     }
 
@@ -192,10 +192,41 @@ export class DonationService {
         errorText = await response.text();
       }
       throw new Error(
-        `HTTP error! status: ${response.status}, message: ${errorText}`
+        `HTTP error! status: ${response.status}, message: ${errorText}`,
       );
     }
 
     return response.json();
+  }
+
+  static async downloadContract(payload: DonationPayload): Promise<Blob> {
+    this.validatePayload(payload);
+
+    const apiUrl =
+      process.env.NEXT_PUBLIC_API_URL || "https://api.baq.ec/api/baq";
+    const endpoint = `${apiUrl}/donaciones-recurrentes/descargar-contrato`;
+
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      let errorText;
+      try {
+        const errorJson = await response.json();
+        errorText = JSON.stringify(errorJson);
+      } catch {
+        errorText = await response.text();
+      }
+      throw new Error(
+        `HTTP error! status: ${response.status}, message: ${errorText}`,
+      );
+    }
+
+    return response.blob();
   }
 }

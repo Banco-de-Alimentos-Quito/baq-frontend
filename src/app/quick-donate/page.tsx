@@ -113,32 +113,48 @@ function QuickDonateContent() {
 
   const handleDownloadContract = async () => {
     if (!validateForm()) {
-      // Mark all touched to show errors
       setValidationTouched({ ciudad: true });
-      // Re-validate to show errors in UI
       return;
     }
 
     try {
-      const params = new URLSearchParams({
-        cedula,
-        nombres: nombres || "N/A",
-        correo: email,
-        telefono: phone || "N/A",
-        direccion,
-        cuenta,
-        tipoCuenta,
-        banco,
-        ciudad,
-        monto: monto.toString(),
-        fechaAceptacion: new Date().toISOString(),
-      });
+      const payload = {
+        cedula_ruc: cedula,
+        nombres_completos: nombres || "Donante Rápido",
+        numero_telefono: phone || "0999999999",
+        correo_electronico: email,
+        direccion: direccion,
+        numero_cuenta: cuenta,
+        tipo_cuenta: tipoCuenta as "Ahorros" | "Corriente",
+        banco_cooperativa: banco,
+        monto_donar: monto,
+        acepta_aporte_voluntario: true,
+        acepta_tratamiento_datos: true,
+        ciudad: ciudad,
+        requiere_factura: false,
+        gestor_donacion: code || "DonacionRapida",
+      };
 
-      const url = `https://api.baq.ec/api/baq/donaciones-recurrentes/descargar-pdf?${params.toString()}`;
+      const blob = await DonationService.downloadContract(payload as any);
 
-      window.open(url, "_blank");
+      // Create blob link to download
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `Contrato_Donacion_${cedula}.pdf`);
+
+      // Append to html link element page and click
+      document.body.appendChild(link);
+      link.click();
+
+      // Clean up and remove the link
+      link.parentNode?.removeChild(link);
+      window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error("Error generating contract url", error);
+      console.error("Error downloading contract:", error);
+      alert(
+        "Hubo un error al descargar el contrato. Por favor intente nuevamente.",
+      );
     }
   };
 
@@ -311,8 +327,8 @@ function QuickDonateContent() {
                               ? "border-green-400 bg-green-50 focus:border-green-500"
                               : "border-red-300 bg-red-50 focus:border-red-400"
                             : errors.cedula
-                            ? "border-red-300 bg-red-50"
-                            : "border-gray-100 focus:border-blue-300"
+                              ? "border-red-300 bg-red-50"
+                              : "border-gray-100 focus:border-blue-300"
                         }`}
                       />
                       <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
