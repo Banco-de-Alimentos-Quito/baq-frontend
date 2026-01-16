@@ -43,6 +43,10 @@ function QuickDonateContent() {
   const [loading, setLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
+  // Modal State
+  const [showConflictModal, setShowConflictModal] = useState(false);
+  const [conflictMessage, setConflictMessage] = useState("");
+
   // Store actions
   const setFormField = useFormStore((state) => state.setFormField);
   const initUser = useFormStore((state) => state.initUser);
@@ -200,8 +204,39 @@ function QuickDonateContent() {
       setIsSubmitted(true);
     } catch (err: any) {
       console.error(err);
+
+      let errorMsg = err.message || "Ocurrió un error al procesar la donación.";
+
+      // Check for 409 Conflict
+      if (typeof errorMsg === "string" && errorMsg.includes("status: 409")) {
+        try {
+          // Attempt to extract the JSON message part
+          const messagePart = errorMsg.split("message: ")[1];
+          if (messagePart) {
+            const errorJson = JSON.parse(messagePart);
+            if (errorJson.message === "donator has been register previously") {
+              setConflictMessage(errorJson.message);
+              setShowConflictModal(true);
+              setLoading(false);
+              return;
+            }
+            // Handle other 409s differently or generically if needed, but per request:
+            if (errorJson.statusCode === 409) {
+              setConflictMessage(
+                errorJson.message || "Error al registrar donante.",
+              );
+              setShowConflictModal(true);
+              setLoading(false);
+              return;
+            }
+          }
+        } catch (e) {
+          console.warn("Could not parse error JSON", e);
+        }
+      }
+
       setErrors({
-        form: err.message || "Ocurrió un error al procesar la donación.",
+        form: errorMsg,
       });
       setLoading(false);
     }
@@ -690,6 +725,58 @@ function QuickDonateContent() {
           </AnimatePresence>
         </div>
       </motion.div>
+
+      <AnimatePresence>
+        {showConflictModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden"
+            >
+              <div className="p-6 text-center">
+                <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg
+                    className="w-8 h-8 text-red-500"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                    />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">
+                  Atención
+                </h3>
+                <p className="text-gray-600 mb-6">{conflictMessage}</p>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setShowConflictModal(false)}
+                    className="flex-1 py-3 px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-xl transition-colors"
+                  >
+                    Cerrar
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowConflictModal(false);
+                      setIsSubmitted(true);
+                    }}
+                    className="flex-1 py-3 px-4 bg-[#FF6B35] hover:bg-[#ff8c42] text-white font-bold rounded-xl transition-colors"
+                  >
+                    Generar Contrato
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
