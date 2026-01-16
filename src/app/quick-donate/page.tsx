@@ -242,11 +242,6 @@ function QuickDonateContent() {
     }
   };
 
-  const handleContinueToPayphone = () => {
-    const reference = `Donación Rápida - ${cedula}`;
-    router.push(`/donacion/payphone?monto=${monto}&reference=${reference}`);
-  };
-
   return (
     <div className="min-h-screen bg-[#f8f9fc] flex flex-col items-center justify-center p-4">
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
@@ -693,31 +688,6 @@ function QuickDonateContent() {
                       />
                     </svg>
                     <span>Descargar Contrato</span>
-                  </motion.button>
-
-                  <motion.button
-                    whileHover={{
-                      scale: 1.02,
-                      boxShadow: "0 10px 25px -5px rgba(255, 107, 53, 0.4)",
-                    }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={handleContinueToPayphone}
-                    className="w-full py-4 px-6 rounded-xl shadow-xl text-lg font-bold text-white bg-gradient-to-r from-[#FF6B35] to-[#F9844A] transition-all duration-300 flex items-center justify-center gap-2"
-                  >
-                    <span>Continuar al Pago</span>
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M14 5l7 7m0 0l-7 7m7-7H3"
-                      />
-                    </svg>
                   </motion.button>
                 </div>
               </motion.div>
