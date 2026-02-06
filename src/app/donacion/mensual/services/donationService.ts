@@ -1,4 +1,4 @@
-import { FormData } from "../hooks/useFormValidation";
+import { FormData as ValidationFormData } from "../hooks/useFormValidation";
 
 export interface DonationPayload {
   cedula_ruc: string;
@@ -15,6 +15,7 @@ export interface DonationPayload {
   ciudad: string;
   requiere_factura: boolean;
   gestor_donacion: string;
+  archivo_cedula?: string;
 }
 
 export class DonationService {
@@ -74,7 +75,7 @@ export class DonationService {
   }
 
   private static transformFormData(
-    form: FormData,
+    form: ValidationFormData,
     monto: number,
     termsChecked: boolean,
     quiereFactura: boolean,
@@ -99,7 +100,7 @@ export class DonationService {
   }
 
   static async submitDonation(
-    form: FormData,
+    form: ValidationFormData,
     monto: number,
     termsChecked: boolean,
     quiereFactura: boolean,
@@ -228,5 +229,37 @@ export class DonationService {
     }
 
     return response.blob();
+  }
+
+  static async submitImage(cedula: string, file: File): Promise<any> {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("cedula", cedula);
+
+    const apiUrl =
+      process.env.NEXT_PUBLIC_API_URL || "https://api.baq.ec/api/baq";
+    const endpoint = `${apiUrl}/donaciones/quick-donate`;
+
+    console.log(`🌐 Sending Image to: ${endpoint}`);
+
+    const response = await fetch(endpoint, {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      let errorText;
+      try {
+        const errorJson = await response.json();
+        errorText = JSON.stringify(errorJson);
+      } catch {
+        errorText = await response.text();
+      }
+      throw new Error(
+        `HTTP error! status: ${response.status}, message: ${errorText}`,
+      );
+    }
+
+    return response.json();
   }
 }
