@@ -23,7 +23,8 @@ export default function Home() {
       <DonationSection />
       <FloatingDonationButton />
       <TestimonialsSection />
-      <AmbassadorsSection />
+      {/* POR ACTUALIZAR CON LOS EMBAJADORES REALES*/}
+      {/* <AmbassadorsSection /> */}
       <ImpactStories />
       <Location />
     </div>

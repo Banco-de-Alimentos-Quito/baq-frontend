@@ -2,19 +2,15 @@ import React from "react";
 import { Phone } from "lucide-react"; // Asumiendo que usas Lucide React para íconos; ajusta si es otra librería
 
 const contactList = [
-  { type: "Dirección", value: "direccion@baq.ec" },
-  { type: "Comunicación", value: "comunicacion@baq.ec" },
-  { type: "Alianzas(para realizar dinaciones)", value: "alianzas@baq.ec" },
-  {
-    type: "Gestión Social(Para solicitar donaciones)",
-    value: "gestionsocial@baq.ec",
-  },
+  { type: "Información General", value: "info@baq.ec" },
+  { type: "Alianzas", value: "alianzas@baq.ec" },
+  { type: "Gestión Social", value: "gestionsocial@baq.ec" },
   { type: "Talento Humano", value: "talentohumano@baq.ec" },
 ];
 
 const phoneList = [
-  { type: "Recepción Donaciones", value: "099 5450 969" },
-  { type: "Vinculación Organizaciones Sociales", value: "097 8655 501" },
+  { type: "Donaciones", value: "099 870 0860" },  
+  { type: "Vinculación Organizaciones Sociales", value: "099 536 9558" },
 ];
 
 export default function Location() {
@@ -48,6 +44,16 @@ export default function Location() {
                 {contact.value}
               </p>
             ))}
+            <div className="w-2/3 h-0.5 bg-orange-500 mb-4 mx-auto mt-4"></div>
+            <h3 className="text-2xl font-semibold text-gray-900 mb-4">
+              Teléfonos
+            </h3>
+            {phoneList.map((phone, index) => (
+              <p key={index} className="text-gray-600 mb-2 flex items-center justify-center gap-2">
+                <Phone className="w-4 h-4 text-orange-500 flex-shrink-0" />
+                <span><span className="font-bold">{phone.type}:</span> {phone.value}</span>
+              </p>
+            ))}
           </div>
 
           {/* Parte derecha: Imagen y Mapa */}
@@ -57,7 +63,7 @@ export default function Location() {
               width="100%"
               height="300"
               style={{ border: 0 }}
-              allowFullScreen=""
+              allowFullScreen
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
               title="Mapa de ubicación"

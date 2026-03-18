@@ -10,9 +10,8 @@ export default {
   theme: {
   	extend: {
   		fontFamily: {
-        sans: ["var(--font-lexend)", "Lexend Deca", "system-ui", "sans-serif"],
-        serif: ["var(--font-queens)", "Playfair Display", "Georgia", "serif"],
-        inter: ["var(--font-inter)", "Inter", "sans-serif"],
+        sans: ["var(--font-montserrat)", "Montserrat", "system-ui", "sans-serif"],
+        serif: ["var(--font-montserrat)", "Montserrat", "Georgia", "serif"],
       },
   		colors: {
   			background: 'hsl(var(--background))',

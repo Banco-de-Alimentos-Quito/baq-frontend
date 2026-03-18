@@ -26,7 +26,7 @@ const OurAliances: React.FC = () => {
           {/* Diálogos Vitales */}
           <div className="flex items-center justify-center p-6">
             <img
-              src="https://robertosalasguzman.cl/wp-content/uploads/2020/09/Logo.jpg"
+              src="/LOGO DIALOGOS VITALES.png"
               alt="Diálogos Vitales"
               className="h-32 w-auto object-contain"
             />

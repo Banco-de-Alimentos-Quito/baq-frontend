@@ -11,8 +11,9 @@ const helpOptions = [
 		description:
 			'Aporta alimentos no perecibles o frescos para ayudar a nutrir a familias necesitadas.',
 		buttonText: 'Ver Centros de Acopio',
-		aiHint: 'food donation',
-		href: '/volunteering', // Nueva propiedad para la redirección
+		aiHint: 'food donation',	
+		// href: 'https://forms.gle/SDih4CJWj5BaAa1t8', // Nueva propiedad para la redirección
+		href: '',
 		isExternal: true, // Para diferenciar de ScrollLink
 	},
 	{
@@ -22,8 +23,8 @@ const helpOptions = [
 			'Tu contribución económica nos permite adquirir alimentos específicos y cubrir costos operativos.',
 		buttonText: 'Donar Dinero',
 		aiHint: 'money charity',
-		href: '#donate',
-		isExternal: false,
+		href: '/donacion',
+		isExternal: true,
 	},
 	{
 		icon: Users,
@@ -32,8 +33,9 @@ const helpOptions = [
 			'Únete a nuestro equipo de voluntarios y ayúdanos con tu tiempo y talento en diversas tareas.',
 		buttonText: 'Conoce Más',
 		aiHint: 'volunteers helping',
-		href: '#donate',
-		isExternal: false,
+		// href: 'https://forms.gle/psAxT2SutBZDQsUC8',
+		href: '',
+		isExternal: true,
 	},
 	{
 		icon: Factory,
@@ -42,8 +44,8 @@ const helpOptions = [
 			'Si representas a una empresa y deseas colaborar, contáctanos para explorar oportunidades de ayuda y de beneficios especiales para tu empresa.',
 		buttonText: 'Contáctanos',
 		aiHint: 'company collaboration',
-		href: '#donate',
-		isExternal: false,
+		href: 'https://wa.me/5930995450969',
+		isExternal: true,
 	},
 ];
 
@@ -89,7 +91,7 @@ export default function HowToHelpSection() {
 									className="bg-primary bg-orange-400 hover:bg-orange-300 text-primary-foreground w-full sm:w-auto"
 								>
 									{option.isExternal ? (
-										<Link href={option.href}>{option.buttonText}</Link>
+										<Link href={option.href} target="_blank" rel="noopener noreferrer">{option.buttonText}</Link>
 									) : (
 										<ScrollLink href={option.href}>
 											{option.buttonText}

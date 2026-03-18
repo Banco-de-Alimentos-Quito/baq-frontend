@@ -3,6 +3,7 @@ import {
   Facebook,
   Instagram,
   Phone,
+  Mail,
   MapPin,
   HeartHandshake,
   Linkedin,
@@ -39,17 +40,17 @@ export default function Footer() {
               Contacto
             </h4>
             <ul className="space-y-2 text-sm">
-              <h5 className="text-primary font-semibold mt-4">Para Donantes</h5>
+              <h5 className="text-primary font-semibold mt-4">Contribuciones</h5>
               <li className="flex items-center gap-2 justify-center sm:justify-start">
-                <Phone className="w-4 h-4 text-primary flex-shrink-0" />
-                <span className="break-all">099 5450 969</span>
+                <Mail className="w-4 h-4 text-primary flex-shrink-0" />
+                <a href="mailto:contibuciones@baq.ec" className="break-all hover:text-primary transition-colors">contibuciones@baq.ec</a>
               </li>
               <h5 className="text-primary font-semibold mt-4">
-                Para Recibir Alimentos
+                Donaciones
               </h5>
               <li className="flex items-center gap-2 justify-center sm:justify-start">
-                <Phone className="w-4 h-4 text-primary flex-shrink-0" />
-                <span className="break-all">097 8655 501</span>
+                <Mail className="w-4 h-4 text-primary flex-shrink-0" />
+                <a href="mailto:donaciones@baq.ec" className="break-all hover:text-primary transition-colors">donaciones@baq.ec</a>
               </li>
               <li className="flex items-center gap-2 mt-4 justify-center sm:justify-start">
                 <MapPin className="w-4 h-4 text-primary flex-shrink-0" />

@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import { Lexend_Deca } from "next/font/google";
-import { Playfair_Display } from "next/font/google";
+import { Montserrat } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
@@ -9,23 +7,13 @@ import Header from "@/components/sections/Header";
 import Footer from "@/components/sections/Footer";
 import LoadingWrapper from "@/components/ui/LoadingWrapper";
 import StoreInitializer from "./components/StoreInitializer";
-import ImpactPopup from "@/components/ImpactPopup";
 
-const inter = Inter({
+const montserrat = Montserrat({
   subsets: ["latin"],
-  variable: "--font-inter",
-});
-
-const lexend = Lexend_Deca({
-  subsets: ["latin"],
-  variable: "--font-lexend",
-});
-
-// Usando Playfair Display como alternativa elegante similar a Queens
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  variable: "--font-queens",
-  weight: ["400", "700"],
+  variable: "--font-montserrat",
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  style: ["normal", "italic"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -55,7 +43,7 @@ export default function RootLayout({
 
       <body
         suppressHydrationWarning
-        className={`${inter.variable} ${lexend.variable} ${playfair.variable} font-sans antialiased min-h-screen flex flex-col`}
+        className={`${montserrat.variable} font-sans antialiased min-h-screen flex flex-col`}
       >
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-XJNTP3SK76"
@@ -71,7 +59,6 @@ export default function RootLayout({
         </Script>
 
         <StoreInitializer />
-        <ImpactPopup />
 
         <LoadingWrapper>
           <Header />

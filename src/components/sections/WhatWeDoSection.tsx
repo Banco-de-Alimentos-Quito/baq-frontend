@@ -15,7 +15,7 @@ export default function WhatWeDoSection() {
         <div className="grid md:grid-cols-2 gap-8 items-center">
           <div className="flex justify-center animate-in fade-in-0 slide-in-from-left-10 duration-700 delay-100">
             <img
-              src="what_we_do.jpg"
+              src="/historias/BAQ_2024-41.jpg"
               alt="Voluntarios organizando alimentos"
               width={600}
               height={400}
