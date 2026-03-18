@@ -17,7 +17,7 @@ export default function KYCValidationPage() {
             <div className="w-full max-w-4xl">
                 <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
                     {/* Header */}
-                    <div className="bg-gradient-to-r from-slate-900 to-slate-800 px-8 py-6">
+                    <div className="bg-slate-900 px-8 py-6">
                         <div className="flex items-center justify-center">
                             <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mr-4">
                                 <CheckCircle className="w-6 h-6 text-white" />

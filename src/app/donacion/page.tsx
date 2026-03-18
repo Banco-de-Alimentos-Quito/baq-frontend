@@ -351,7 +351,7 @@ export default function DonacionPage() {
         {/* Sección izquierda - Formulario de donación */}
         <div className="w-full lg:w-1/2 max-w-md lg:max-w-lg flex flex-col items-center">
           <div className="bg-white rounded-xl lg:rounded-2xl p-4 sm:p-6 lg:p-8 w-full shadow-[0_8px_32px_rgba(255,140,0,0.13)] flex flex-col items-center">
-            <h1 className="bg-gradient-to-r from-[#ff7300] to-[#FF6347] bg-clip-text text-transparent text-xl sm:text-2xl lg:text-3xl font-extrabold text-center mb-3 sm:mb-4">
+            <h1 className="text-[#ff7300] text-xl sm:text-2xl lg:text-3xl font-extrabold text-center mb-3 sm:mb-4">
               A un <strong>clic</strong> para alimentar
             </h1>
             <p className="text-center text-sm sm:text-base lg:text-lg font-medium text-orange-500 mb-2">
@@ -367,7 +367,7 @@ export default function DonacionPage() {
               <button
                 className={`flex items-center justify-center gap-2 px-4 sm:px-6 py-2 sm:py-3 rounded-full font-bold text-sm sm:text-base lg:text-lg transition-transform ${
                   tipo === "unica"
-                    ? "bg-gradient-to-r from-[#2F3388] to-[#1D2394] text-white shadow-lg scale-105"
+                    ? "bg-[#2F3388] text-white shadow-lg scale-105"
                     : "bg-gray-200 text-gray-700 shadow-md hover:bg-[#2F3388] hover:text-white"
                 }`}
                 onClick={() => setTipo("unica")}
@@ -391,7 +391,7 @@ export default function DonacionPage() {
               <button
                 className={`flex items-center justify-center gap-2 px-4 sm:px-6 py-2 sm:py-3 rounded-full font-bold text-sm sm:text-base lg:text-lg transition-transform ${
                   tipo === "mensual"
-                    ? "bg-gradient-to-r from-[#2F3388] to-[#1D2394] text-white shadow-lg scale-105"
+                    ? "bg-[#2F3388] text-white shadow-lg scale-105"
                     : "bg-gray-200 text-gray-700 shadow-md hover:bg-[#2F3388] hover:text-white"
                 }`}
                 onClick={() => {
@@ -642,8 +642,8 @@ export default function DonacionPage() {
         </div>
       </section>
 
-      <section className="w-full bg-gradient-to-r from-[#fff7ed] to-[#ffe0c3] flex flex-col items-center py-8 sm:py-12 lg:py-16 px-4 sm:px-6 lg:px-8">
-        <h2 className="text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-extrabold bg-gradient-to-r from-[#ff7300] to-[#FF6347] bg-clip-text text-transparent mb-6 sm:mb-8 text-center">
+      <section className="w-full bg-[#fff7ed] flex flex-col items-center py-8 sm:py-12 lg:py-16 px-4 sm:px-6 lg:px-8">
+        <h2 className="text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-extrabold text-[#ff7300] mb-6 sm:mb-8 text-center">
           Conoce el impacto que genera tu donación
         </h2>
         <div className="flex justify-center w-full">
@@ -802,15 +802,8 @@ export default function DonacionPage() {
             <div className="mb-4">
               <button
                 onClick={handleContinueToMonthly}
-                className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold py-4 px-6 rounded-xl shadow-lg transform transition-all duration-200 hover:scale-105 hover:shadow-xl active:scale-95 flex items-center justify-center gap-3 group cursor-pointer relative overflow-hidden animate-pulse hover:animate-none"
-                style={{
-                  boxShadow:
-                    "0 0 20px rgba(249, 115, 22, 0.4), 0 0 40px rgba(249, 115, 22, 0.2)",
-                  animation: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
-                }}
+                className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-6 rounded-xl shadow-lg transform transition-all duration-200 hover:scale-105 hover:shadow-xl active:scale-95 flex items-center justify-center gap-3 group cursor-pointer relative overflow-hidden"
               >
-                {/* Efecto de brillo continuo */}
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 animate-shimmer"></div>
 
                 <span className="text-lg relative z-10">Continuar</span>
                 <svg
@@ -949,7 +942,7 @@ export default function DonacionPage() {
               <button
                 type="submit"
                 disabled={!canSubmitDeuna}
-                className="w-full bg-gradient-to-r from-[#ff7300] to-[#ffb347] text-white py-3 rounded-lg font-bold disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-[#ff7300] text-white py-3 rounded-lg font-bold disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Confirmar Pago
               </button>
@@ -1029,7 +1022,7 @@ function PersonasAlimentadas({
       </div>
       <div className={`font-extrabold text-sm sm:text-base lg:text-lg mt-4 text-center ${
         tipo === "mensual"
-          ? "text-transparent bg-gradient-to-r from-[#2F3388] to-[#ff7300] bg-clip-text"
+          ? "text-[#2F3388]"
           : "invisible"
       }`}>
         Proyección anual: {personas * 12} personas alimentadas al año

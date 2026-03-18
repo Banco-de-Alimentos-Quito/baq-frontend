@@ -58,7 +58,7 @@ const DonorCard = ({
       ></div>
 
       {/* Enhanced gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-orange-400/70 via-orange-500/70 to-orange-600/70"></div>
+      <div className="absolute inset-0 bg-orange-500/70"></div>
 
       {/* Decorative elements */}
       <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
@@ -771,7 +771,7 @@ export default function DonacionMensualForm() {
                         type="button"
                         onClick={handleNextStep}
                         disabled={!isStep1Valid()}
-                        className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold py-4 px-6 rounded-xl shadow-lg transform transition-all duration-200 hover:scale-105 hover:shadow-xl active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-3"
+                        className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-6 rounded-xl shadow-lg transform transition-all duration-200 hover:scale-105 hover:shadow-xl active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-3"
                       >
                         <span>Continuar al Paso 2</span>
                         <svg
@@ -1013,7 +1013,7 @@ export default function DonacionMensualForm() {
                           type="button"
                           onClick={() => setShowConfirmationModal(true)}
                           disabled={!isStep2Valid() || enviado}
-                          className="flex-1 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold py-4 px-6 rounded-xl shadow-lg transform transition-all duration-200 hover:scale-105 hover:shadow-xl active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-3"
+                          className="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-6 rounded-xl shadow-lg transform transition-all duration-200 hover:scale-105 hover:shadow-xl active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-3"
                         >
                           {enviado ? (
                             <>
@@ -1105,7 +1105,7 @@ export default function DonacionMensualForm() {
             <div className="grid grid-cols-1 gap-3">
               <button
                 onClick={handleCloseSuccessModal}
-                className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition-all duration-200 hover:scale-105"
+                className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition-all duration-200 hover:scale-105"
               >
                 Entendido
               </button>
@@ -1175,7 +1175,7 @@ export default function DonacionMensualForm() {
                 <button
                   onClick={handleConfirmAndSubmit}
                   disabled={enviado}
-                  className="flex-1 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold py-4 px-6 rounded-xl shadow-lg transform transition-all duration-200 hover:scale-105 hover:shadow-xl active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-3"
+                  className="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-6 rounded-xl shadow-lg transform transition-all duration-200 hover:scale-105 hover:shadow-xl active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-3"
                 >
                   {enviado ? (
                     <>

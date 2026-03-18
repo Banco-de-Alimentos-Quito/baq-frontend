@@ -289,7 +289,7 @@ function QuickDonateContent() {
         transition={{ duration: 0.6, type: "spring" }}
         className="w-full max-w-2xl bg-white rounded-[32px] shadow-2xl overflow-hidden relative z-10 border border-white/50 backdrop-blur-xl my-8"
       >
-        <div className="bg-gradient-to-r from-[#FF6B35] to-[#FF8C42] p-8 text-center relative overflow-hidden">
+        <div className="bg-[#FF6B35] p-8 text-center relative overflow-hidden">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 0.1 }}
@@ -780,7 +780,7 @@ function QuickDonateContent() {
                   className={`w-full py-4 px-6 rounded-2xl shadow-xl text-lg font-bold text-white transition-all duration-300 mt-4 ${
                     loading
                       ? "bg-gray-300 cursor-not-allowed shadow-none"
-                      : "bg-gradient-to-r from-[#FF6B35] to-[#F9844A]"
+                      : "bg-[#FF6B35]"
                   }`}
                 >
                   {loading ? (

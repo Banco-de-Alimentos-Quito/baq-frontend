@@ -23,7 +23,7 @@ const ambassadors = [
 
 export default function AmbassadorsSection() {
   return (
-    <section id="ambassadors" className="bg-gradient-to-br from-orange-50 to-red-50 py-16 md:py-24">
+    <section id="ambassadors" className="bg-orange-50 py-16 md:py-24">
       <div className="container mx-auto px-4 md:px-6">
         <div className="text-center mb-12 md:mb-16 animate-in fade-in-0 slide-in-from-bottom-10 duration-700">
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl text-orange-600">

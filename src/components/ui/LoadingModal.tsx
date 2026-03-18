@@ -33,7 +33,7 @@ export default function LoadingModal({
           {/* Barra de progreso */}
           <div className="w-full bg-gray-200 rounded-full h-2 mb-4 overflow-hidden">
             <div 
-              className="h-full bg-gradient-to-r from-[#ff7300] to-[#ffb347] rounded-full transition-all duration-300 ease-out"
+              className="h-full bg-[#ff7300] rounded-full transition-all duration-300 ease-out"
               style={{ width: `${Math.min(progress, 100)}%` }}
             />
           </div>

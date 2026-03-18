@@ -274,7 +274,7 @@ export default function DonacionAlimentosPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <div className="relative bg-gradient-to-r from-orange-600 to-orange-400 text-white py-16">
+      <div className="relative bg-orange-600 text-white py-16">
         <div className="absolute inset-0 bg-black opacity-20"></div>
         <div className="relative container mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">

@@ -196,7 +196,7 @@ export default function PaymentModal({
             {cantidad >= 1 ? (
               <>
                 <button
-                  className="flex items-center justify-center gap-2 py-5 rounded-lg bg-gradient-to-r from-orange-600 to-orange-400 text-white font-semibold hover:from-orange-700 hover:to-orange-500 transition"
+                  className="flex items-center justify-center gap-2 py-5 rounded-lg bg-orange-600 text-white font-semibold hover:bg-orange-700 transition"
                   onClick={() => {
                     onClose();
                     router.push(`/donacion/deuna?monto=${cantidad}`);
@@ -224,7 +224,7 @@ export default function PaymentModal({
 
                 {/* ✅ NUEVO: Botón DeUna directo para montos < $50 (sin formulario) */}
                 <button
-                  className="flex items-center justify-center gap-2 py-3 rounded-lg bg-gradient-to-r from-orange-600 to-orange-400 text-white font-semibold hover:from-orange-700 hover:to-orange-500 transition"
+                  className="flex items-center justify-center gap-2 py-3 rounded-lg bg-orange-600 text-white font-semibold hover:bg-orange-700 transition"
                   onClick={goToDeuna}
                 >
                   <img
@@ -240,7 +240,7 @@ export default function PaymentModal({
 
             {/* Payphone */}
             <button
-              className="flex items-center justify-center gap-2 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-blue-400 text-white font-semibold hover:from-blue-700 hover:to-blue-500 transition"
+              className="flex items-center justify-center gap-2 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition"
               onClick={goToPayphone}
             >
               <img
@@ -252,7 +252,7 @@ export default function PaymentModal({
             </button>
 
             <button
-              className="flex items-center justify-center gap-1 py-1 rounded-lg bg-gradient-to-r from-green-600 to-green-400 text-white font-semibold hover:from-green-700 hover:to-green-500 transition"
+              className="flex items-center justify-center gap-1 py-1 rounded-lg bg-green-600 text-white font-semibold hover:bg-green-700 transition"
               onClick={handlePpxClick}
             >
               <img src="pagos-plux.png" className="w-20" />
@@ -260,7 +260,7 @@ export default function PaymentModal({
             </button>
 
             <button
-              className="flex items-center justify-center gap-2 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-blue-400 text-white font-semibold opacity-50 cursor-not-allowed"
+              className="flex items-center justify-center gap-2 py-3 rounded-lg bg-blue-600 text-white font-semibold opacity-50 cursor-not-allowed"
               onClick={() => {
                 onClose();
                 router.push(`/donacion/paypal?monto=${cantidad}`);
@@ -437,7 +437,7 @@ export default function PaymentModal({
 
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-green-600 to-green-400 text-white py-3 rounded-lg font-bold hover:from-green-700 hover:to-green-500 transition"
+                className="w-full bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700 transition"
               >
                 Continuar con el Pago
               </button>

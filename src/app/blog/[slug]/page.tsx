@@ -18,7 +18,7 @@ export default async function PostPage({ params }: PostPageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
+    <div className="min-h-screen bg-orange-50">
       <div className="container mx-auto px-4 py-12">
         {/* Header con imagen de portada */}
         <div className="mb-8">

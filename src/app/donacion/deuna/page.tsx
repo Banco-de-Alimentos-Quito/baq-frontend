@@ -164,7 +164,7 @@ function DeunaContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-100 p-4">
+    <div className="min-h-screen bg-orange-50 p-4">
       <div className="max-w-2xl mx-auto pt-8">
         {/* Header */}
         <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
@@ -297,7 +297,7 @@ function DeunaContent() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-orange-500 to-orange-300 text-white py-3 rounded-lg font-bold hover:from-orange-600 hover:to-orange-400 transition disabled:opacity-50"
+              className="w-full bg-orange-500 text-white py-3 rounded-lg font-bold hover:bg-orange-600 transition disabled:opacity-50"
             >
               {loading ? (
                 <span className="flex items-center justify-center">

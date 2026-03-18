@@ -6,7 +6,7 @@ const WhyWeDoExist: React.FC = () => {
     <div className="container mx-auto px-4 py-16 bg-white/90 rounded-xl shadow-2xl border border-orange-200 backdrop-blur-md relative z-10">
         {/* Título principal */}
         <h2 className="text-4xl font-bold text-orange-500 text-center mb-8">
-          Para qué existimos
+          ¿Para qué existimos?
         </h2>
 
         {/* Contenido principal */}

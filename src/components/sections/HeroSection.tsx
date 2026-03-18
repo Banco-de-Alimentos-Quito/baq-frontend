@@ -15,7 +15,7 @@ export default function HeroSection() {
   return (
     <section 
       id="hero" 
-      className="relative flex items-center justify-center min-h-[calc(100vh-4rem)] bg-gradient-to-br from-orange-100 via-rose-50 to-amber-100 dark:from-orange-900/30 dark:via-rose-900/30 dark:to-amber-900/30 pt-16 -mt-16"
+      className="relative flex items-center justify-center min-h-[calc(100vh-4rem)] bg-orange-50 dark:bg-orange-900/30 pt-16 -mt-16"
     >
       <div className="absolute inset-0 opacity-20">
         <Image

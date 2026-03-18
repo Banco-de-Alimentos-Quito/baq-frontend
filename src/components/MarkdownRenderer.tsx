@@ -142,7 +142,7 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
             </div>
           ),
           thead: ({ node, ...props }) => (
-            <thead className="bg-gradient-to-r from-orange-500 to-orange-600">
+            <thead className="bg-orange-500">
               {props.children}
             </thead>
           ),
@@ -190,7 +190,7 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
           ),
           // Divisores
           hr: ({ node, ...props }) => (
-            <hr className="my-12 border-0 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent" />
+            <hr className="my-12 border-0 h-px bg-gray-300" />
           ),
         }}
       >

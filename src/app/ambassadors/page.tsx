@@ -130,7 +130,7 @@ export default function HeroesContraElHambrePage() {
                     href={hero.instagram}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-8 h-8 flex items-center justify-center rounded-full bg-gradient-to-tr from-pink-500 via-red-500 to-yellow-500 hover:scale-110 transition-transform"
+                    className="w-8 h-8 flex items-center justify-center rounded-full bg-pink-500 hover:scale-110 transition-transform"
                     aria-label="Instagram"
                   >
                     <svg

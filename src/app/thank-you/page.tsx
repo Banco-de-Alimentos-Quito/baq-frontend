@@ -251,7 +251,7 @@ export default function ThankYou() {
             href="https://www.instagram.com/bancoalimentosquito/"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 text-white rounded hover:opacity-90 transition"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-pink-500 text-white rounded hover:opacity-90 transition"
             title="Ver Instagram de la Fundación"
           >
             <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">

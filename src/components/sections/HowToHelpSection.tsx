@@ -28,7 +28,7 @@ const helpOptions = [
 	},
 	{
 		icon: Users,
-		title: 'Ser Voluntario',
+		title: 'Voluntariado',
 		description:
 			'Únete a nuestro equipo de voluntarios y ayúdanos con tu tiempo y talento en diversas tareas.',
 		buttonText: 'Conoce Más',
