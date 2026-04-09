@@ -14,13 +14,14 @@ export default function WhatWeDoSection() {
         </div>
         <div className="grid md:grid-cols-2 gap-8 items-center">
           <div className="flex justify-center animate-in fade-in-0 slide-in-from-left-10 duration-700 delay-100">
-            <img
+            <Image
               src="/historias/BAQ_2024-41.jpg"
               alt="Voluntarios organizando alimentos"
               width={600}
               height={400}
               className="rounded-lg shadow-xl object-cover max-h-[35rem] w-auto"
-              data-ai-hint="volunteers foodbank"
+              quality={75}
+              priority
             />
           </div>
           <div className="space-y-6 animate-in fade-in-0 slide-in-from-right-10 duration-700 delay-200">

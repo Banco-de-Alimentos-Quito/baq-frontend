@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 
 const OurAliances: React.FC = () => {
   return (
@@ -16,28 +17,36 @@ const OurAliances: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center justify-items-center max-w-4xl mx-auto">
           {/* The Global Food Banking Network */}
           <div className="flex items-center justify-center p-6">
-            <img
+            <Image
               src="https://www.foodbanking.org/wp-content/uploads/2023/05/GFN_Logo_Teal.png"
               alt="The Global Food Banking Network"
+              width={200}
+              height={128}
               className="h-32 w-auto object-contain"
+              unoptimized
             />
           </div>
 
           {/* Diálogos Vitales */}
           <div className="flex items-center justify-center p-6">
-            <img
+            <Image
               src="/LOGO DIALOGOS VITALES.png"
               alt="Diálogos Vitales"
+              width={200}
+              height={128}
               className="h-32 w-auto object-contain"
             />
           </div>
 
           {/* Pontificia Universidad Javeriana */}
           <div className="flex items-center justify-center p-6">
-            <img
-              src="https://webhistorico.epn.edu.ec/wp-content/uploads/2022/08/logo-epn-vertical.png"
+            <Image
+              src="/logo-epn-vertical.png"
               alt="Escuela Politecnica Nacional"
+              width={200}
+              height={128}
               className="h-32 w-auto object-contain"
+              unoptimized
             />
           </div>
         </div>
@@ -47,3 +56,4 @@ const OurAliances: React.FC = () => {
 };
 
 export default OurAliances;
+

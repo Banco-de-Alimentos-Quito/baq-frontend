@@ -774,10 +774,13 @@ json' -d '${JSON.stringify(statusPayload)}'`;
           ¡Gracias por tu solidaridad!
         </div>
 
-        <img
+        <Image
           src="https://vectorseek.com/wp-content/uploads/2023/08/Deuna-Wordmark-Logo-Vector.svg-.png"
           alt="DeUna logo"
+          width={80}
+          height={18}
           style={{ height: 18, marginTop: 12, opacity: 0.7 }}
+          unoptimized
         />
         <button
           onClick={handleConfirmPayment}

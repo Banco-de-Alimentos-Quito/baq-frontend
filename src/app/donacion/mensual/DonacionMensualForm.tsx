@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import Link from "next/link";
+import Image from "next/image";
 import { useFormValidation, FormData } from "./hooks/useFormValidation";
 import { ValidatedInput, ValidatedSelect } from "./components/FormFields";
 import { CitySelector } from "./components/CitySelector";
@@ -68,9 +69,11 @@ const DonorCard = ({
 
       {/* Logo del Banco de Alimentos */}
       <div className="absolute top-2 right-2 sm:top-4 sm:right-8 z-20">
-        <img
+        <Image
           src="/logo.webp"
           alt="Banco de Alimentos de Quito"
+          width={112}
+          height={112}
           className="w-12 h-12 sm:w-20 sm:md:w-24 sm:lg:w-28 h-12 sm:h-20 sm:md:h-24 sm:lg:h-28 object-contain drop-shadow-lg"
         />
       </div>
@@ -118,9 +121,11 @@ const DonorCard = ({
                 style={{ backgroundImage: "url(/background.png)" }}
               ></div>
               {/* Manzana */}
-              <img
+              <Image
                 src="/avatars/manzanita.png"
                 alt="Manzanita Súper Donador"
+                width={160}
+                height={160}
                 className="w-40 h-40 sm:w-64 sm:h-64 object-contain relative z-10"
               />
             </div>

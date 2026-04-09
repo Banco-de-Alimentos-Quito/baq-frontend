@@ -3,6 +3,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import Paypal from "../components/Paypal";
 import { z } from "zod";
 import PluxModal from "./PluxModal";
@@ -202,10 +203,13 @@ export default function PaymentModal({
                     router.push(`/donacion/deuna?monto=${cantidad}`);
                   }}
                 >
-                  <img
+                  <Image
                     src="https://vectorseek.com/wp-content/uploads/2023/08/Deuna-Wordmark-Logo-Vector.svg-.png"
                     alt="DeUna"
-                    className="h-6"
+                    width={80}
+                    height={24}
+                    className="h-6 w-auto"
+                    unoptimized
                   />
                   Pagar con DeUna
                 </button>
@@ -227,10 +231,13 @@ export default function PaymentModal({
                   className="flex items-center justify-center gap-2 py-3 rounded-lg bg-orange-600 text-white font-semibold hover:bg-orange-700 transition"
                   onClick={goToDeuna}
                 >
-                  <img
+                  <Image
                     src="https://vectorseek.com/wp-content/uploads/2023/08/Deuna-Wordmark-Logo-Vector.svg-.png"
                     alt="DeUna"
-                    className="h-6"
+                    width={80}
+                    height={24}
+                    className="h-6 w-auto"
+                    unoptimized
                   />
                   Pagar con DeUna
                 </button>
@@ -243,10 +250,13 @@ export default function PaymentModal({
               className="flex items-center justify-center gap-2 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition"
               onClick={goToPayphone}
             >
-              <img
+              <Image
                 src="https://oneclic.app/tutoriales/payphone/assets/img/payphone.png"
-                alt=""
-                className="w-10"
+                alt="Payphone"
+                width={40}
+                height={40}
+                className="w-10 h-auto"
+                unoptimized
               />
               Pagar con Payphone
             </button>
@@ -255,7 +265,7 @@ export default function PaymentModal({
               className="flex items-center justify-center gap-1 py-1 rounded-lg bg-green-600 text-white font-semibold hover:bg-green-700 transition"
               onClick={handlePpxClick}
             >
-              <img src="pagos-plux.png" className="w-20" />
+              <Image src="/pagos-plux.png" alt="PagoPlux" width={80} height={32} className="w-20 h-auto" />
               Pagar con Tarjeta (PagoPlux)
             </button>
 
@@ -267,10 +277,13 @@ export default function PaymentModal({
               }}
               disabled
             >
-              <img
+              <Image
                 src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_74x46.jpg"
                 alt="PayPal"
-                className="h-6"
+                width={74}
+                height={24}
+                className="h-6 w-auto"
+                unoptimized
               />
               Pagar con PayPal
             </button>

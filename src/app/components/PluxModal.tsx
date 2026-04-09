@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 interface PluxModalProps {
   isOpen: boolean;
@@ -88,7 +89,7 @@ export default function PluxModal({ isOpen, onClose, amount }: PluxModalProps) {
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-4">
-            <img src="https://www.plux.ec/wp-content/uploads/2023/03/logo-footer-12.svg" alt="PagoPlux" className="w-12 h-12" />
+            <Image src="https://www.plux.ec/wp-content/uploads/2023/03/logo-footer-12.svg" alt="PagoPlux" width={48} height={48} className="w-12 h-12" unoptimized />
           </div>
           <h2 className="text-xl font-bold text-gray-800 mb-2">
             Negocio de Registro
@@ -208,11 +209,11 @@ export default function PluxModal({ isOpen, onClose, amount }: PluxModalProps) {
 
         {/* Footer con logos de pagos */}
         <div className="flex items-center justify-center gap-4 mt-6 pt-4 border-t">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png" alt="Visa" className="h-6" />
+          <Image src="https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png" alt="Visa" width={80} height={24} className="h-6 w-auto" unoptimized />
           <div className="w-8 h-6 bg-green-600 rounded flex items-center justify-center">
             <span className="text-white text-xs font-bold">SSL</span>
           </div>
-          <img src="pagos-plux.png" alt="PagoPlux" className="h-6" />
+          <Image src="/pagos-plux.png" alt="PagoPlux" width={80} height={24} className="h-6 w-auto" />
         </div>
 
         <p className="text-center text-xs text-gray-500 mt-2">
