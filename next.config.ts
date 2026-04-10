@@ -5,8 +5,10 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
   reactStrictMode: true,
+  allowedDevOrigins: ["*.ngrok-free.app"],
 
   images: {
+    qualities: [75, 90],
     remotePatterns: [
       {
         protocol: "https",

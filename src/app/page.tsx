@@ -9,6 +9,8 @@ import FloatingDonationButton from "@/components/ui/floating-donation-button";
 import Location from "@/components/sections/Location";
 import ImpactStories from "@/components/sections/ImpactStories";
 import OurAliances from "@/components/sections/OurAliances";
+import AchievementsSection from "@/components/sections/AchievementsSection";
+import EnvironmentalImpactSection from "@/components/sections/EnvironmentalImpactSection";
 import AmbassadorsSection from "@/components/sections/Ambassadors";
 import WhyWeDoExist from "@/components/sections/WhyWeDoExist";
 
@@ -19,6 +21,9 @@ export default function Home() {
       <WhatWeDoSection />
       <WhyWeDoExist />
       <OurAliances />
+      <AchievementsSection />
+      <EnvironmentalImpactSection />
+      
       <HowToHelpSection />
       <DonationSection />
       <FloatingDonationButton />
