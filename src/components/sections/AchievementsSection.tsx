@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 
 // ── Animated counter hook ──────────────────────────────────────────────
 function useCountUp(end: number, duration = 2000, startOnView = true) {
@@ -107,10 +108,14 @@ const AchievementsSection: React.FC = () => {
           {/* Left: Hero photo — unoptimized to preserve original JPEG quality */}
           <div className="w-full lg:w-5/12 flex-shrink-0">
             <div className="relative aspect-[3/4] w-full max-w-md mx-auto rounded-2xl overflow-hidden shadow-xl">
-              <img
+              <Image
                 src="/achievements/IMG_6840.JPEG"
                 alt="Beneficiaria del Banco de Alimentos de Quito recibiendo productos"
-                className="absolute inset-0 w-full h-full object-cover"
+                fill
+                className="object-cover"
+                sizes="(max-width: 1024px) 100vw, 40vw"
+                quality={90}
+                priority
               />
             </div>
           </div>
