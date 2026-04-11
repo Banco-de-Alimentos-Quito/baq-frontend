@@ -62,6 +62,8 @@ function NuveiPageContent() {
   const [checkoutInstance, setCheckoutInstance] =
     useState<NuveiCheckoutInstance | null>(null);
 
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api/baq";
+
   // Polling para verificar status del webhook
   const pollOrderStatus = useCallback(
     async (devReference: string, attempts = 0) => {
@@ -76,7 +78,6 @@ function NuveiPageContent() {
       await new Promise((r) => setTimeout(r, 2000));
 
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api/baq";
         const res = await fetch(`${apiUrl}/nuvei/status/${devReference}`);
         const data = await res.json();
 
@@ -96,7 +97,7 @@ function NuveiPageContent() {
         pollOrderStatus(devReference, attempts + 1);
       }
     },
-    [router]
+    [router, apiUrl]
   );
 
   // Inicializar el modal de Nuvei cuando el SDK esté listo
@@ -104,8 +105,14 @@ function NuveiPageContent() {
     if (!sdkReady || !window.PaymentCheckout) return;
 
     const nuveiEnv = process.env.NEXT_PUBLIC_NUVEI_ENV || "stg";
-    const clientAppCode = process.env.NEXT_PUBLIC_NUVEI_CLIENT_CODE || "";
-    const clientAppKey = process.env.NEXT_PUBLIC_NUVEI_CLIENT_KEY || "";
+    const clientAppCode = process.env.NEXT_PUBLIC_NUVEI_CLIENT_CODE || "NUVEISTG-EC-CLIENT";
+    const clientAppKey = process.env.NEXT_PUBLIC_NUVEI_CLIENT_KEY || "rvpKAv2tc49x6YL38fvtv5jJxRRiPs";
+
+    console.log("[nuvei] Inicializando modal con:", {
+      client_app_code: clientAppCode,
+      client_app_key: clientAppKey ? clientAppKey.substring(0, 6) + "..." : "VACÍA",
+      env_mode: nuveiEnv,
+    });
 
     try {
       const instance = new window.PaymentCheckout.modal({
@@ -143,10 +150,7 @@ function NuveiPageContent() {
             setMessage(
               `✓ Pago procesado. Verificando con el banco... (TX: ${tx.id})`
             );
-            const devRef =
-              searchParams.get("devReference") ||
-              `DON-${Date.now()}`;
-            pollOrderStatus(devRef);
+            pollOrderStatus(`DON-${Date.now()}`);
           } else {
             setStatus("error");
             setMessage(
@@ -169,50 +173,46 @@ function NuveiPageContent() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sdkReady]);
 
-  // Manejar click del botón de pago
-  const handlePay = async () => {
+  // Click: fetch + open encadenados con .then() para mantener el user gesture
+  const handlePay = () => {
+    if (!checkoutInstance) {
+      setStatus("error");
+      setMessage("El procesador de pagos aún no está listo.");
+      return;
+    }
+
     setStatus("loading");
     setMessage("Conectando con el procesador de pagos...");
 
     const devReference = `DON-${Date.now()}`;
 
-    try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api/baq";
-      const res = await fetch(`${apiUrl}/nuvei/init`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userId,
-          userEmail: email || "donante@baq.ec",
-          amount: monto,
-          description: `Donación BAQ - $${monto} USD`,
-          devReference,
-        }),
-      });
-
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || "Error del servidor");
-      }
-
-      const { reference } = await res.json();
-      console.log("[nuvei] Reference obtenida:", reference);
-
-      setStatus("processing");
-      setMessage("Abriendo ventana de pago...");
-
-      if (checkoutInstance) {
+    fetch(`${apiUrl}/nuvei/init`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId,
+        userEmail: email || "donante@baq.ec",
+        amount: monto,
+        description: `Donación BAQ - $${monto} USD`,
+        devReference,
+      }),
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Error del servidor");
+        return res.json();
+      })
+      .then(({ reference }) => {
+        console.log("[nuvei] Reference obtenida:", reference);
+        setStatus("processing");
+        setMessage("Abriendo ventana de pago...");
         checkoutInstance.open({ reference });
-      } else {
-        throw new Error("El SDK de Nuvei no está listo");
-      }
-    } catch (err: unknown) {
-      const msg =
-        err instanceof Error ? err.message : "Error desconocido";
-      console.error("[handlePay] Error:", msg);
-      setStatus("error");
-      setMessage(`No se pudo iniciar el pago: ${msg}`);
-    }
+      })
+      .catch((err) => {
+        const msg = err instanceof Error ? err.message : "Error desconocido";
+        console.error("[handlePay] Error:", msg);
+        setStatus("error");
+        setMessage(`No se pudo iniciar el pago: ${msg}`);
+      });
   };
 
   if (monto <= 0) {
@@ -236,25 +236,29 @@ function NuveiPageContent() {
 
   return (
     <>
-      {/* jQuery (requerido por el SDK de Checkout) */}
+      {/* jQuery primero, luego SDK de Nuvei en cadena para garantizar orden */}
       <Script
         src="https://code.jquery.com/jquery-3.5.0.min.js"
-        strategy="beforeInteractive"
-      />
-      {/* SDK de Nuvei Checkout */}
-      <Script
-        src="https://cdn.paymentez.com/ccapi/sdk/payment_checkout_3.0.0.min.js"
         strategy="afterInteractive"
         onLoad={() => {
-          console.log("[nuvei] SDK cargado");
-          setSdkReady(true);
+          console.log("[nuvei] jQuery cargado");
+          const script = document.createElement("script");
+          script.src = "https://cdn.paymentez.com/ccapi/sdk/payment_checkout_3.0.0.min.js";
+          script.onload = () => {
+            console.log("[nuvei] SDK cargado");
+            setSdkReady(true);
+          };
+          script.onerror = () => {
+            console.error("[nuvei] Error cargando SDK");
+            setStatus("error");
+            setMessage("No se pudo cargar el procesador de pagos. Intenta recargar la página.");
+          };
+          document.head.appendChild(script);
         }}
         onError={() => {
-          console.error("[nuvei] Error cargando SDK");
+          console.error("[nuvei] Error cargando jQuery");
           setStatus("error");
-          setMessage(
-            "No se pudo cargar el procesador de pagos. Intenta recargar la página."
-          );
+          setMessage("No se pudo cargar una dependencia requerida.");
         }}
       />
 
