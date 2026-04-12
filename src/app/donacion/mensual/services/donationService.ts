@@ -19,6 +19,46 @@ export interface DonationPayload {
 }
 
 export class DonationService {
+  public static async submitQuickDonation(payload: DonationPayload) {
+    //donaciones/quick-donate
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+    const endpoint = `${apiUrl}/donaciones/quick-donate`;
+
+    console.log("🌐 DEBUG - Endpoint:", endpoint);
+    console.log(
+      "📤 DEBUG - JSON que se va a enviar:",
+      JSON.stringify(payload, null, 2),
+    );
+
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    console.log("📥 DEBUG - Response status:", response.status);
+    console.log("📥 DEBUG - Response ok:", response.ok);
+
+    if (!response.ok) {
+      let errorText;
+      try {
+        const errorJson = await response.json();
+        errorText = JSON.stringify(errorJson);
+      } catch {
+        errorText = await response.text();
+      }
+      throw new Error(
+        `HTTP error! status: ${response.status}, message: ${errorText}`,
+      );
+    }
+
+    return response.json();
+  }
+
   private static validatePayload(payload: DonationPayload): void {
     const requiredFields = [
       "cedula_ruc",
@@ -203,8 +243,7 @@ export class DonationService {
   static async downloadContract(payload: DonationPayload): Promise<Blob> {
     this.validatePayload(payload);
 
-    const apiUrl =
-      process.env.NEXT_PUBLIC_API_URL || "https://api.baq.ec/api/baq";
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
     const endpoint = `${apiUrl}/donaciones-recurrentes/descargar-contrato`;
 
     const response = await fetch(endpoint, {

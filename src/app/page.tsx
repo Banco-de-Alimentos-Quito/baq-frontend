@@ -13,6 +13,7 @@ import AchievementsSection from "@/components/sections/AchievementsSection";
 import EnvironmentalImpactSection from "@/components/sections/EnvironmentalImpactSection";
 import AmbassadorsSection from "@/components/sections/Ambassadors";
 import WhyWeDoExist from "@/components/sections/WhyWeDoExist";
+import QuickDonateButton from "./quick-donate/QuickDoanteButton";
 
 export default function Home() {
   return (
@@ -26,6 +27,7 @@ export default function Home() {
       
       <HowToHelpSection />
       <DonationSection />
+      <QuickDonateButton />
       <FloatingDonationButton />
       <TestimonialsSection />
       {/* POR ACTUALIZAR CON LOS EMBAJADORES REALES*/}

@@ -12,6 +12,7 @@ import { Upload, X, ImageIcon, CheckCircle } from "lucide-react";
 import { CedulaValidator } from "../donacion/mensual/validators/documentValidators";
 import { useFormStore } from "../store/formStore";
 import { DonationService } from "../donacion/mensual/services/donationService";
+import { DiditSdk } from "@didit-protocol/sdk-web";
 
 const PRESET_AMOUNTS = [2, 10, 30, 50];
 
@@ -42,6 +43,13 @@ function QuickDonateContent() {
   const [cedulaPreview, setCedulaPreview] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
 
+  // Back File Upload State
+  const [cedulaFileBack, setCedulaFileBack] = useState<File | null>(null);
+  const [cedulaPreviewBack, setCedulaPreviewBack] = useState<string | null>(
+    null,
+  );
+  const [isDraggingBack, setIsDraggingBack] = useState(false);
+
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [validationTouched, setValidationTouched] = useState<
     Record<string, boolean>
@@ -63,6 +71,28 @@ function QuickDonateContent() {
       setFormField("gestorDonacion", code);
     }
   }, [code, initUser, setFormField]);
+
+  useEffect(() => {
+    DiditSdk.shared.onComplete = (result: any) => {
+      if (result.type === "completed") {
+        alert("Verification completed: " + result.session?.status);
+        console.log("Verification completed!");
+        console.log("Session ID:", result.session?.sessionId);
+        console.log("Status:", result.session?.status);
+      } else if (result.type === "cancelled") {
+        console.log("User cancelled verification");
+      } else if (result.type === "failed") {
+        console.error("Verification failed:", result.error?.message);
+        alert("Verification failed: " + result.error?.message);
+      }
+    };
+  }, []);
+
+  const startDiditVerification = () => {
+    DiditSdk.shared.startVerification({
+      url: "https://verify.didit.me/u/5c846a5c-d20d-4d1d-b2ac-4eed2bf15089",
+    });
+  };
 
   const handleAmountSelect = (amount: number) => {
     setMonto(amount);
@@ -119,7 +149,11 @@ function QuickDonateContent() {
 
     // Validate File
     if (!cedulaFile) {
-      newErrors.archivo_cedula = "La foto de la cédula es requerida";
+      newErrors.archivo_cedula = "La foto frontal de la cédula es requerida";
+    }
+    if (!cedulaFileBack) {
+      newErrors.archivo_cedula_trasera =
+        "La foto trasera de la cédula es requerida";
     }
 
     setErrors(newErrors);
@@ -148,7 +182,8 @@ function QuickDonateContent() {
         ciudad: ciudad,
         requiere_factura: false,
         gestor_donacion: code || "DonacionRapida",
-        archivo_cedula: cedulaPreview || undefined,
+        // No enviamos archivo_cedula aquí para evitar el PayloadTooLargeError del backend,
+        // ya que la imagen se sube por separado o no es necesaria en el contrato PDF.
       };
 
       const blob = await DonationService.downloadContract(payload as any);
@@ -203,25 +238,32 @@ function QuickDonateContent() {
       };
 
       // 1. First, register the donation data
-      await DonationService.submitRawDonation(payload as any);
+      await DonationService.submitQuickDonation(payload as any);
 
       // 2. Then, if file exists, upload to the strict endpoint
       if (cedulaFile) {
         try {
           const imageResponse = await DonationService.submitImage(
-            cedula,
+            cedula + "_frontal",
             cedulaFile,
           );
-          console.log("Subida exitosa:", imageResponse);
-          // Show toast success message
-          // Assuming we might have a toast component or use browser alert/console as requested
-          // "necesito que una ves subido, diga imagen subida"
-          // If we have 'sonner' or similar, strict use of user request:
-          console.log("Imagen subida");
+          console.log("Subida exitosa frontal:", imageResponse);
+          console.log("Imagen frontal subida");
         } catch (uploadError) {
-          console.error("Error uploading image:", uploadError);
-          // We don't block the flow if image fails, but maybe warn?
-          // For now, proceed as success of donation
+          console.error("Error uploading image frontal:", uploadError);
+        }
+      }
+
+      if (cedulaFileBack) {
+        try {
+          const imageResponseBack = await DonationService.submitImage(
+            cedula + "_trasera",
+            cedulaFileBack,
+          );
+          console.log("Subida exitosa trasera:", imageResponseBack);
+          console.log("Imagen trasera subida");
+        } catch (uploadError) {
+          console.error("Error uploading image trasera:", uploadError);
         }
       }
 
@@ -648,59 +690,30 @@ function QuickDonateContent() {
                 {/* File Upload Section */}
                 <div className="space-y-4 pt-2">
                   <h3 className="text-sm font-bold text-[#2F3388] uppercase tracking-wider border-b pb-2">
-                    Foto de Cédula
+                    Fotos de Cédula
                   </h3>
 
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold text-gray-500 pl-1 uppercase tracking-wide">
-                      Subir imagen (Cédula frontal) *
-                    </label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Front Image */}
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold text-gray-500 pl-1 uppercase tracking-wide">
+                        Subir imagen (Cédula frontal) *
+                      </label>
 
-                    {!cedulaPreview ? (
-                      <div
-                        onDragOver={(e) => {
-                          e.preventDefault();
-                          setIsDragging(true);
-                        }}
-                        onDragLeave={(e) => {
-                          e.preventDefault();
-                          setIsDragging(false);
-                        }}
-                        onDrop={(e) => {
-                          e.preventDefault();
-                          setIsDragging(false);
-                          const file = e.dataTransfer.files?.[0];
-                          if (file) {
-                            if (file.size > 5 * 1024 * 1024) {
-                              setErrors({
-                                ...errors,
-                                archivo_cedula:
-                                  "El archivo no debe pesar más de 5MB",
-                              });
-                              return;
-                            }
-                            setCedulaFile(file);
-                            const reader = new FileReader();
-                            reader.onloadend = () =>
-                              setCedulaPreview(reader.result as string);
-                            reader.readAsDataURL(file);
-                            if (errors.archivo_cedula)
-                              setErrors({ ...errors, archivo_cedula: "" });
-                          }
-                        }}
-                        className={`relative border-2 border-dashed rounded-2xl p-8 transition-all duration-300 flex flex-col items-center justify-center cursor-pointer group ${
-                          isDragging
-                            ? "border-[#FF6B35] bg-orange-50 scale-[1.02]"
-                            : errors.archivo_cedula
-                              ? "border-red-300 bg-red-50"
-                              : "border-gray-200 bg-gray-50 hover:border-orange-200 hover:bg-orange-50/50"
-                        }`}
-                      >
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={(e) => {
-                            const file = e.target.files?.[0];
+                      {!cedulaPreview ? (
+                        <div
+                          onDragOver={(e) => {
+                            e.preventDefault();
+                            setIsDragging(true);
+                          }}
+                          onDragLeave={(e) => {
+                            e.preventDefault();
+                            setIsDragging(false);
+                          }}
+                          onDrop={(e) => {
+                            e.preventDefault();
+                            setIsDragging(false);
+                            const file = e.dataTransfer.files?.[0];
                             if (file) {
                               if (file.size > 5 * 1024 * 1024) {
                                 setErrors({
@@ -719,53 +732,209 @@ function QuickDonateContent() {
                                 setErrors({ ...errors, archivo_cedula: "" });
                             }
                           }}
-                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                        />
-
-                        <div className="w-16 h-16 bg-white rounded-full shadow-md flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                          <Upload className="w-8 h-8 text-[#FF6B35]" />
-                        </div>
-                        <p className="text-gray-600 font-medium text-center">
-                          <span className="text-[#FF6B35] font-bold">
-                            Clic para subir
-                          </span>{" "}
-                          o arrastra la imagen aquí
-                        </p>
-                        <p className="text-xs text-gray-400 mt-2">
-                          PNG, JPG (Max. 5MB)
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="relative rounded-2xl overflow-hidden border-2 border-[#FF6B35] shadow-lg group">
-                        <img
-                          src={cedulaPreview}
-                          alt="Vista previa cédula"
-                          className="w-full h-48 object-cover"
-                        />
-                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setCedulaFile(null);
-                              setCedulaPreview(null);
+                          className={`relative border-2 border-dashed rounded-2xl p-8 transition-all duration-300 flex flex-col items-center justify-center cursor-pointer group ${
+                            isDragging
+                              ? "border-[#FF6B35] bg-orange-50 scale-[1.02]"
+                              : errors.archivo_cedula
+                                ? "border-red-300 bg-red-50"
+                                : "border-gray-200 bg-gray-50 hover:border-orange-200 hover:bg-orange-50/50"
+                          }`}
+                        >
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                if (file.size > 5 * 1024 * 1024) {
+                                  setErrors({
+                                    ...errors,
+                                    archivo_cedula:
+                                      "El archivo no debe pesar más de 5MB",
+                                  });
+                                  return;
+                                }
+                                setCedulaFile(file);
+                                const reader = new FileReader();
+                                reader.onloadend = () =>
+                                  setCedulaPreview(reader.result as string);
+                                reader.readAsDataURL(file);
+                                if (errors.archivo_cedula)
+                                  setErrors({ ...errors, archivo_cedula: "" });
+                              }
                             }}
-                            className="p-2 bg-white rounded-full text-red-500 hover:bg-red-50 transition-colors"
-                          >
-                            <X className="w-6 h-6" />
-                          </button>
-                        </div>
-                        <div className="absolute top-2 right-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1 shadow-md">
-                          <CheckCircle className="w-3 h-3" />
-                          <span>Listo</span>
-                        </div>
-                      </div>
-                    )}
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                          />
 
-                    {errors.archivo_cedula && (
-                      <p className="text-red-500 text-xs pl-1">
-                        {errors.archivo_cedula}
-                      </p>
-                    )}
+                          <div className="w-16 h-16 bg-white rounded-full shadow-md flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                            <Upload className="w-8 h-8 text-[#FF6B35]" />
+                          </div>
+                          <p className="text-gray-600 font-medium text-center">
+                            <span className="text-[#FF6B35] font-bold">
+                              Clic para subir
+                            </span>{" "}
+                            o arrastra la imagen aquí
+                          </p>
+                          <p className="text-xs text-gray-400 mt-2">
+                            PNG, JPG (Max. 5MB)
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="relative rounded-2xl overflow-hidden border-2 border-[#FF6B35] shadow-lg group">
+                          <img
+                            src={cedulaPreview}
+                            alt="Vista previa cédula frontal"
+                            className="w-full h-48 object-cover"
+                          />
+                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setCedulaFile(null);
+                                setCedulaPreview(null);
+                              }}
+                              className="p-2 bg-white rounded-full text-red-500 hover:bg-red-50 transition-colors"
+                            >
+                              <X className="w-6 h-6" />
+                            </button>
+                          </div>
+                          <div className="absolute top-2 right-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1 shadow-md">
+                            <CheckCircle className="w-3 h-3" />
+                            <span>Listo</span>
+                          </div>
+                        </div>
+                      )}
+
+                      {errors.archivo_cedula && (
+                        <p className="text-red-500 text-xs pl-1">
+                          {errors.archivo_cedula}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Back Image */}
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold text-gray-500 pl-1 uppercase tracking-wide">
+                        Subir imagen (Cédula trasera) *
+                      </label>
+
+                      {!cedulaPreviewBack ? (
+                        <div
+                          onDragOver={(e) => {
+                            e.preventDefault();
+                            setIsDraggingBack(true);
+                          }}
+                          onDragLeave={(e) => {
+                            e.preventDefault();
+                            setIsDraggingBack(false);
+                          }}
+                          onDrop={(e) => {
+                            e.preventDefault();
+                            setIsDraggingBack(false);
+                            const file = e.dataTransfer.files?.[0];
+                            if (file) {
+                              if (file.size > 5 * 1024 * 1024) {
+                                setErrors({
+                                  ...errors,
+                                  archivo_cedula_trasera:
+                                    "El archivo no debe pesar más de 5MB",
+                                });
+                                return;
+                              }
+                              setCedulaFileBack(file);
+                              const reader = new FileReader();
+                              reader.onloadend = () =>
+                                setCedulaPreviewBack(reader.result as string);
+                              reader.readAsDataURL(file);
+                              if (errors.archivo_cedula_trasera)
+                                setErrors({
+                                  ...errors,
+                                  archivo_cedula_trasera: "",
+                                });
+                            }
+                          }}
+                          className={`relative border-2 border-dashed rounded-2xl p-8 transition-all duration-300 flex flex-col items-center justify-center cursor-pointer group ${
+                            isDraggingBack
+                              ? "border-[#FF6B35] bg-orange-50 scale-[1.02]"
+                              : errors.archivo_cedula_trasera
+                                ? "border-red-300 bg-red-50"
+                                : "border-gray-200 bg-gray-50 hover:border-orange-200 hover:bg-orange-50/50"
+                          }`}
+                        >
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                if (file.size > 5 * 1024 * 1024) {
+                                  setErrors({
+                                    ...errors,
+                                    archivo_cedula_trasera:
+                                      "El archivo no debe pesar más de 5MB",
+                                  });
+                                  return;
+                                }
+                                setCedulaFileBack(file);
+                                const reader = new FileReader();
+                                reader.onloadend = () =>
+                                  setCedulaPreviewBack(reader.result as string);
+                                reader.readAsDataURL(file);
+                                if (errors.archivo_cedula_trasera)
+                                  setErrors({
+                                    ...errors,
+                                    archivo_cedula_trasera: "",
+                                  });
+                              }
+                            }}
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                          />
+
+                          <div className="w-16 h-16 bg-white rounded-full shadow-md flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                            <Upload className="w-8 h-8 text-[#FF6B35]" />
+                          </div>
+                          <p className="text-gray-600 font-medium text-center">
+                            <span className="text-[#FF6B35] font-bold">
+                              Clic para subir
+                            </span>{" "}
+                            o arrastra la imagen aquí
+                          </p>
+                          <p className="text-xs text-gray-400 mt-2">
+                            PNG, JPG (Max. 5MB)
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="relative rounded-2xl overflow-hidden border-2 border-[#FF6B35] shadow-lg group">
+                          <img
+                            src={cedulaPreviewBack}
+                            alt="Vista previa cédula trasera"
+                            className="w-full h-48 object-cover"
+                          />
+                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setCedulaFileBack(null);
+                                setCedulaPreviewBack(null);
+                              }}
+                              className="p-2 bg-white rounded-full text-red-500 hover:bg-red-50 transition-colors"
+                            >
+                              <X className="w-6 h-6" />
+                            </button>
+                          </div>
+                          <div className="absolute top-2 right-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1 shadow-md">
+                            <CheckCircle className="w-3 h-3" />
+                            <span>Listo</span>
+                          </div>
+                        </div>
+                      )}
+
+                      {errors.archivo_cedula_trasera && (
+                        <p className="text-red-500 text-xs pl-1">
+                          {errors.archivo_cedula_trasera}
+                        </p>
+                      )}
+                    </div>
                   </div>
                 </div>
 
