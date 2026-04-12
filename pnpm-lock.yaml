@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@didit-protocol/sdk-web':
+    specifier: ^0.1.8
+    version: 0.1.8
   '@lottiefiles/dotlottie-react':
     specifier: ^0.14.0
     version: 0.14.4(react@19.1.1)
@@ -311,6 +314,11 @@ packages:
 
   /@date-fns/tz@1.4.1:
     resolution: {integrity: sha512-P5LUNhtbj6YfI3iJjw5EL9eUAG6OitD0W3fWQcpQjDRc/QIsL0tRNuO1PcDvPccWL1fSTXXdE1ds+l95DV/OFA==}
+    dev: false
+
+  /@didit-protocol/sdk-web@0.1.8:
+    resolution: {integrity: sha512-AOnhdFBtTMyqc0mMLKd3E2K/Ri1uqDYG9dcdxj/k/BMACwZV3TCyk2DqJR8Nc3entdPLPfHz+iIqgiJDVroqhA==}
+    engines: {node: '>=16.0.0'}
     dev: false
 
   /@emnapi/core@1.9.0:
