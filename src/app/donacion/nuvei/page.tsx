@@ -162,8 +162,14 @@ function NuveiPageContent() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sdkReady]);
 
-  // Manejar click del botón de pago
-  const handlePay = async () => {
+  // Click: fetch + open encadenados con .then() para mantener el user gesture
+  const handlePay = () => {
+    if (!checkoutInstance) {
+      setStatus("error");
+      setMessage("El procesador de pagos aún no está listo.");
+      return;
+    }
+
     setStatus("loading");
     setMessage("Preparando el checkout seguro...");
 
@@ -241,21 +247,30 @@ function NuveiPageContent() {
 
   return (
     <>
-      {/* jQuery (requerido por el SDK de Checkout) */}
+      {/* jQuery primero, luego SDK de Nuvei en cadena para garantizar orden */}
       <Script
         src="https://code.jquery.com/jquery-3.5.0.min.js"
-        strategy="beforeInteractive"
-      />
-      {/* SDK de Nuvei Checkout */}
-      <Script
-        src="https://cdn.paymentez.com/ccapi/sdk/payment_checkout_3.0.0.min.js"
         strategy="afterInteractive"
         onLoad={() => {
-          console.log("[nuvei] SDK cargado");
-          setSdkReady(true);
+          console.log("[nuvei] jQuery cargado");
+          const script = document.createElement("script");
+          script.src =
+            "https://cdn.paymentez.com/ccapi/sdk/payment_checkout_3.0.0.min.js";
+          script.onload = () => {
+            console.log("[nuvei] SDK cargado");
+            setSdkReady(true);
+          };
+          script.onerror = () => {
+            console.error("[nuvei] Error cargando SDK");
+            setStatus("error");
+            setMessage(
+              "No se pudo cargar el procesador de pagos. Intenta recargar la página.",
+            );
+          };
+          document.head.appendChild(script);
         }}
         onError={() => {
-          console.error("[nuvei] Error cargando SDK");
+          console.error("[nuvei] Error cargando jQuery");
           setStatus("error");
           setMessage(
             "No se pudo cargar el procesador de pagos. Intenta recargar la página.",
