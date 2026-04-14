@@ -24,13 +24,12 @@ export default function Home() {
       <OurAliances />
       <AchievementsSection />
       <EnvironmentalImpactSection />
-      
+
       <HowToHelpSection />
       <DonationSection />
-      <QuickDonateButton />
+      {/*<QuickDonateButton />*/}
       <FloatingDonationButton />
       <TestimonialsSection />
-      {/* POR ACTUALIZAR CON LOS EMBAJADORES REALES*/}
       {/* <AmbassadorsSection /> */}
       <ImpactStories />
       <Location />
