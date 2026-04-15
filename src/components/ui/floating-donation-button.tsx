@@ -1,13 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 
 // Type for Google Analytics gtag function
 declare global {
   interface Window {
-    gtag: (command: string, eventName: string, params?: Record<string, unknown>) => void;
+    gtag: (
+      command: string,
+      eventName: string,
+      params?: Record<string, unknown>,
+    ) => void;
   }
 }
 
@@ -27,31 +31,25 @@ export default function FloatingDonationButton() {
   return (
     <>
       <Link
-        href="/donacion"
+        href="/quick-donate"
         className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 bg-[#ff7300] text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 flex flex-col items-center justify-center font-bold animate-pulse w-24 h-24 sm:w-24 sm:h-24"
         onClick={() => {
-          if (typeof window !== 'undefined' && window.gtag) {
-            window.gtag('event', 'presiono_dono_landing', {
-              ubicacion: 'floating_button',
-              tipo_boton: 'donar_floating'
+          if (typeof window !== "undefined" && window.gtag) {
+            window.gtag("event", "presiono_dono_landing", {
+              ubicacion: "floating_button",
+              tipo_boton: "donar_floating",
             });
           }
         }}
       >
-        <div className="w-20 h-16 flex items-center justify-center">
-          <DotLottieReact
-            src="/gesture_animation.lottie"
-            loop
-            autoplay
-            // translateZ(0) para forzar la aceleración por GPU y mejorar la nitidez
-            style={{
-              transform: 'scale(1.6) translateZ(0)',
-              backfaceVisibility: 'hidden',
-              imageRendering: '-webkit-optimize-contrast' // Ayuda en navegadores WebKit
-            }}
+        <div className="w-20 h-20 relative flex items-center justify-center">
+          <Image
+            src="/buttons/AYUDAR ALIMENTA.png"
+            alt="Ayudar Alimenta"
+            fill
+            className="object-contain"
           />
         </div>
-        <span className="text-xs leading-none mt-1">Donar</span>
       </Link>
 
       <style jsx>{`

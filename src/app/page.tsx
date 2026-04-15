@@ -27,7 +27,6 @@ export default function Home() {
 
       <HowToHelpSection />
       <DonationSection />
-      {/*<QuickDonateButton />*/}
       <FloatingDonationButton />
       <TestimonialsSection />
       {/* <AmbassadorsSection /> */}
