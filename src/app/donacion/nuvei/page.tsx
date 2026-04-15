@@ -163,7 +163,7 @@ function NuveiPageContent() {
   }, [sdkReady]);
 
   // Click: fetch + open encadenados con .then() para mantener el user gesture
-  const handlePay = () => {
+  const handlePay = async () => {
     if (!checkoutInstance) {
       setStatus("error");
       setMessage("El procesador de pagos aún no está listo.");
