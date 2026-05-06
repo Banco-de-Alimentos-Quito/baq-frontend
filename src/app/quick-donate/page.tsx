@@ -1059,15 +1059,20 @@ function QuickDonateContent() {
                   >
                     Cerrar
                   </button>
-                  <button
-                    onClick={() => {
-                      setShowConflictModal(false);
-                      setIsSubmitted(true);
-                    }}
-                    className="flex-1 py-3 px-4 bg-[#FF6B35] hover:bg-[#ff8c42] text-white font-bold rounded-xl transition-colors"
-                  >
-                    Generar Contrato
-                  </button>
+                  {!(
+                    conflictMessage.toLowerCase().includes("registr") ||
+                    conflictMessage.toLowerCase().includes("register")
+                  ) && (
+                    <button
+                      onClick={() => {
+                        setShowConflictModal(false);
+                        setIsSubmitted(true);
+                      }}
+                      className="flex-1 py-3 px-4 bg-[#FF6B35] hover:bg-[#ff8c42] text-white font-bold rounded-xl transition-colors"
+                    >
+                      Generar Contrato
+                    </button>
+                  )}
                 </div>
               </div>
             </motion.div>
