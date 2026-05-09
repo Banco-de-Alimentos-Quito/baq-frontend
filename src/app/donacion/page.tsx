@@ -822,6 +822,34 @@ export default function DonacionPage() {
                 </svg>
               </button>
             </div>
+
+            {/* Separador y botón Nuvei para pago mensual con tarjeta */}
+            {tipo === "mensual" && cantidad > 0 && (
+              <div className="mb-4">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="flex-1 h-px bg-gray-300"></div>
+                  <span className="text-gray-400 text-xs font-medium uppercase tracking-wider">o paga con tarjeta</span>
+                  <div className="flex-1 h-px bg-gray-300"></div>
+                </div>
+                <button
+                  onClick={() => {
+                    window.location.href = `/donacion/nuvei?monto=${cantidad}&tipo=mensual`;
+                  }}
+                  className="w-full bg-gradient-to-r from-[#2F3388] to-[#4a4fbf] hover:from-[#252a6e] hover:to-[#3d42a8] text-white font-bold py-3 px-6 rounded-xl shadow-md transform transition-all duration-200 hover:scale-[1.02] hover:shadow-lg active:scale-95 flex items-center justify-center gap-3 cursor-pointer"
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                    <line x1="1" y1="10" x2="23" y2="10"></line>
+                  </svg>
+                  <span className="text-base">Ahora con Nuvei</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-70">
+                    <path d="M5 12h14"></path>
+                    <path d="M12 5l7 7-7 7"></path>
+                  </svg>
+                </button>
+                <p className="text-center text-gray-400 text-xs mt-2">🔒 Cobro mensual automático con tarjeta de crédito/débito</p>
+              </div>
+            )}
           </div>
         </div>
       )}

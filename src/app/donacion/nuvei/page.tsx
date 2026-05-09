@@ -55,6 +55,12 @@ function NuveiPageContent() {
   const monto = parseFloat(searchParams.get("monto") || "0");
   const email = searchParams.get("email") || "";
   const userId = searchParams.get("user_id") || `user_${Date.now()}`;
+  const tipo = searchParams.get("tipo") || "";
+  const isRecurring = tipo === "mensual";
+
+  // Campos adicionales para pago recurrente
+  const [nombre, setNombre] = useState("");
+  const [cedula, setCedula] = useState("");
 
   const [status, setStatus] = useState<
     "idle" | "loading" | "processing" | "success" | "error"
@@ -184,15 +190,21 @@ function NuveiPageContent() {
         // 1. Obtener Token de Referencia desde el Backend
         const apiUrl =
           process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api/baq";
+        const finalEmail = email || "donante@baq.ec";
         const initRes = await fetch(`${apiUrl}/nuvei/init`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             userId: String(userId || `user_${Date.now()}`),
-            userEmail: String(email || "donante@baq.ec"),
+            userEmail: String(finalEmail),
             amount: Number(monto),
             devReference: devReference,
-            description: `Donación BAQ - $${monto} USD`,
+            description: isRecurring
+              ? `Suscripción mensual BAQ - $${monto} USD`
+              : `Donación BAQ - $${monto} USD`,
+            isRecurring,
+            nombre: isRecurring ? nombre : undefined,
+            cedula: isRecurring ? cedula : undefined,
           }),
         });
 
@@ -306,25 +318,67 @@ function NuveiPageContent() {
                 />
               </div>
               <h1 className="text-3xl font-bold text-[#2F3388] mb-2">
-                Pago con Tarjeta — Nuvei
+                {isRecurring ? "Suscripción Mensual — Nuvei" : "Pago con Tarjeta — Nuvei"}
               </h1>
               <p className="text-gray-600">
-                Completa tu donación de forma segura
+                {isRecurring
+                  ? "Se cobrará automáticamente cada mes"
+                  : "Completa tu donación de forma segura"}
               </p>
+              {isRecurring && (
+                <div className="mt-3 inline-flex items-center gap-2 bg-blue-100 text-blue-700 px-4 py-1.5 rounded-full text-sm font-semibold">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="23 4 23 10 17 10"></polyline>
+                    <polyline points="1 20 1 14 7 14"></polyline>
+                    <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"></path>
+                  </svg>
+                  Cobro mensual recurrente
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Botón de pago */}
+          {/* Formulario de datos (recurrente) + Botón de pago */}
           <div className="bg-white rounded-xl shadow-lg p-6 flex flex-col items-center">
+            {/* Campos adicionales para suscripción recurrente */}
+            {isRecurring && (
+              <div className="w-full mb-6 space-y-4">
+                <p className="text-sm text-gray-500 font-medium mb-2">Datos para tu suscripción mensual:</p>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-600 mb-1">Nombre completo *</label>
+                  <input
+                    type="text"
+                    value={nombre}
+                    onChange={(e) => setNombre(e.target.value)}
+                    placeholder="Juan Pérez"
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-600 mb-1">Cédula / RUC *</label>
+                  <input
+                    type="text"
+                    value={cedula}
+                    onChange={(e) => setCedula(e.target.value)}
+                    placeholder="1712345678"
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    required
+                  />
+                </div>
+              </div>
+            )}
+
             <button
               onClick={handlePay}
               disabled={
-                status === "loading" || status === "processing" || !sdkReady
+                status === "loading" || status === "processing" || !sdkReady ||
+                (isRecurring && (!nombre || !cedula))
               }
               className={`w-full py-4 rounded-lg font-semibold text-lg transition ${
                 status === "loading" || status === "processing"
                   ? "bg-gray-400 cursor-not-allowed text-white"
-                  : !sdkReady
+                  : !sdkReady || (isRecurring && (!nombre || !cedula))
                     ? "bg-gray-300 cursor-wait text-gray-500"
                     : "bg-red-600 hover:bg-red-700 text-white active:scale-[0.98]"
               }`}
@@ -335,7 +389,9 @@ function NuveiPageContent() {
                   ? "Iniciando pago..."
                   : status === "processing"
                     ? "Procesando..."
-                    : "💳 Pagar con tarjeta"}
+                    : isRecurring
+                      ? "💳 Suscribirse — Pagar primer mes"
+                      : "💳 Pagar con tarjeta"}
             </button>
 
             {/* Status Box (Opcional si usas modal) */}
