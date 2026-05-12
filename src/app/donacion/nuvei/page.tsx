@@ -188,8 +188,7 @@ function NuveiPageContent() {
 
       if (checkoutInstance) {
         // 1. Obtener Token de Referencia desde el Backend
-        const apiUrl =
-          process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api/baq";
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL;
         const finalEmail = email || "donante@baq.ec";
         const initRes = await fetch(`${apiUrl}/nuvei/init`, {
           method: "POST",
@@ -318,7 +317,9 @@ function NuveiPageContent() {
                 />
               </div>
               <h1 className="text-3xl font-bold text-[#2F3388] mb-2">
-                {isRecurring ? "Suscripción Mensual — Nuvei" : "Pago con Tarjeta — Nuvei"}
+                {isRecurring
+                  ? "Suscripción Mensual — Nuvei"
+                  : "Pago con Tarjeta — Nuvei"}
               </h1>
               <p className="text-gray-600">
                 {isRecurring
@@ -327,7 +328,16 @@ function NuveiPageContent() {
               </p>
               {isRecurring && (
                 <div className="mt-3 inline-flex items-center gap-2 bg-blue-100 text-blue-700 px-4 py-1.5 rounded-full text-sm font-semibold">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
                     <polyline points="23 4 23 10 17 10"></polyline>
                     <polyline points="1 20 1 14 7 14"></polyline>
                     <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"></path>
@@ -343,9 +353,13 @@ function NuveiPageContent() {
             {/* Campos adicionales para suscripción recurrente */}
             {isRecurring && (
               <div className="w-full mb-6 space-y-4">
-                <p className="text-sm text-gray-500 font-medium mb-2">Datos para tu suscripción mensual:</p>
+                <p className="text-sm text-gray-500 font-medium mb-2">
+                  Datos para tu suscripción mensual:
+                </p>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-600 mb-1">Nombre completo *</label>
+                  <label className="block text-sm font-semibold text-gray-600 mb-1">
+                    Nombre completo *
+                  </label>
                   <input
                     type="text"
                     value={nombre}
@@ -356,7 +370,9 @@ function NuveiPageContent() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-600 mb-1">Cédula / RUC *</label>
+                  <label className="block text-sm font-semibold text-gray-600 mb-1">
+                    Cédula / RUC *
+                  </label>
                   <input
                     type="text"
                     value={cedula}
@@ -372,7 +388,9 @@ function NuveiPageContent() {
             <button
               onClick={handlePay}
               disabled={
-                status === "loading" || status === "processing" || !sdkReady ||
+                status === "loading" ||
+                status === "processing" ||
+                !sdkReady ||
                 (isRecurring && (!nombre || !cedula))
               }
               className={`w-full py-4 rounded-lg font-semibold text-lg transition ${
