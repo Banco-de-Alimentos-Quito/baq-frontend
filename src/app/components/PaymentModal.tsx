@@ -269,6 +269,24 @@ export default function PaymentModal({
               Pagar con Tarjeta (PagoPlux)
             </button>
 
+            {/* Nuvei – Pago con tarjeta */}
+            <button
+              className="flex items-center justify-center gap-2 py-3 rounded-lg bg-[#1B2A4A] text-white font-semibold hover:bg-[#142038] transition"
+              onClick={() => {
+                onClose();
+                router.push(`/donacion/nuvei?monto=${cantidad}`);
+              }}
+            >
+              <Image
+                src="/payment-logos/nuvei-logo.png"
+                alt="Nuvei"
+                width={80}
+                height={28}
+                className="h-7 w-auto brightness-0 invert"
+              />
+              Pagar con Tarjeta (Nuvei)
+            </button>
+
             <button
               className="flex items-center justify-center gap-2 py-3 rounded-lg bg-blue-600 text-white font-semibold opacity-50 cursor-not-allowed"
               onClick={() => {
