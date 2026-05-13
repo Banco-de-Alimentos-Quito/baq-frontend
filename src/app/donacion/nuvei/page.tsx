@@ -12,10 +12,17 @@ declare global {
   interface Window {
     PaymentCheckout: {
       modal: new (config: {
-        client_app_code: string;
-        client_app_key: string;
+        client_app_code?: string;
+        client_app_key?: string;
         locale?: string;
         env_mode: string;
+        conf?: {
+          style_version?: string;
+          theme?: {
+            logo?: string;
+            primary_color?: string;
+          };
+        };
         onOpen?: () => void;
         onClose?: () => void;
         onResponse?: (response: NuveiResponse) => void;
@@ -88,16 +95,21 @@ function NuveiPageContent() {
     // Almacenamos en ref para evitar re-inicialización en StrictMode
     modalInitialized.current = true;
 
-    const nuveiEnv = process.env.NEXT_PUBLIC_NUVEI_ENV;
+    const nuveiEnv = process.env.NEXT_PUBLIC_NUVEI_ENV || "stg";
     const clientAppCode = process.env.NEXT_PUBLIC_NUVEI_CLIENT_CODE;
     const clientAppKey = process.env.NEXT_PUBLIC_NUVEI_CLIENT_KEY;
 
     try {
       const instance = new window.PaymentCheckout.modal({
-        client_app_code: clientAppCode,
-        client_app_key: clientAppKey,
         locale: "es",
         env_mode: nuveiEnv,
+        conf: {
+          style_version: "2",
+          theme: {
+            logo: "https://donar.baq.ec/logo2.png",
+            primary_color: "#C800A1",
+          },
+        },
 
         onOpen: () => {
           console.log("[nuvei] Modal abierto");
