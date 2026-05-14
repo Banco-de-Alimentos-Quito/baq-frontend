@@ -270,30 +270,16 @@ function NuveiPageContent() {
 
   return (
     <>
-      {/* jQuery primero, luego SDK de Nuvei en cadena para garantizar orden */}
+      {/* SDK de Nuvei Checkout v3 — no requiere jQuery */}
       <Script
-        src="https://code.jquery.com/jquery-3.5.0.min.js"
+        src="https://cdn.paymentez.com/ccapi/sdk/payment_checkout_3.0.0.min.js"
         strategy="afterInteractive"
         onLoad={() => {
-          console.log("[nuvei] jQuery cargado");
-          const script = document.createElement("script");
-          script.src =
-            "https://cdn.paymentez.com/ccapi/sdk/payment_checkout_3.0.0.min.js";
-          script.onload = () => {
-            console.log("[nuvei] SDK cargado");
-            setSdkReady(true);
-          };
-          script.onerror = () => {
-            console.error("[nuvei] Error cargando SDK");
-            setStatus("error");
-            setMessage(
-              "No se pudo cargar el procesador de pagos. Intenta recargar la página.",
-            );
-          };
-          document.head.appendChild(script);
+          console.log("[nuvei] SDK cargado");
+          setSdkReady(true);
         }}
         onError={() => {
-          console.error("[nuvei] Error cargando jQuery");
+          console.error("[nuvei] Error cargando SDK");
           setStatus("error");
           setMessage(
             "No se pudo cargar el procesador de pagos. Intenta recargar la página.",
@@ -405,13 +391,25 @@ function NuveiPageContent() {
                 !sdkReady ||
                 (isRecurring && (!nombre || !cedula))
               }
-              className={`w-full py-4 rounded-lg font-semibold text-lg transition ${
-                status === "loading" || status === "processing"
-                  ? "bg-gray-400 cursor-not-allowed text-white"
-                  : !sdkReady || (isRecurring && (!nombre || !cedula))
-                    ? "bg-gray-300 cursor-wait text-gray-500"
-                    : "bg-red-600 hover:bg-red-700 text-white active:scale-[0.98]"
-              }`}
+              className="w-full py-4 rounded-lg font-semibold text-lg transition active:scale-[0.98]"
+              style={{
+                background:
+                  status === "loading" || status === "processing"
+                    ? "#9ca3af"
+                    : !sdkReady || (isRecurring && (!nombre || !cedula))
+                      ? "#d1d5db"
+                      : "#C800A1",
+                color:
+                  !sdkReady && !(status === "loading" || status === "processing") && !(isRecurring && (!nombre || !cedula))
+                    ? "#6b7280"
+                    : "#ffffff",
+                cursor:
+                  status === "loading" || status === "processing"
+                    ? "not-allowed"
+                    : !sdkReady || (isRecurring && (!nombre || !cedula))
+                      ? "wait"
+                      : "pointer",
+              }}
             >
               {!sdkReady
                 ? "Cargando procesador..."

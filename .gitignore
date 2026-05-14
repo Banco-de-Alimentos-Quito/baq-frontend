@@ -48,3 +48,6 @@ next-env.d.ts
 
 # Setup local guide
 SETUP_LOCAL.md
+
+# Nuvei demo config (credenciales locales del archivo files/index.html)
+files/env.js
