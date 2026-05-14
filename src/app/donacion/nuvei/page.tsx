@@ -95,7 +95,7 @@ function NuveiPageContent() {
     // Almacenamos en ref para evitar re-inicialización en StrictMode
     modalInitialized.current = true;
 
-    const nuveiEnv = process.env.NEXT_PUBLIC_NUVEI_ENV || "stg";
+    const nuveiEnv = process.env.NEXT_PUBLIC_NUVEI_ENV;
     const clientAppCode = process.env.NEXT_PUBLIC_NUVEI_CLIENT_CODE;
     const clientAppKey = process.env.NEXT_PUBLIC_NUVEI_CLIENT_KEY;
 
@@ -400,7 +400,9 @@ function NuveiPageContent() {
                       ? "#d1d5db"
                       : "#C800A1",
                 color:
-                  !sdkReady && !(status === "loading" || status === "processing") && !(isRecurring && (!nombre || !cedula))
+                  !sdkReady &&
+                  !(status === "loading" || status === "processing") &&
+                  !(isRecurring && (!nombre || !cedula))
                     ? "#6b7280"
                     : "#ffffff",
                 cursor:
