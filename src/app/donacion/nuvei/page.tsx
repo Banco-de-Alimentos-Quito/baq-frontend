@@ -229,8 +229,9 @@ function NuveiPageContent() {
     if (typeof PaymentGateway === "undefined") return;
 
     const nuveiEnv = process.env.NEXT_PUBLIC_NUVEI_ENV;
-    const clientAppCode = process.env.NEXT_PUBLIC_NUVEI_CLIENT_CODE || "";
-    const clientAppKey = process.env.NEXT_PUBLIC_NUVEI_CLIENT_KEY || "";
+    // Tokenización SOLO se usa para recurrencia → credenciales BDAQ-PR-EC-CLIENT
+    const clientAppCode = process.env.NEXT_PUBLIC_NUVEI_REC_CLIENT_CODE || "";
+    const clientAppKey = process.env.NEXT_PUBLIC_NUVEI_REC_CLIENT_KEY || "";
 
     if (!nuveiEnv) {
       console.error("[nuvei] NEXT_PUBLIC_NUVEI_ENV no está definida");
