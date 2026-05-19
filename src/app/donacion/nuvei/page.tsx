@@ -89,8 +89,16 @@ function NuveiPageContent() {
     modalInitialized.current = true;
 
     const nuveiEnv = process.env.NEXT_PUBLIC_NUVEI_ENV;
-    const clientAppCode = process.env.NEXT_PUBLIC_NUVEI_CLIENT_CODE;
-    const clientAppKey = process.env.NEXT_PUBLIC_NUVEI_CLIENT_KEY;
+
+    // Credenciales CLIENT distintas según el tipo de pago:
+    // - Checkout único: BANCOALIMENTOS-EC-CLIENT (NEXT_PUBLIC_NUVEI_CLIENT_*)
+    // - Recurrente:     BDAQ-PR-EC-CLIENT       (NEXT_PUBLIC_NUVEI_REC_CLIENT_*)
+    const clientAppCode = isRecurring
+      ? process.env.NEXT_PUBLIC_NUVEI_REC_CLIENT_CODE
+      : process.env.NEXT_PUBLIC_NUVEI_CLIENT_CODE;
+    const clientAppKey = isRecurring
+      ? process.env.NEXT_PUBLIC_NUVEI_REC_CLIENT_KEY
+      : process.env.NEXT_PUBLIC_NUVEI_CLIENT_KEY;
 
     try {
       const instance = new window.PaymentCheckout.modal({
