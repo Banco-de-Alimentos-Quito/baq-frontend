@@ -220,9 +220,16 @@ function NuveiPageContent() {
     // Por lo que no se añade automáticamente a 'window', debemos accederlo directamente.
     if (typeof PaymentGateway === "undefined") return;
 
-    const nuveiEnv = process.env.NEXT_PUBLIC_NUVEI_ENV || "stg";
+    const nuveiEnv = process.env.NEXT_PUBLIC_NUVEI_ENV;
     const clientAppCode = process.env.NEXT_PUBLIC_NUVEI_CLIENT_CODE || "";
     const clientAppKey = process.env.NEXT_PUBLIC_NUVEI_CLIENT_KEY || "";
+
+    if (!nuveiEnv) {
+      console.error("[nuvei] NEXT_PUBLIC_NUVEI_ENV no está definida");
+      setStatus("error");
+      setMessage("Error de configuración: entorno de pago no definido.");
+      return;
+    }
 
     try {
       const sdk = new PaymentGateway(nuveiEnv, clientAppCode, clientAppKey);
