@@ -8,6 +8,10 @@
   <!-- SDK de Nuvei Checkout (requerido para el modal) -->
   <script src="https://cdn.paymentez.com/ccapi/sdk/payment_checkout_3.0.0.min.js"></script>
 
+  <!-- Config local: credenciales sin hardcodear (ver env.example.js) -->
+  <!-- ⚠️  Crea files/env.js copiando env.example.js y poniendo tus valores reales -->
+  <script src="env.js"></script>
+
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -60,7 +64,7 @@
     .btn-pay {
       width: 100%;
       padding: 14px;
-      background: #e03030;
+      background: #C800A1;
       color: #fff;
       border: none;
       border-radius: 10px;
@@ -70,7 +74,7 @@
       transition: background 0.15s, transform 0.1s;
     }
 
-    .btn-pay:hover:not(:disabled)    { background: #c22828; }
+    .btn-pay:hover:not(:disabled)    { background: #a60085; }
     .btn-pay:active:not(:disabled)   { transform: scale(0.98); }
     .btn-pay:disabled                 { background: #ccc; cursor: not-allowed; }
 
@@ -143,11 +147,20 @@
 </div>
 
 <script>
-  // ── Configuración ───────────────────────────────────────────────────────
+  // ── Configuración (cargada desde env.js) ───────────────────────────────
+  if (!window.NUVEI_ENV) {
+    document.body.innerHTML = '<div style="color:red;padding:40px;font-family:sans-serif">' +
+      '<h2>⚠️ Falta env.js</h2>' +
+      '<p>Copia <code>files/env.example.js</code> como <code>files/env.js</code> ' +
+      'y completa con tus credenciales reales.</p></div>';
+    throw new Error('window.NUVEI_ENV no definido. Crea files/env.js desde env.example.js.');
+  }
+
   const CONFIG = {
-    backendUrl:    'http://localhost:3000',   // URL de tu backend Express
-    nuveiEnv:      'stg',                    // 'stg' o 'prod'
-    nuveiClientCode: 'NUVEISTG-EC-CLIENT',   // APP_CODE_CLIENT (staging)
+    backendUrl:      window.NUVEI_ENV.backendUrl,
+    nuveiEnv:        window.NUVEI_ENV.nuveiEnv,
+    nuveiClientCode: window.NUVEI_ENV.nuveiClientCode,
+    nuveiClientKey:  window.NUVEI_ENV.nuveiClientKey,
   };
 
   // Datos del pago (en tu app real vendrían del carrito / sesión)
@@ -163,6 +176,13 @@
   // Crear UNA sola vez al cargar la página
   const paymentCheckout = new PaymentCheckout.modal({
     env_mode: CONFIG.nuveiEnv,
+    conf: {
+      style_version: "2",
+      theme: {
+        logo: "https://donar.baq.ec/logo2.png",
+        primary_color: "#C800A1"
+      }
+    },
 
     onOpen: function () {
       console.log('[nuvei] Modal abierto');
@@ -213,7 +233,7 @@
 
     try {
       // ── Paso 2: backend genera la referencia en Nuvei ────────────────
-      const res = await fetch(`${CONFIG.backendUrl}/api/payments/init`, {
+      const res = await fetch(`${CONFIG.backendUrl}/nuvei/init`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
