@@ -7,7 +7,6 @@ import Script from "next/script";
 import { motion, AnimatePresence } from "framer-motion";
 import { Upload, X } from "lucide-react";
 import { DonationService } from "../mensual/services/donationService";
-import { CedulaValidator } from "../mensual/validators/documentValidators";
 
 // ── Tipos ───────────────────────────────────────────────────────────────────
 
@@ -73,26 +72,11 @@ function NuveiPageContent() {
   const isRecurring = tipo === "mensual";
 
   const [inputEmail, setInputEmail] = useState(searchParams.get("email") || "");
-  const [cedula, setCedula] = useState("");
-  const [nombre, setNombre] = useState("");
-
-  // File Upload State
-  const [cedulaFileFront, setCedulaFileFront] = useState<File | null>(null);
-  const [cedulaPreviewFront, setCedulaPreviewFront] = useState<string | null>(
-    null,
-  );
-  const [isDraggingFront, setIsDraggingFront] = useState(false);
-
-  const [cedulaFileBack, setCedulaFileBack] = useState<File | null>(null);
-  const [cedulaPreviewBack, setCedulaPreviewBack] = useState<string | null>(
-    null,
-  );
-  const [isDraggingBack, setIsDraggingBack] = useState(false);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   // If not recurring, we only need email (which could be pre-confirmed via query param)
-  // If recurring, we need email, cedula, name, and images. We don't pre-confirm if recurring.
+  // If recurring, we need email. We don't pre-confirm if recurring.
   const [preStepConfirmed, setPreStepConfirmed] = useState(
     !isRecurring && !!searchParams.get("email"),
   );
@@ -133,10 +117,10 @@ function NuveiPageContent() {
     // - Checkout único: BANCOALIMENTOS-EC-CLIENT (NEXT_PUBLIC_NUVEI_CLIENT_*)
     // - Recurrente:     BDAQ-PR-EC-CLIENT       (NEXT_PUBLIC_NUVEI_REC_CLIENT_*)
     const clientAppCode = isRecurring
-      ? process.env.NEXT_PUBLIC_NUVEI_REC_CLIENT_CODE
+      ? (process.env.NEXT_PUBLIC_NUVEI_REC_CLIENT_CODE || process.env.NEXT_PUBLIC_NUVEI_CLIENT_CODE)
       : process.env.NEXT_PUBLIC_NUVEI_CLIENT_CODE;
     const clientAppKey = isRecurring
-      ? process.env.NEXT_PUBLIC_NUVEI_REC_CLIENT_KEY
+      ? (process.env.NEXT_PUBLIC_NUVEI_REC_CLIENT_KEY || process.env.NEXT_PUBLIC_NUVEI_CLIENT_KEY)
       : process.env.NEXT_PUBLIC_NUVEI_CLIENT_KEY;
 
     try {
@@ -230,8 +214,8 @@ function NuveiPageContent() {
 
     const nuveiEnv = process.env.NEXT_PUBLIC_NUVEI_ENV;
     // Tokenización SOLO se usa para recurrencia → credenciales BDAQ-PR-EC-CLIENT
-    const clientAppCode = process.env.NEXT_PUBLIC_NUVEI_REC_CLIENT_CODE || "";
-    const clientAppKey = process.env.NEXT_PUBLIC_NUVEI_REC_CLIENT_KEY || "";
+    const clientAppCode = process.env.NEXT_PUBLIC_NUVEI_REC_CLIENT_CODE || process.env.NEXT_PUBLIC_NUVEI_CLIENT_CODE || "";
+    const clientAppKey = process.env.NEXT_PUBLIC_NUVEI_REC_CLIENT_KEY || process.env.NEXT_PUBLIC_NUVEI_CLIENT_KEY || "";
 
     if (!nuveiEnv) {
       console.error("[nuvei] NEXT_PUBLIC_NUVEI_ENV no está definida");
@@ -284,36 +268,12 @@ function NuveiPageContent() {
               userId: userId,
               email: email || "donante@baq.ec",
               monto: monto,
-              cedula: cedula,
-              nombre: nombre,
+              cedula: "9999999999", // Default fallback if no cedula is provided
+              nombre: "Donante Anónimo", // Default fallback
               response: response,
             }),
           })
             .then(async () => {
-              // Upload front ID image
-              if (cedulaFileFront) {
-                try {
-                  await DonationService.submitImage(
-                    cedula + "_frontal",
-                    cedulaFileFront,
-                  );
-                } catch (uploadError) {
-                  console.error("Error uploading image frontal:", uploadError);
-                }
-              }
-
-              // Upload back ID image
-              if (cedulaFileBack) {
-                try {
-                  await DonationService.submitImage(
-                    cedula + "_trasera",
-                    cedulaFileBack,
-                  );
-                } catch (uploadError) {
-                  console.error("Error uploading image trasera:", uploadError);
-                }
-              }
-
               setTxResult({
                 status: "success",
                 title: "¡Suscripción Activa!",
@@ -372,10 +332,6 @@ function NuveiPageContent() {
     tokenizeSdkReady,
     userId,
     email,
-    cedula,
-    nombre,
-    cedulaFileFront,
-    cedulaFileBack,
   ]);
 
   // Click: fetch + open encadenados con .then() para mantener el user gesture
@@ -483,33 +439,12 @@ function NuveiPageContent() {
 
         const newErrors: Record<string, string> = {};
 
-        // Validate Nombre
-        if (!nombre.trim()) {
-          newErrors.nombre = "El nombre completo es requerido";
-        }
-
         // Validate Email
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!inputEmail.trim()) {
           newErrors.email = "El correo es requerido";
         } else if (!emailRegex.test(inputEmail)) {
           newErrors.email = "Correo inválido";
-        }
-
-        // Validate Cedula
-        const cedulaValidator = new CedulaValidator();
-        if (!cedula.trim()) {
-          newErrors.cedula = "La cédula o RUC es requerida";
-        } else if (!cedulaValidator.validate(cedula)) {
-          newErrors.cedula = "La cédula o RUC no es válida";
-        }
-
-        // Validate Files
-        if (!cedulaFileFront) {
-          newErrors.cedulaFront = "La foto frontal de la cédula es requerida";
-        }
-        if (!cedulaFileBack) {
-          newErrors.cedulaBack = "La foto trasera de la cédula es requerida";
         }
 
         setErrors(newErrors);
@@ -535,43 +470,13 @@ function NuveiPageContent() {
               Paso Previo - Donación Recurrente
             </h1>
             <p className="text-gray-600 mb-6 text-sm">
-              Ingresa tus datos personales y las fotos de tu cédula (frontal y
-              trasera) para continuar con el débito recurrente seguro.
+              Ingresa tu correo electrónico para continuar con el débito recurrente seguro.
             </p>
 
             <form
               onSubmit={handlePreStepSubmit}
               className="flex flex-col gap-5 text-left"
             >
-              {/* Nombre Completo */}
-              <div>
-                <label
-                  htmlFor="nombreInput"
-                  className="block text-sm font-semibold text-gray-700 mb-1"
-                >
-                  Nombres Completos *
-                </label>
-                <input
-                  id="nombreInput"
-                  type="text"
-                  required
-                  value={nombre}
-                  onChange={(e) => {
-                    setNombre(e.target.value);
-                    if (errors.nombre) setErrors({ ...errors, nombre: "" });
-                  }}
-                  placeholder="Ej: Juan Carlos Pérez González"
-                  className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#C800A1] focus:border-transparent transition text-gray-800 ${
-                    errors.nombre
-                      ? "border-red-500 bg-red-50"
-                      : "border-gray-300"
-                  }`}
-                />
-                {errors.nombre && (
-                  <p className="text-red-500 text-xs mt-1">{errors.nombre}</p>
-                )}
-              </div>
-
               {/* Correo Electrónico */}
               <div>
                 <label
@@ -599,268 +504,6 @@ function NuveiPageContent() {
                 {errors.email && (
                   <p className="text-red-500 text-xs mt-1">{errors.email}</p>
                 )}
-              </div>
-
-              {/* Cédula / RUC */}
-              <div>
-                <label
-                  htmlFor="cedulaInput"
-                  className="block text-sm font-semibold text-gray-700 mb-1"
-                >
-                  Cédula / RUC *
-                </label>
-                <input
-                  id="cedulaInput"
-                  type="text"
-                  required
-                  maxLength={13}
-                  value={cedula}
-                  onChange={(e) => {
-                    const val = e.target.value.replace(/\D/g, "");
-                    setCedula(val);
-                    if (errors.cedula) setErrors({ ...errors, cedula: "" });
-                  }}
-                  placeholder="Ej: 1710034065"
-                  className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#C800A1] focus:border-transparent transition text-gray-800 ${
-                    errors.cedula
-                      ? "border-red-500 bg-red-50"
-                      : "border-gray-300"
-                  }`}
-                />
-                {errors.cedula && (
-                  <p className="text-red-500 text-xs mt-1">{errors.cedula}</p>
-                )}
-              </div>
-
-              {/* Uploads Section */}
-              <div className="space-y-4">
-                <label className="block text-sm font-bold text-[#2F3388] uppercase tracking-wider border-b pb-2">
-                  Fotos de Cédula
-                </label>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Front Image Upload */}
-                  <div className="space-y-2">
-                    <span className="text-xs font-bold text-gray-500 uppercase tracking-wide">
-                      Subir imagen (Cédula frontal) *
-                    </span>
-
-                    {!cedulaPreviewFront ? (
-                      <div
-                        onDragOver={(e) => {
-                          e.preventDefault();
-                          setIsDraggingFront(true);
-                        }}
-                        onDragLeave={(e) => {
-                          e.preventDefault();
-                          setIsDraggingFront(false);
-                        }}
-                        onDrop={(e) => {
-                          e.preventDefault();
-                          setIsDraggingFront(false);
-                          const file = e.dataTransfer.files?.[0];
-                          if (file) {
-                            if (file.size > 5 * 1024 * 1024) {
-                              setErrors({
-                                ...errors,
-                                cedulaFront:
-                                  "El archivo no debe pesar más de 5MB",
-                              });
-                              return;
-                            }
-                            setCedulaFileFront(file);
-                            const reader = new FileReader();
-                            reader.onloadend = () =>
-                              setCedulaPreviewFront(reader.result as string);
-                            reader.readAsDataURL(file);
-                            if (errors.cedulaFront)
-                              setErrors({ ...errors, cedulaFront: "" });
-                          }
-                        }}
-                        className={`relative border-2 border-dashed rounded-2xl p-6 transition-all duration-300 flex flex-col items-center justify-center cursor-pointer group min-h-[160px] ${
-                          isDraggingFront
-                            ? "border-[#C800A1] bg-[#C800A1]/5 scale-[1.02]"
-                            : errors.cedulaFront
-                              ? "border-red-300 bg-red-50"
-                              : "border-gray-200 bg-gray-50 hover:border-[#C800A1] hover:bg-[#C800A1]/5"
-                        }`}
-                      >
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            if (file) {
-                              if (file.size > 5 * 1024 * 1024) {
-                                setErrors({
-                                  ...errors,
-                                  cedulaFront:
-                                    "El archivo no debe pesar más de 5MB",
-                                });
-                                return;
-                              }
-                              setCedulaFileFront(file);
-                              const reader = new FileReader();
-                              reader.onloadend = () =>
-                                setCedulaPreviewFront(reader.result as string);
-                              reader.readAsDataURL(file);
-                              if (errors.cedulaFront)
-                                setErrors({ ...errors, cedulaFront: "" });
-                            }
-                          }}
-                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                        />
-
-                        <Upload className="w-6 h-6 text-[#C800A1] mb-2 group-hover:scale-110 transition-transform duration-300" />
-                        <p className="text-gray-600 font-semibold text-xs text-center">
-                          <span className="text-[#C800A1] font-bold">
-                            Clic para subir
-                          </span>
-                          <br />o arrastra la imagen aquí
-                        </p>
-                        <p className="text-[10px] text-gray-400 mt-1">
-                          PNG, JPG (Max. 5MB)
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="relative rounded-2xl overflow-hidden border-2 border-[#C800A1] shadow-md group h-[160px]">
-                        <img
-                          src={cedulaPreviewFront}
-                          alt="Vista previa cédula frontal"
-                          className="w-full h-full object-cover"
-                        />
-                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setCedulaFileFront(null);
-                              setCedulaPreviewFront(null);
-                            }}
-                            className="p-2 bg-white rounded-full text-red-500 hover:bg-red-50 transition-colors shadow-lg"
-                          >
-                            <X className="w-5 h-5" />
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                    {errors.cedulaFront && (
-                      <p className="text-red-500 text-xs pl-1">
-                        {errors.cedulaFront}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Back Image Upload */}
-                  <div className="space-y-2">
-                    <span className="text-xs font-bold text-gray-500 uppercase tracking-wide">
-                      Subir imagen (Cédula trasera) *
-                    </span>
-
-                    {!cedulaPreviewBack ? (
-                      <div
-                        onDragOver={(e) => {
-                          e.preventDefault();
-                          setIsDraggingBack(true);
-                        }}
-                        onDragLeave={(e) => {
-                          e.preventDefault();
-                          setIsDraggingBack(false);
-                        }}
-                        onDrop={(e) => {
-                          e.preventDefault();
-                          setIsDraggingBack(false);
-                          const file = e.dataTransfer.files?.[0];
-                          if (file) {
-                            if (file.size > 5 * 1024 * 1024) {
-                              setErrors({
-                                ...errors,
-                                cedulaBack:
-                                  "El archivo no debe pesar más de 5MB",
-                              });
-                              return;
-                            }
-                            setCedulaFileBack(file);
-                            const reader = new FileReader();
-                            reader.onloadend = () =>
-                              setCedulaPreviewBack(reader.result as string);
-                            reader.readAsDataURL(file);
-                            if (errors.cedulaBack)
-                              setErrors({ ...errors, cedulaBack: "" });
-                          }
-                        }}
-                        className={`relative border-2 border-dashed rounded-2xl p-6 transition-all duration-300 flex flex-col items-center justify-center cursor-pointer group min-h-[160px] ${
-                          isDraggingBack
-                            ? "border-[#C800A1] bg-[#C800A1]/5 scale-[1.02]"
-                            : errors.cedulaBack
-                              ? "border-red-300 bg-red-50"
-                              : "border-gray-200 bg-gray-50 hover:border-[#C800A1] hover:bg-[#C800A1]/5"
-                        }`}
-                      >
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            if (file) {
-                              if (file.size > 5 * 1024 * 1024) {
-                                setErrors({
-                                  ...errors,
-                                  cedulaBack:
-                                    "El archivo no debe pesar más de 5MB",
-                                });
-                                return;
-                              }
-                              setCedulaFileBack(file);
-                              const reader = new FileReader();
-                              reader.onloadend = () =>
-                                setCedulaPreviewBack(reader.result as string);
-                              reader.readAsDataURL(file);
-                              if (errors.cedulaBack)
-                                setErrors({ ...errors, cedulaBack: "" });
-                            }
-                          }}
-                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                        />
-
-                        <Upload className="w-6 h-6 text-[#C800A1] mb-2 group-hover:scale-110 transition-transform duration-300" />
-                        <p className="text-gray-600 font-semibold text-xs text-center">
-                          <span className="text-[#C800A1] font-bold">
-                            Clic para subir
-                          </span>
-                          <br />o arrastra la imagen aquí
-                        </p>
-                        <p className="text-[10px] text-gray-400 mt-1">
-                          PNG, JPG (Max. 5MB)
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="relative rounded-2xl overflow-hidden border-2 border-[#C800A1] shadow-md group h-[160px]">
-                        <img
-                          src={cedulaPreviewBack}
-                          alt="Vista previa cédula trasera"
-                          className="w-full h-full object-cover"
-                        />
-                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setCedulaFileBack(null);
-                              setCedulaPreviewBack(null);
-                            }}
-                            className="p-2 bg-white rounded-full text-red-500 hover:bg-red-50 transition-colors shadow-lg"
-                          >
-                            <X className="w-5 h-5" />
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                    {errors.cedulaBack && (
-                      <p className="text-red-500 text-xs pl-1">
-                        {errors.cedulaBack}
-                      </p>
-                    )}
-                  </div>
-                </div>
               </div>
 
               <button

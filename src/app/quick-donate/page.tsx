@@ -24,10 +24,8 @@ function QuickDonateContent() {
   // Local state for form fields
   const [monto, setMonto] = useState<number>(10);
   const [customMonto, setCustomMonto] = useState<string>("");
-  const [cedula, setCedula] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [nombres, setNombres] = useState("");
 
   // New bank fields
   const [banco, setBanco] = useState(BANK_OPTIONS[0].value);
@@ -37,18 +35,6 @@ function QuickDonateContent() {
   // Address fields for Contract
   const [ciudad, setCiudad] = useState("Quito");
   const [direccion, setDireccion] = useState("");
-
-  // File Upload State
-  const [cedulaFile, setCedulaFile] = useState<File | null>(null);
-  const [cedulaPreview, setCedulaPreview] = useState<string | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
-
-  // Back File Upload State
-  const [cedulaFileBack, setCedulaFileBack] = useState<File | null>(null);
-  const [cedulaPreviewBack, setCedulaPreviewBack] = useState<string | null>(
-    null,
-  );
-  const [isDraggingBack, setIsDraggingBack] = useState(false);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [validationTouched, setValidationTouched] = useState<
@@ -168,8 +154,8 @@ function QuickDonateContent() {
 
     try {
       const payload = {
-        cedula_ruc: cedula,
-        nombres_completos: nombres || "Donante Rápido",
+        cedula_ruc: "9999999999",
+        nombres_completos: "Donante Rápido",
         numero_telefono: phone || "0999999999",
         correo_electronico: email,
         direccion: direccion,
@@ -182,8 +168,6 @@ function QuickDonateContent() {
         ciudad: ciudad,
         requiere_factura: false,
         gestor_donacion: code || "DonacionRapida",
-        // No enviamos archivo_cedula aquí para evitar el PayloadTooLargeError del backend,
-        // ya que la imagen se sube por separado o no es necesaria en el contrato PDF.
       };
 
       const blob = await DonationService.downloadContract(payload as any);
@@ -192,7 +176,7 @@ function QuickDonateContent() {
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", `Contrato_Donacion_${cedula}.pdf`);
+      link.setAttribute("download", `Contrato_Donacion.pdf`);
 
       // Append to html link element page and click
       document.body.appendChild(link);
@@ -218,8 +202,8 @@ function QuickDonateContent() {
     try {
       // Construct payload for API
       const payload = {
-        cedula_ruc: cedula,
-        nombres_completos: nombres || "Donante Rápido",
+        cedula_ruc: "9999999999",
+        nombres_completos: "Donante Rápido",
         numero_telefono: phone || "0999999999",
         correo_electronico: email,
         direccion: direccion,
@@ -233,42 +217,13 @@ function QuickDonateContent() {
         requiere_factura: false,
         gestor_donacion: code || "DonacionRapida",
         estatus_kyc: "Not Started",
-        // archivo_cedula is not needed in JSON if we send file, but keeping for compatibility if interface requires.
-        // We will pass the file directly to the service.
       };
 
       // 1. First, register the donation data
       await DonationService.submitQuickDonation(payload as any);
 
-      // 2. Then, if file exists, upload to the strict endpoint
-      if (cedulaFile) {
-        try {
-          const imageResponse = await DonationService.submitImage(
-            cedula + "_frontal",
-            cedulaFile,
-          );
-          console.log("Subida exitosa frontal:", imageResponse);
-          console.log("Imagen frontal subida");
-        } catch (uploadError) {
-          console.error("Error uploading image frontal:", uploadError);
-        }
-      }
-
-      if (cedulaFileBack) {
-        try {
-          const imageResponseBack = await DonationService.submitImage(
-            cedula + "_trasera",
-            cedulaFileBack,
-          );
-          console.log("Subida exitosa trasera:", imageResponseBack);
-          console.log("Imagen trasera subida");
-        } catch (uploadError) {
-          console.error("Error uploading image trasera:", uploadError);
-        }
-      }
-
       // Save to store for Payphone if needed
-      setFormField("identificacion", cedula);
+      setFormField("identificacion", "9999999999");
       setFormField("email", email);
       setFormField("phone", phone);
       setFormField("monto", monto.toString());
@@ -410,73 +365,6 @@ function QuickDonateContent() {
                 <div className="h-px bg-gray-100 my-4" />
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Cédula */}
-                  <div className="space-y-1">
-                    <label className="text-xs font-bold text-gray-500 pl-1 uppercase tracking-wide">
-                      Cédula / RUC *
-                    </label>
-                    <div className="relative">
-                      <input
-                        type="text"
-                        maxLength={13}
-                        placeholder="0999999999"
-                        value={cedula}
-                        onChange={(e) => {
-                          const val = e.target.value.replace(/\D/g, "");
-                          setCedula(val);
-                          if (errors.cedula)
-                            setErrors({ ...errors, cedula: "" });
-                        }}
-                        className={`w-full px-4 py-3 bg-gray-50 border-2 rounded-xl focus:outline-none transition-colors ${
-                          cedula.length >= 10
-                            ? new CedulaValidator().validate(cedula)
-                              ? "border-green-400 bg-green-50 focus:border-green-500"
-                              : "border-red-300 bg-red-50 focus:border-red-400"
-                            : errors.cedula
-                              ? "border-red-300 bg-red-50"
-                              : "border-gray-100 focus:border-blue-300"
-                        }`}
-                      />
-                      <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                        {cedula.length >= 10 &&
-                          (new CedulaValidator().validate(cedula) ? (
-                            <svg
-                              className="w-5 h-5 text-green-500"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M5 13l4 4L19 7"
-                              />
-                            </svg>
-                          ) : (
-                            <svg
-                              className="w-5 h-5 text-red-400"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M6 18L18 6M6 6l12 12"
-                              />
-                            </svg>
-                          ))}
-                      </div>
-                    </div>
-                    {errors.cedula && (
-                      <p className="text-red-500 text-xs pl-1">
-                        {errors.cedula}
-                      </p>
-                    )}
-                  </div>
-
                   {/* Correo */}
                   <div className="space-y-1">
                     <label className="text-xs font-bold text-gray-500 pl-1 uppercase tracking-wide">
@@ -609,19 +497,6 @@ function QuickDonateContent() {
                       className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-100 rounded-xl focus:outline-none focus:border-blue-300 transition-colors"
                     />
                   </div>
-
-                  <div className="space-y-1">
-                    <label className="text-xs font-bold text-gray-500 pl-1 uppercase tracking-wide">
-                      Nombre Completo (Opcional)
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Juan Pérez"
-                      value={nombres}
-                      onChange={(e) => setNombres(e.target.value)}
-                      className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-100 rounded-xl focus:outline-none focus:border-blue-300 transition-colors"
-                    />
-                  </div>
                 </div>
 
                 {/* Address Details - Required for Contract */}
@@ -687,202 +562,7 @@ function QuickDonateContent() {
                   </div>
                 </div>
 
-                {/* File Upload Section */}
-                <div className="space-y-4 pt-2">
-                  <h3 className="text-sm font-bold text-[#2F3388] uppercase tracking-wider border-b pb-2">
-                    Fotos de Cédula
-                  </h3>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* Front Image */}
-                    <div className="space-y-2">
-                      <label className="text-xs font-bold text-gray-500 pl-1 uppercase tracking-wide">
-                        Subir imagen (Cédula frontal) *
-                      </label>
-
-                      {!cedulaPreview ? (
-                        <div
-                          onDragOver={(e) => {
-                            e.preventDefault();
-                            setIsDragging(true);
-                          }}
-                          onDragLeave={(e) => {
-                            e.preventDefault();
-                            setIsDragging(false);
-                          }}
-                          onDrop={(e) => {
-                            e.preventDefault();
-                            setIsDragging(false);
-                            const file = e.dataTransfer.files?.[0];
-                            if (file) {
-                              if (file.size > 5 * 1024 * 1024) {
-                                setErrors({
-                                  ...errors,
-                                  archivo_cedula:
-                                    "El archivo no debe pesar más de 5MB",
-                                });
-                                return;
-                              }
-                              setCedulaFile(file);
-                              const reader = new FileReader();
-                              reader.onloadend = () =>
-                                setCedulaPreview(reader.result as string);
-                              reader.readAsDataURL(file);
-                              if (errors.archivo_cedula)
-                                setErrors({ ...errors, archivo_cedula: "" });
-                            }
-                          }}
-                          className={`relative border-2 border-dashed rounded-2xl p-8 transition-all duration-300 flex flex-col items-center justify-center cursor-pointer group ${
-                            isDragging
-                              ? "border-[#FF6B35] bg-orange-50 scale-[1.02]"
-                              : errors.archivo_cedula
-                                ? "border-red-300 bg-red-50"
-                                : "border-gray-200 bg-gray-50 hover:border-orange-200 hover:bg-orange-50/50"
-                          }`}
-                        >
-                          <input
-                            type="file"
-                            accept="image/*"
-                            onChange={(e) => {
-                              const file = e.target.files?.[0];
-                              if (file) {
-                                if (file.size > 5 * 1024 * 1024) {
-                                  setErrors({
-                                    ...errors,
-                                    archivo_cedula:
-                                      "El archivo no debe pesar más de 5MB",
-                                  });
-                                  return;
-                                }
-                                setCedulaFile(file);
-                                const reader = new FileReader();
-                                reader.onloadend = () =>
-                                  setCedulaPreview(reader.result as string);
-                                reader.readAsDataURL(file);
-                                if (errors.archivo_cedula)
-                                  setErrors({ ...errors, archivo_cedula: "" });
-                              }
-                            }}
-                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                          />
-
-                          <div className="w-16 h-16 bg-white rounded-full shadow-md flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                            <Upload className="w-8 h-8 text-[#FF6B35]" />
-                          </div>
-                          <p className="text-gray-600 font-medium text-center">
-                            <span className="text-[#FF6B35] font-bold">
-                              Clic para subir
-                            </span>{" "}
-                            o arrastra la imagen aquí
-                          </p>
-                          <p className="text-xs text-gray-400 mt-2">
-                            PNG, JPG (Max. 5MB)
-                          </p>
-                        </div>
-                      ) : (
-                        <div className="relative rounded-2xl overflow-hidden border-2 border-[#FF6B35] shadow-lg group">
-                          <img
-                            src={cedulaPreview}
-                            alt="Vista previa cédula frontal"
-                            className="w-full h-48 object-cover"
-                          />
-                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3">
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setCedulaFile(null);
-                                setCedulaPreview(null);
-                              }}
-                              className="p-2 bg-white rounded-full text-red-500 hover:bg-red-50 transition-colors"
-                            >
-                              <X className="w-6 h-6" />
-                            </button>
-                          </div>
-                          <div className="absolute top-2 right-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1 shadow-md">
-                            <CheckCircle className="w-3 h-3" />
-                            <span>Listo</span>
-                          </div>
-                        </div>
-                      )}
-
-                      {errors.archivo_cedula && (
-                        <p className="text-red-500 text-xs pl-1">
-                          {errors.archivo_cedula}
-                        </p>
-                      )}
-                    </div>
-
-                    {/* Back Image */}
-                    <div className="space-y-2">
-                      <label className="text-xs font-bold text-gray-500 pl-1 uppercase tracking-wide">
-                        Subir imagen (Cédula trasera) *
-                      </label>
-
-                      {!cedulaPreviewBack ? (
-                        <div
-                          onDragOver={(e) => {
-                            e.preventDefault();
-                            setIsDraggingBack(true);
-                          }}
-                          onDragLeave={(e) => {
-                            e.preventDefault();
-                            setIsDraggingBack(false);
-                          }}
-                          onDrop={(e) => {
-                            e.preventDefault();
-                            setIsDraggingBack(false);
-                            const file = e.dataTransfer.files?.[0];
-                            if (file) {
-                              if (file.size > 5 * 1024 * 1024) {
-                                setErrors({
-                                  ...errors,
-                                  archivo_cedula_trasera:
-                                    "El archivo no debe pesar más de 5MB",
-                                });
-                                return;
-                              }
-                              setCedulaFileBack(file);
-                              const reader = new FileReader();
-                              reader.onloadend = () =>
-                                setCedulaPreviewBack(reader.result as string);
-                              reader.readAsDataURL(file);
-                              if (errors.archivo_cedula_trasera)
-                                setErrors({
-                                  ...errors,
-                                  archivo_cedula_trasera: "",
-                                });
-                            }
-                          }}
-                          className={`relative border-2 border-dashed rounded-2xl p-8 transition-all duration-300 flex flex-col items-center justify-center cursor-pointer group ${
-                            isDraggingBack
-                              ? "border-[#FF6B35] bg-orange-50 scale-[1.02]"
-                              : errors.archivo_cedula_trasera
-                                ? "border-red-300 bg-red-50"
-                                : "border-gray-200 bg-gray-50 hover:border-orange-200 hover:bg-orange-50/50"
-                          }`}
-                        >
-                          <input
-                            type="file"
-                            accept="image/*"
-                            onChange={(e) => {
-                              const file = e.target.files?.[0];
-                              if (file) {
-                                if (file.size > 5 * 1024 * 1024) {
-                                  setErrors({
-                                    ...errors,
-                                    archivo_cedula_trasera:
-                                      "El archivo no debe pesar más de 5MB",
-                                  });
-                                  return;
-                                }
-                                setCedulaFileBack(file);
-                                const reader = new FileReader();
-                                reader.onloadend = () =>
-                                  setCedulaPreviewBack(reader.result as string);
-                                reader.readAsDataURL(file);
-                                if (errors.archivo_cedula_trasera)
-                                  setErrors({
-                                    ...errors,
+                {errors.form && (
                                     archivo_cedula_trasera: "",
                                   });
                               }
