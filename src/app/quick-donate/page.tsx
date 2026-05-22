@@ -563,60 +563,10 @@ function QuickDonateContent() {
                 </div>
 
                 {errors.form && (
-                                    archivo_cedula_trasera: "",
-                                  });
-                              }
-                            }}
-                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                          />
-
-                          <div className="w-16 h-16 bg-white rounded-full shadow-md flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                            <Upload className="w-8 h-8 text-[#FF6B35]" />
-                          </div>
-                          <p className="text-gray-600 font-medium text-center">
-                            <span className="text-[#FF6B35] font-bold">
-                              Clic para subir
-                            </span>{" "}
-                            o arrastra la imagen aquí
-                          </p>
-                          <p className="text-xs text-gray-400 mt-2">
-                            PNG, JPG (Max. 5MB)
-                          </p>
-                        </div>
-                      ) : (
-                        <div className="relative rounded-2xl overflow-hidden border-2 border-[#FF6B35] shadow-lg group">
-                          <img
-                            src={cedulaPreviewBack}
-                            alt="Vista previa cédula trasera"
-                            className="w-full h-48 object-cover"
-                          />
-                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3">
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setCedulaFileBack(null);
-                                setCedulaPreviewBack(null);
-                              }}
-                              className="p-2 bg-white rounded-full text-red-500 hover:bg-red-50 transition-colors"
-                            >
-                              <X className="w-6 h-6" />
-                            </button>
-                          </div>
-                          <div className="absolute top-2 right-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1 shadow-md">
-                            <CheckCircle className="w-3 h-3" />
-                            <span>Listo</span>
-                          </div>
-                        </div>
-                      )}
-
-                      {errors.archivo_cedula_trasera && (
-                        <p className="text-red-500 text-xs pl-1">
-                          {errors.archivo_cedula_trasera}
-                        </p>
-                      )}
-                    </div>
+                  <div className="p-4 bg-red-50 text-red-700 rounded-xl text-sm font-medium border border-red-200 flex items-start gap-3">
+                    <p>{errors.form}</p>
                   </div>
-                </div>
+                )}
 
                 <motion.button
                   whileHover={{
