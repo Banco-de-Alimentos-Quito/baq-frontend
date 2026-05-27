@@ -36,6 +36,11 @@ function QuickDonateContent() {
   const [ciudad, setCiudad] = useState("Quito");
   const [direccion, setDireccion] = useState("");
 
+  // ID and file fields
+  const [cedula, setCedula] = useState("");
+  const [cedulaFile, setCedulaFile] = useState<File | null>(null);
+  const [cedulaFileBack, setCedulaFileBack] = useState<File | null>(null);
+
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [validationTouched, setValidationTouched] = useState<
     Record<string, boolean>
@@ -154,7 +159,7 @@ function QuickDonateContent() {
 
     try {
       const payload = {
-        cedula_ruc: "9999999999",
+        cedula_ruc: cedula,
         nombres_completos: "Donante Rápido",
         numero_telefono: phone || "0999999999",
         correo_electronico: email,
@@ -202,7 +207,7 @@ function QuickDonateContent() {
     try {
       // Construct payload for API
       const payload = {
-        cedula_ruc: "9999999999",
+        cedula_ruc: cedula,
         nombres_completos: "Donante Rápido",
         numero_telefono: phone || "0999999999",
         correo_electronico: email,
@@ -222,8 +227,16 @@ function QuickDonateContent() {
       // 1. First, register the donation data
       await DonationService.submitQuickDonation(payload as any);
 
+      // 2. Submit the images
+      if (cedulaFile) {
+        await DonationService.submitImage(cedula, cedulaFile);
+      }
+      if (cedulaFileBack) {
+        await DonationService.submitImage(cedula, cedulaFileBack);
+      }
+
       // Save to store for Payphone if needed
-      setFormField("identificacion", "9999999999");
+      setFormField("identificacion", cedula);
       setFormField("email", email);
       setFormField("phone", phone);
       setFormField("monto", monto.toString());
@@ -365,6 +378,32 @@ function QuickDonateContent() {
                 <div className="h-px bg-gray-100 my-4" />
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Cédula */}
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-gray-500 pl-1 uppercase tracking-wide">
+                      Cédula de Identidad *
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="0000000000"
+                      value={cedula}
+                      onChange={(e) => {
+                        setCedula(e.target.value.replace(/\D/g, ""));
+                        if (errors.cedula) setErrors({ ...errors, cedula: "" });
+                      }}
+                      className={`w-full px-4 py-3 bg-gray-50 border-2 rounded-xl focus:outline-none transition-colors ${
+                        errors.cedula
+                          ? "border-red-300 bg-red-50"
+                          : "border-gray-100 focus:border-blue-300"
+                      }`}
+                    />
+                    {errors.cedula && (
+                      <p className="text-red-500 text-xs pl-1">
+                        {errors.cedula}
+                      </p>
+                    )}
+                  </div>
+
                   {/* Correo */}
                   <div className="space-y-1">
                     <label className="text-xs font-bold text-gray-500 pl-1 uppercase tracking-wide">
@@ -558,6 +597,82 @@ function QuickDonateContent() {
                           {errors.direccion}
                         </p>
                       )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* File Uploads */}
+                <div className="space-y-4 pt-2">
+                  <h3 className="text-sm font-bold text-[#2F3388] uppercase tracking-wider border-b pb-2">
+                    Fotos de Cédula
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Frontal */}
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold text-gray-500 pl-1 uppercase tracking-wide">
+                        Parte Frontal *
+                      </label>
+                      <div className={`relative flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-xl transition-all ${
+                        cedulaFile ? "border-green-400 bg-green-50" : errors.archivo_cedula ? "border-red-300 bg-red-50" : "border-gray-300 bg-gray-50 hover:bg-gray-100 hover:border-blue-400"
+                      }`}>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => {
+                            if (e.target.files && e.target.files[0]) {
+                              setCedulaFile(e.target.files[0]);
+                              if (errors.archivo_cedula) setErrors({ ...errors, archivo_cedula: "" });
+                            }
+                          }}
+                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                        />
+                        {cedulaFile ? (
+                          <div className="flex flex-col items-center text-green-600 gap-2">
+                            <CheckCircle className="w-8 h-8" />
+                            <span className="text-sm font-bold truncate max-w-[150px]">{cedulaFile.name}</span>
+                          </div>
+                        ) : (
+                          <div className="flex flex-col items-center text-gray-400 gap-2">
+                            <Upload className="w-8 h-8" />
+                            <span className="text-sm font-medium">Click para subir foto</span>
+                          </div>
+                        )}
+                      </div>
+                      {errors.archivo_cedula && <p className="text-red-500 text-xs pl-1">{errors.archivo_cedula}</p>}
+                    </div>
+
+                    {/* Trasera */}
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold text-gray-500 pl-1 uppercase tracking-wide">
+                        Parte Trasera *
+                      </label>
+                      <div className={`relative flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-xl transition-all ${
+                        cedulaFileBack ? "border-green-400 bg-green-50" : errors.archivo_cedula_trasera ? "border-red-300 bg-red-50" : "border-gray-300 bg-gray-50 hover:bg-gray-100 hover:border-blue-400"
+                      }`}>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => {
+                            if (e.target.files && e.target.files[0]) {
+                              setCedulaFileBack(e.target.files[0]);
+                              if (errors.archivo_cedula_trasera) setErrors({ ...errors, archivo_cedula_trasera: "" });
+                            }
+                          }}
+                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                        />
+                        {cedulaFileBack ? (
+                          <div className="flex flex-col items-center text-green-600 gap-2">
+                            <CheckCircle className="w-8 h-8" />
+                            <span className="text-sm font-bold truncate max-w-[150px]">{cedulaFileBack.name}</span>
+                          </div>
+                        ) : (
+                          <div className="flex flex-col items-center text-gray-400 gap-2">
+                            <Upload className="w-8 h-8" />
+                            <span className="text-sm font-medium">Click para subir foto</span>
+                          </div>
+                        )}
+                      </div>
+                      {errors.archivo_cedula_trasera && <p className="text-red-500 text-xs pl-1">{errors.archivo_cedula_trasera}</p>}
                     </div>
                   </div>
                 </div>
