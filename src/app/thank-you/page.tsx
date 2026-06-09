@@ -2,72 +2,14 @@
 
 import Link from "next/link";
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import {
-  StreakData,
-  createConfetti,
-  fetchStreakFromAPI,
-} from "./DonationStreak";
-import DonationStreakPopup from "./DonationStreakPopup";
-import DonationStreakMinimized from "./DonationStreakMinimized";
+
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useFormStore } from "../store/formStore";
 
 export default function ThankYou() {
   const router = useRouter();
-  // Estados para el manejo de la racha de donaciones
-  const [streakData, setStreakData] = useState<StreakData>({
-    currentStreak: 0,
-    lastDonationDate: null,
-    longestStreak: 0,
-    totalDonations: 0,
-    donationHistory: [],
-  });
 
-  const [popupPhase, setPopupPhase] = useState<
-    "loading" | "complete" | "minimized"
-  >("loading");
-  const [loadingProgress, setLoadingProgress] = useState(0);
-  const [showPopup, setShowPopup] = useState(false);
-  const [showConfetti, setShowConfetti] = useState(false);
-  const [streakAnimating, setStreakAnimating] = useState(false);
-  const [donationHistory, setDonationHistory] = useState<
-    Array<{
-      date: string;
-      amount?: number;
-      breakPoint?: boolean;
-      milestone?: boolean;
-    }>
-  >([]);
-
-  // Función para obtener la racha desde el backend
-  const fetchStreakData = async () => {
-    try {
-      const data = await fetchStreakFromAPI();
-
-      // Asegurar formato
-      const normalized = {
-        currentStreak:
-          typeof data.currentStreak === "number" ? data.currentStreak : 0,
-        lastDonationDate: data.lastDonationDate ?? null,
-        longestStreak:
-          typeof data.longestStreak === "number" ? data.longestStreak : 0,
-        totalDonations:
-          typeof data.totalDonations === "number" ? data.totalDonations : 0,
-        donationHistory: Array.isArray(data.donationHistory)
-          ? data.donationHistory
-          : [],
-      };
-
-      setStreakData(normalized);
-      setDonationHistory(normalized.donationHistory);
-    } catch (error) {
-      console.error("fetchStreakData error:", error);
-      // en fallo, mantener valores por defecto ya inicializados
-    }
-  };
-
-  const confettiRef = useRef<HTMLDivElement | null>(null);
 
   // Lógica para compartir en redes sociales
   const shareText =
@@ -100,70 +42,7 @@ export default function ThankYou() {
     }
   }, [shareText, shareUrl]);
 
-  // Cargar datos de racha y mostrar popup
-  useEffect(() => {
-    // Mostrar popup después de 1 segundo
-    const popupTimer = setTimeout(() => {
-      setShowPopup(true);
 
-      // Iniciar barra de progreso
-      let progress = 0;
-      const progressInterval = setInterval(() => {
-        progress += 2;
-        setLoadingProgress(progress);
-
-        if (progress >= 100) {
-          clearInterval(progressInterval);
-
-          // Obtener datos de racha desde el backend
-          fetchStreakData().then(() => {
-            // Cambiar a fase completa
-            setPopupPhase("complete");
-
-            // Animar racha
-            setStreakAnimating(true);
-            setTimeout(() => setStreakAnimating(false), 500);
-
-            // Mostrar efecto de confetti
-            setShowConfetti(true);
-            if (confettiRef.current) {
-              createConfetti(confettiRef.current, 100);
-            }
-          });
-        }
-      }, 30);
-
-      return () => {
-        clearInterval(progressInterval);
-      };
-    }, 1000);
-
-    return () => {
-      clearTimeout(popupTimer);
-    };
-  }, []);
-
-  // Manejar cierre del popup
-  const handleClosePopup = () => {
-    setPopupPhase("minimized");
-    setShowPopup(false);
-  };
-
-  // Manejar reapertura del popup minimizado
-  const handleTogglePopup = () => {
-    setPopupPhase("complete");
-    setShowPopup(true);
-  };
-
-  // Obtener mensaje de celebración basado en la racha
-  const getCelebrationMessage = () => {
-    const streak = streakData.currentStreak;
-    if (streak === 1) return "¡Has iniciado tu racha de donaciones!";
-    else if (streak >= 10)
-      return "¡Increíble! Tu generosidad es extraordinaria.";
-    else if (streak >= 5) return "¡Gran racha! Estás haciendo una diferencia.";
-    else return "¡Gracias por mantener tu racha de donaciones!";
-  };
 
   useEffect(() => {
     // Modificar el historial para prevenir la navegación hacia atrás a payment-confirmation
@@ -295,28 +174,7 @@ export default function ThankYou() {
         </Link>
       </div>
 
-      {/* Popup de racha de donaciones */}
-      {showPopup && (
-        <DonationStreakPopup
-          streakData={streakData}
-          popupPhase={popupPhase}
-          loadingProgress={loadingProgress}
-          handleClosePopup={handleClosePopup}
-          showConfetti={showConfetti}
-          streakAnimating={streakAnimating}
-          confettiRef={confettiRef}
-          donationHistory={donationHistory}
-          getCelebrationMessage={getCelebrationMessage}
-        />
-      )}
 
-      {/* Versión minimizada del popup */}
-      {popupPhase === "minimized" && (
-        <DonationStreakMinimized
-          streakData={streakData}
-          handleTogglePopup={handleTogglePopup}
-        />
-      )}
     </div>
   );
 }

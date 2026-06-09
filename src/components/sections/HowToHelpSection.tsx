@@ -13,8 +13,8 @@ const helpOptions = [
 		buttonText: 'Ver Centros de Acopio',
 		aiHint: 'food donation',	
 		// href: 'https://forms.gle/SDih4CJWj5BaAa1t8', // Nueva propiedad para la redirección
-		href: '',
-		isExternal: true, // Para diferenciar de ScrollLink
+		href: '/volunteering',
+		linkType: 'internal', // 'external', 'internal', 'scroll'
 	},
 	{
 		icon: HandCoins,
@@ -24,7 +24,7 @@ const helpOptions = [
 		buttonText: 'Donar Dinero',
 		aiHint: 'money charity',
 		href: '/donacion',
-		isExternal: true,
+		linkType: 'internal',
 	},
 	{
 		icon: Users,
@@ -35,7 +35,7 @@ const helpOptions = [
 		aiHint: 'volunteers helping',
 		// href: 'https://forms.gle/psAxT2SutBZDQsUC8',
 		href: '',
-		isExternal: true,
+		linkType: 'scroll',
 	},
 	{
 		icon: Factory,
@@ -45,7 +45,7 @@ const helpOptions = [
 		buttonText: 'Contáctanos',
 		aiHint: 'company collaboration',
 		href: 'https://wa.me/5930995450969',
-		isExternal: true,
+		linkType: 'external',
 	},
 ];
 
@@ -90,13 +90,15 @@ export default function HowToHelpSection() {
 									asChild
 									className="bg-primary bg-orange-400 hover:bg-orange-300 text-primary-foreground w-full sm:w-auto"
 								>
-									{option.isExternal ? (
+									{option.linkType === 'external' ? (
 										<Link href={option.href} target="_blank" rel="noopener noreferrer">{option.buttonText}</Link>
-									) : (
+									) : option.linkType === 'scroll' ? (
 										<ScrollLink href={option.href}>
 											{option.buttonText}
 										</ScrollLink>
-									)}
+									) : (
+                                        <Link href={option.href}>{option.buttonText}</Link>
+                                    )}
 								</Button>
 							</CardFooter>
 						</Card>
