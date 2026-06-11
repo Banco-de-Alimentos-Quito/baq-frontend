@@ -165,6 +165,7 @@ function QuickDonateContent() {
         ciudad: ciudad,
         requiere_factura: false,
         estatus_kyc: "Not Started",
+        gestor_donacion: "BAQ",
       };
 
       // 1. First, register the donation data
