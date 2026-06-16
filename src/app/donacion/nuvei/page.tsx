@@ -273,7 +273,11 @@ function NuveiPageContent() {
               response: response,
             }),
           })
-            .then(async () => {
+            .then(async (res) => {
+              if (!res.ok) {
+                const errorData = await res.json().catch(() => ({}));
+                throw new Error(errorData.error || "Fallo en el servidor al guardar la suscripción");
+              }
               setTxResult({
                 status: "success",
                 title: "¡Suscripción Activa!",

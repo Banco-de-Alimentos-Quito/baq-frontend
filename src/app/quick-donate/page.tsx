@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState, useEffect } from "react";
+import { Suspense, useState, useEffect, useMemo } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { CitySelector } from "../donacion/mensual/components/CitySelector";
 import {
@@ -12,20 +12,19 @@ import { Upload, X, ImageIcon, CheckCircle } from "lucide-react";
 import { CedulaValidator } from "../donacion/mensual/validators/documentValidators";
 import { useFormStore } from "../store/formStore";
 import { DonationService } from "../donacion/mensual/services/donationService";
-import { DiditSdk } from "@didit-protocol/sdk-web";
 
 const PRESET_AMOUNTS = [2, 10, 30, 50];
 
 function QuickDonateContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const code = searchParams.get("code");
 
   // Local state for form fields
   const [monto, setMonto] = useState<number>(10);
   const [customMonto, setCustomMonto] = useState<string>("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [nombre, setNombre] = useState("");
 
   // New bank fields
   const [banco, setBanco] = useState(BANK_OPTIONS[0].value);
@@ -39,7 +38,9 @@ function QuickDonateContent() {
   // ID and file fields
   const [cedula, setCedula] = useState("");
   const [cedulaFile, setCedulaFile] = useState<File | null>(null);
+  const [cedulaPreview, setCedulaPreview] = useState<string | null>(null);
   const [cedulaFileBack, setCedulaFileBack] = useState<File | null>(null);
+  const [cedulaPreviewBack, setCedulaPreviewBack] = useState<string | null>(null);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [validationTouched, setValidationTouched] = useState<
@@ -58,32 +59,7 @@ function QuickDonateContent() {
 
   useEffect(() => {
     initUser();
-    if (code) {
-      setFormField("gestorDonacion", code);
-    }
-  }, [code, initUser, setFormField]);
-
-  useEffect(() => {
-    DiditSdk.shared.onComplete = (result: any) => {
-      if (result.type === "completed") {
-        alert("Verification completed: " + result.session?.status);
-        console.log("Verification completed!");
-        console.log("Session ID:", result.session?.sessionId);
-        console.log("Status:", result.session?.status);
-      } else if (result.type === "cancelled") {
-        console.log("User cancelled verification");
-      } else if (result.type === "failed") {
-        console.error("Verification failed:", result.error?.message);
-        alert("Verification failed: " + result.error?.message);
-      }
-    };
-  }, []);
-
-  const startDiditVerification = () => {
-    DiditSdk.shared.startVerification({
-      url: "https://verify.didit.me/u/5c846a5c-d20d-4d1d-b2ac-4eed2bf15089",
-    });
-  };
+  }, [initUser]);
 
   const handleAmountSelect = (amount: number) => {
     setMonto(amount);
@@ -91,10 +67,18 @@ function QuickDonateContent() {
   };
 
   const handleCustomAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value;
+    let val = e.target.value.replace(",", ".");
+    if (val.startsWith("-")) return;
+
+    if (val !== "" && !/^\d*\.?\d{0,2}$/.test(val)) {
+      return;
+    }
+
     setCustomMonto(val);
     if (val && !isNaN(Number(val))) {
       setMonto(Number(val));
+    } else if (val === "") {
+      setMonto(0);
     }
   };
 
@@ -115,6 +99,11 @@ function QuickDonateContent() {
       newErrors.email = "El correo es requerido";
     } else if (!emailRegex.test(email)) {
       newErrors.email = "Correo inválido";
+    }
+
+    // Validate Name
+    if (!nombre.trim()) {
+      newErrors.nombre = "El nombre es requerido";
     }
 
     // Validate Amount
@@ -151,52 +140,7 @@ function QuickDonateContent() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleDownloadContract = async () => {
-    if (!validateForm()) {
-      setValidationTouched({ ciudad: true });
-      return;
-    }
 
-    try {
-      const payload = {
-        cedula_ruc: cedula,
-        nombres_completos: "Donante Rápido",
-        numero_telefono: phone || "0999999999",
-        correo_electronico: email,
-        direccion: direccion,
-        numero_cuenta: cuenta,
-        tipo_cuenta: tipoCuenta as "Ahorros" | "Corriente",
-        banco_cooperativa: banco,
-        monto_donar: monto,
-        acepta_aporte_voluntario: true,
-        acepta_tratamiento_datos: true,
-        ciudad: ciudad,
-        requiere_factura: false,
-        gestor_donacion: code || "DonacionRapida",
-      };
-
-      const blob = await DonationService.downloadContract(payload as any);
-
-      // Create blob link to download
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", `Contrato_Donacion.pdf`);
-
-      // Append to html link element page and click
-      document.body.appendChild(link);
-      link.click();
-
-      // Clean up and remove the link
-      link.parentNode?.removeChild(link);
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error("Error downloading contract:", error);
-      alert(
-        "Hubo un error al descargar el contrato. Por favor intente nuevamente.",
-      );
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -208,7 +152,7 @@ function QuickDonateContent() {
       // Construct payload for API
       const payload = {
         cedula_ruc: cedula,
-        nombres_completos: "Donante Rápido",
+        nombres_completos: nombre,
         numero_telefono: phone || "0999999999",
         correo_electronico: email,
         direccion: direccion,
@@ -220,8 +164,8 @@ function QuickDonateContent() {
         acepta_tratamiento_datos: true,
         ciudad: ciudad,
         requiere_factura: false,
-        gestor_donacion: code || "DonacionRapida",
         estatus_kyc: "Not Started",
+        gestor_donacion: "BAQ",
       };
 
       // 1. First, register the donation data
@@ -286,6 +230,26 @@ function QuickDonateContent() {
     }
   };
 
+  const isCedulaValid = useMemo(() => {
+    if (!cedula) return false;
+    return new CedulaValidator().validate(cedula);
+  }, [cedula]);
+
+  const isFormValid = useMemo(() => {
+    return (
+      cedula &&
+      email &&
+      nombre.trim() !== "" &&
+      monto >= 1 &&
+      cuenta &&
+      banco &&
+      ciudad &&
+      direccion &&
+      cedulaFile &&
+      cedulaFileBack
+    );
+  }, [cedula, email, nombre, monto, cuenta, banco, ciudad, direccion, cedulaFile, cedulaFileBack]);
+
   return (
     <div className="min-h-screen bg-[#f8f9fc] flex flex-col items-center justify-center p-4">
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
@@ -312,14 +276,6 @@ function QuickDonateContent() {
           <p className="text-orange-50 text-sm font-medium tracking-normal opacity-90 relative z-10">
             Tu ayuda llega a quienes más lo necesitan
           </p>
-
-          {code && (
-            <div className="absolute top-4 right-4 bg-white/20 backdrop-blur-md px-3 py-1 rounded-full border border-white/30">
-              <span className="text-[10px] font-mono text-white font-bold tracking-wider">
-                REF: {code}
-              </span>
-            </div>
-          )}
         </div>
 
         <div className="p-8">
@@ -359,10 +315,26 @@ function QuickDonateContent() {
                       $
                     </span>
                     <input
-                      type="number"
+                      type="text"
+                      inputMode="decimal"
+                      pattern="^\d+(\.\d{0,2})?$"
                       placeholder="Otro monto"
                       value={customMonto}
                       onChange={handleCustomAmountChange}
+                      onBlur={() => {
+                        if (customMonto) {
+                          const parsed = parseFloat(customMonto);
+                          if (!isNaN(parsed)) {
+                            const rounded = Math.floor(parsed * 100) / 100;
+                            setCustomMonto(
+                              rounded % 1 === 0
+                                ? rounded.toFixed(0)
+                                : rounded.toFixed(2),
+                            );
+                            setMonto(Number(rounded.toFixed(2)));
+                          }
+                        }
+                      }}
                       className={`w-full pl-8 pr-4 py-3 bg-gray-50 border-2 rounded-xl focus:outline-none transition-all font-bold text-gray-700 ${
                         customMonto
                           ? "border-[#FF6B35] bg-white ring-2 ring-orange-100"
@@ -383,20 +355,36 @@ function QuickDonateContent() {
                     <label className="text-xs font-bold text-gray-500 pl-1 uppercase tracking-wide">
                       Cédula de Identidad *
                     </label>
-                    <input
-                      type="text"
-                      placeholder="0000000000"
-                      value={cedula}
-                      onChange={(e) => {
-                        setCedula(e.target.value.replace(/\D/g, ""));
-                        if (errors.cedula) setErrors({ ...errors, cedula: "" });
-                      }}
-                      className={`w-full px-4 py-3 bg-gray-50 border-2 rounded-xl focus:outline-none transition-colors ${
-                        errors.cedula
-                          ? "border-red-300 bg-red-50"
-                          : "border-gray-100 focus:border-blue-300"
-                      }`}
-                    />
+                    <div className="relative">
+                      <input
+                        type="text"
+                        placeholder="0000000000"
+                        value={cedula}
+                        onChange={(e) => {
+                          setCedula(e.target.value.replace(/\D/g, ""));
+                          if (errors.cedula) setErrors({ ...errors, cedula: "" });
+                        }}
+                        onBlur={() => {
+                          if (cedula && !isCedulaValid) {
+                            setErrors((prev) => ({ ...prev, cedula: "La cédula no es válida" }));
+                          }
+                        }}
+                        className={`w-full px-4 py-3 pr-10 bg-gray-50 border-2 rounded-xl focus:outline-none transition-colors ${
+                          errors.cedula
+                            ? "border-red-300 bg-red-50"
+                            : "border-gray-100 focus:border-blue-300"
+                        }`}
+                      />
+                      {isCedulaValid && !errors.cedula && (
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                          <div className="bg-[#22c55e] rounded-full p-0.5">
+                            <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                            </svg>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                     {errors.cedula && (
                       <p className="text-red-500 text-xs pl-1">
                         {errors.cedula}
@@ -536,6 +524,31 @@ function QuickDonateContent() {
                       className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-100 rounded-xl focus:outline-none focus:border-blue-300 transition-colors"
                     />
                   </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-gray-500 pl-1 uppercase tracking-wide">
+                      Nombres y Apellidos *
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Tu nombre completo"
+                      value={nombre}
+                      onChange={(e) => {
+                        setNombre(e.target.value);
+                        if (errors.nombre) setErrors({ ...errors, nombre: "" });
+                      }}
+                      className={`w-full px-4 py-3 bg-gray-50 border-2 rounded-xl focus:outline-none transition-colors ${
+                        errors.nombre
+                          ? "border-red-300 bg-red-50"
+                          : "border-gray-100 focus:border-blue-300"
+                      }`}
+                    />
+                    {errors.nombre && (
+                      <p className="text-red-500 text-xs pl-1">
+                        {errors.nombre}
+                      </p>
+                    )}
+                  </div>
                 </div>
 
                 {/* Address Details - Required for Contract */}
@@ -612,33 +625,61 @@ function QuickDonateContent() {
                       <label className="text-xs font-bold text-gray-500 pl-1 uppercase tracking-wide">
                         Parte Frontal *
                       </label>
-                      <div className={`relative flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-xl transition-all ${
-                        cedulaFile ? "border-green-400 bg-green-50" : errors.archivo_cedula ? "border-red-300 bg-red-50" : "border-gray-300 bg-gray-50 hover:bg-gray-100 hover:border-blue-400"
-                      }`}>
+                      <div
+                        className={`relative flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-xl transition-all ${
+                          cedulaFile
+                            ? "border-green-400 bg-green-50"
+                            : errors.archivo_cedula
+                              ? "border-red-300 bg-red-50"
+                              : "border-gray-300 bg-gray-50 hover:bg-gray-100 hover:border-blue-400"
+                        }`}
+                      >
                         <input
                           type="file"
                           accept="image/*"
                           onChange={(e) => {
                             if (e.target.files && e.target.files[0]) {
-                              setCedulaFile(e.target.files[0]);
-                              if (errors.archivo_cedula) setErrors({ ...errors, archivo_cedula: "" });
+                              const file = e.target.files[0];
+                              setCedulaFile(file);
+                              setCedulaPreview(URL.createObjectURL(file));
+                              if (errors.archivo_cedula)
+                                setErrors({ ...errors, archivo_cedula: "" });
                             }
                           }}
-                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                         />
-                        {cedulaFile ? (
+                        {cedulaPreview ? (
+                          <div className="relative w-full h-32">
+                            <img
+                              src={cedulaPreview}
+                              alt="Cedula Frontal"
+                              className="w-full h-full object-contain rounded-lg"
+                            />
+                            <div className="absolute top-1 right-1 bg-white rounded-full p-1 shadow">
+                              <CheckCircle className="w-5 h-5 text-green-500" />
+                            </div>
+                          </div>
+                        ) : cedulaFile ? (
                           <div className="flex flex-col items-center text-green-600 gap-2">
                             <CheckCircle className="w-8 h-8" />
-                            <span className="text-sm font-bold truncate max-w-[150px]">{cedulaFile.name}</span>
+                            <span className="text-sm font-bold truncate max-w-[150px]">
+                              {cedulaFile.name}
+                            </span>
                           </div>
                         ) : (
                           <div className="flex flex-col items-center text-gray-400 gap-2">
                             <Upload className="w-8 h-8" />
-                            <span className="text-sm font-medium">Click para subir foto</span>
+                            <span className="text-sm font-medium">
+                              Click para subir foto
+                            </span>
                           </div>
                         )}
                       </div>
-                      {errors.archivo_cedula && <p className="text-red-500 text-xs pl-1">{errors.archivo_cedula}</p>}
+                      {errors.archivo_cedula && (
+                        <p className="text-red-500 text-xs pl-1">
+                          {errors.archivo_cedula}
+                        </p>
+                      )}
                     </div>
 
                     {/* Trasera */}
@@ -646,33 +687,64 @@ function QuickDonateContent() {
                       <label className="text-xs font-bold text-gray-500 pl-1 uppercase tracking-wide">
                         Parte Trasera *
                       </label>
-                      <div className={`relative flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-xl transition-all ${
-                        cedulaFileBack ? "border-green-400 bg-green-50" : errors.archivo_cedula_trasera ? "border-red-300 bg-red-50" : "border-gray-300 bg-gray-50 hover:bg-gray-100 hover:border-blue-400"
-                      }`}>
+                      <div
+                        className={`relative flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-xl transition-all ${
+                          cedulaFileBack
+                            ? "border-green-400 bg-green-50"
+                            : errors.archivo_cedula_trasera
+                              ? "border-red-300 bg-red-50"
+                              : "border-gray-300 bg-gray-50 hover:bg-gray-100 hover:border-blue-400"
+                        }`}
+                      >
                         <input
                           type="file"
                           accept="image/*"
                           onChange={(e) => {
                             if (e.target.files && e.target.files[0]) {
-                              setCedulaFileBack(e.target.files[0]);
-                              if (errors.archivo_cedula_trasera) setErrors({ ...errors, archivo_cedula_trasera: "" });
+                              const file = e.target.files[0];
+                              setCedulaFileBack(file);
+                              setCedulaPreviewBack(URL.createObjectURL(file));
+                              if (errors.archivo_cedula_trasera)
+                                setErrors({
+                                  ...errors,
+                                  archivo_cedula_trasera: "",
+                                });
                             }
                           }}
-                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                         />
-                        {cedulaFileBack ? (
+                        {cedulaPreviewBack ? (
+                          <div className="relative w-full h-32">
+                            <img
+                              src={cedulaPreviewBack}
+                              alt="Cedula Trasera"
+                              className="w-full h-full object-contain rounded-lg"
+                            />
+                            <div className="absolute top-1 right-1 bg-white rounded-full p-1 shadow">
+                              <CheckCircle className="w-5 h-5 text-green-500" />
+                            </div>
+                          </div>
+                        ) : cedulaFileBack ? (
                           <div className="flex flex-col items-center text-green-600 gap-2">
                             <CheckCircle className="w-8 h-8" />
-                            <span className="text-sm font-bold truncate max-w-[150px]">{cedulaFileBack.name}</span>
+                            <span className="text-sm font-bold truncate max-w-[150px]">
+                              {cedulaFileBack.name}
+                            </span>
                           </div>
                         ) : (
                           <div className="flex flex-col items-center text-gray-400 gap-2">
                             <Upload className="w-8 h-8" />
-                            <span className="text-sm font-medium">Click para subir foto</span>
+                            <span className="text-sm font-medium">
+                              Click para subir foto
+                            </span>
                           </div>
                         )}
                       </div>
-                      {errors.archivo_cedula_trasera && <p className="text-red-500 text-xs pl-1">{errors.archivo_cedula_trasera}</p>}
+                      {errors.archivo_cedula_trasera && (
+                        <p className="text-red-500 text-xs pl-1">
+                          {errors.archivo_cedula_trasera}
+                        </p>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -690,9 +762,9 @@ function QuickDonateContent() {
                   }}
                   whileTap={{ scale: 0.98 }}
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || !isFormValid}
                   className={`w-full py-4 px-6 rounded-2xl shadow-xl text-lg font-bold text-white transition-all duration-300 mt-4 ${
-                    loading
+                    loading || !isFormValid
                       ? "bg-gray-300 cursor-not-allowed shadow-none"
                       : "bg-[#FF6B35]"
                   }`}
@@ -736,30 +808,17 @@ function QuickDonateContent() {
                 <p className="text-gray-600">
                   Tus datos han sido registrados correctamente.
                   <br />
-                  Por favor descarga tu contrato y completa el pago.
+                  Por favor completa el pago.
                 </p>
 
                 <div className="flex flex-col gap-4 pt-6">
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    onClick={handleDownloadContract}
+                    onClick={() => router.push("/")}
                     className="w-full py-4 px-6 rounded-xl border-2 border-[#2F3388] bg-blue-50 text-[#2F3388] font-bold text-lg hover:bg-blue-100 transition-colors flex items-center justify-center gap-2"
                   >
-                    <svg
-                      className="w-6 h-6"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                      />
-                    </svg>
-                    <span>Descargar Contrato</span>
+                    <span>Regresar</span>
                   </motion.button>
                 </div>
               </motion.div>
