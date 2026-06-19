@@ -62,7 +62,7 @@ function NuveiPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const monto = 1; // TODO: Cambiar a 35 cuando se lance a producción
+  const monto = 35;
   const fallbackUserId = React.useMemo(
     () => "user_" + String(Math.floor(Date.now() / 1000)),
     [],
