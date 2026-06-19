@@ -170,8 +170,8 @@ function NuveiPageContent() {
             // Mostrar modal gráfico de éxito
             setTxResult({
               status: "success",
-              title: "¡Donación Exitosa!",
-              message: `Tu pago fue aprobado exitosamente. ¡Gracias por ayudar al Banco de Alimentos Quito!`,
+              title: "¡Inscripción Exitosa!",
+              message: `Tu pago fue aprobado exitosamente. ¡Gracias por inscribirte en la Ruta Contra El Hambre!`,
               txId: tx.id,
             });
           } else {
