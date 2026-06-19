@@ -542,7 +542,7 @@ function NuveiPageContent() {
               Paso Previo
             </h1>
             <p className="text-gray-600 mb-6">
-              Ingresa tu correo electrónico para vincular tu donación y
+              Ingresa tu correo electrónico para vincular tu inscripción y
               continuar de forma segura.
             </p>
             <form
