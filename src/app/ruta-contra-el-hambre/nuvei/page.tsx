@@ -62,7 +62,7 @@ function NuveiPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const monto = 35;
+  const monto = 1; // Antes era 35
   const fallbackUserId = React.useMemo(
     () => "user_" + String(Math.floor(Date.now() / 1000)),
     [],
@@ -118,9 +118,13 @@ function NuveiPageContent() {
     const clientAppCode = isRecurring
       ? (process.env.NEXT_PUBLIC_NUVEI_REC_CLIENT_CODE || process.env.NEXT_PUBLIC_NUVEI_CLIENT_CODE)
       : process.env.NEXT_PUBLIC_NUVEI_CLIENT_CODE;
+      // PARA LA CARRERA CONTRA EL HAMBRE: (cuando sea el momento, reemplazar la anterior con esta)
+      // : process.env.NEXT_PUBLIC_NUVEI_CARRERA_CLIENT_CODE;
     const clientAppKey = isRecurring
       ? (process.env.NEXT_PUBLIC_NUVEI_REC_CLIENT_KEY || process.env.NEXT_PUBLIC_NUVEI_CLIENT_KEY)
       : process.env.NEXT_PUBLIC_NUVEI_CLIENT_KEY;
+      // PARA LA CARRERA CONTRA EL HAMBRE: (cuando sea el momento, reemplazar la anterior con esta)
+      // : process.env.NEXT_PUBLIC_NUVEI_CARRERA_CLIENT_KEY;
 
     try {
       const instance = new window.PaymentCheckout.modal({
@@ -371,6 +375,8 @@ function NuveiPageContent() {
         // 1. Obtener Token de Referencia desde el Backend
         const apiUrl = process.env.NEXT_PUBLIC_API_URL;
         const finalEmail = email || "donante@baq.ec";
+        // PARA LA CARRERA CONTRA EL HAMBRE: descomentar la siguiente y comentar la actual
+        // const initRes = await fetch(`${apiUrl}/nuvei/init-carrera`, {
         const initRes = await fetch(`${apiUrl}/nuvei/init`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
