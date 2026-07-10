@@ -117,14 +117,14 @@ function NuveiPageContent() {
     // - Recurrente:     BDAQ-PR-EC-CLIENT       (NEXT_PUBLIC_NUVEI_REC_CLIENT_*)
     const clientAppCode = isRecurring
       ? (process.env.NEXT_PUBLIC_NUVEI_REC_CLIENT_CODE || process.env.NEXT_PUBLIC_NUVEI_CLIENT_CODE)
-      : process.env.NEXT_PUBLIC_NUVEI_CLIENT_CODE;
-      // PARA LA CARRERA CONTRA EL HAMBRE: (cuando sea el momento, reemplazar la anterior con esta)
-      // : process.env.NEXT_PUBLIC_NUVEI_CARRERA_CLIENT_CODE;
+      : process.env.NEXT_PUBLIC_NUVEI_CARRERA_CLIENT_CODE;
+      // PARA VOLVER A LA NORMAL: (cuando sea el momento, reemplazar la anterior con esta)
+      // : process.env.NEXT_PUBLIC_NUVEI_CLIENT_CODE;
     const clientAppKey = isRecurring
       ? (process.env.NEXT_PUBLIC_NUVEI_REC_CLIENT_KEY || process.env.NEXT_PUBLIC_NUVEI_CLIENT_KEY)
-      : process.env.NEXT_PUBLIC_NUVEI_CLIENT_KEY;
-      // PARA LA CARRERA CONTRA EL HAMBRE: (cuando sea el momento, reemplazar la anterior con esta)
-      // : process.env.NEXT_PUBLIC_NUVEI_CARRERA_CLIENT_KEY;
+      : process.env.NEXT_PUBLIC_NUVEI_CARRERA_CLIENT_KEY;
+      // PARA VOLVER A LA NORMAL: (cuando sea el momento, reemplazar la anterior con esta)
+      // : process.env.NEXT_PUBLIC_NUVEI_CLIENT_KEY;
 
     try {
       const instance = new window.PaymentCheckout.modal({
@@ -375,9 +375,9 @@ function NuveiPageContent() {
         // 1. Obtener Token de Referencia desde el Backend
         const apiUrl = process.env.NEXT_PUBLIC_API_URL;
         const finalEmail = email || "donante@baq.ec";
-        // PARA LA CARRERA CONTRA EL HAMBRE: descomentar la siguiente y comentar la actual
-        // const initRes = await fetch(`${apiUrl}/nuvei/init-carrera`, {
-        const initRes = await fetch(`${apiUrl}/nuvei/init`, {
+        // PARA VOLVER A LA NORMAL: descomentar la siguiente y comentar la actual
+        const initRes = await fetch(`${apiUrl}/nuvei/init-carrera`, {
+        // const initRes = await fetch(`${apiUrl}/nuvei/init`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
