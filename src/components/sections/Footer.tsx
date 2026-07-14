@@ -1,3 +1,4 @@
+"use client";
 import Link from "next/link";
 import {
   Facebook,
@@ -9,8 +10,13 @@ import {
   Linkedin,
 } from "lucide-react";
 import Image from "next/image";
+import { usePathname } from 'next/navigation';
 
 export default function Footer() {
+  const pathname = usePathname() || '';
+  if (pathname.startsWith('/ruta-contra-el-hambre')) {
+    return null;
+  }
   const currentYear = new Date().getFullYear();
 
   return (
