@@ -47,7 +47,9 @@ export default function CampaignPopup() {
         </button>
 
         <Link
-          href="/ruta-contra-el-hambre/nuvei"
+          href="https://go.kanpastimingec.com/ruta-hambre-2026"
+          target="_blank"
+          rel="noopener noreferrer"
           onClick={handleClose}
           className="block w-full h-full"
         >
