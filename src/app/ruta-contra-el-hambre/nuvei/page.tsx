@@ -66,8 +66,8 @@ interface ParticipantForm {
 
 // ── Constantes ──────────────────────────────────────────────────────────────
 
-const PRECIO_INDIVIDUAL = 1; // TODO: Cambiar a 35 en producción
-const PRECIO_GRUPAL = 1; // TODO: Cambiar a 30 en producción
+const PRECIO_INDIVIDUAL = 35; // TODO: Cambiar a 35 en producción
+const PRECIO_GRUPAL = 30; // TODO: Cambiar a 30 en producción
 const MIN_GRUPO = 5;
 
 const CATEGORIAS = [
