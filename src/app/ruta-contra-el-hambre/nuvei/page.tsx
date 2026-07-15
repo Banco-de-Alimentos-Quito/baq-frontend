@@ -857,7 +857,7 @@ function NuveiPageContent() {
               <p className="text-gray-600 text-lg mb-8 leading-relaxed">{txResult.message}</p>
               <div className="w-full">
                 {txResult.status === "success" ? (
-                  <button onClick={() => router.push("/thank-you")} className="w-full py-4 px-6 bg-[#C800A1] hover:bg-[#a00081] text-white text-lg font-bold rounded-xl transition-all shadow-md active:scale-95">Finalizar</button>
+                  <button onClick={() => window.location.href = "/thank-you"} className="w-full py-4 px-6 bg-[#C800A1] hover:bg-[#a00081] text-white text-lg font-bold rounded-xl transition-all shadow-md active:scale-95">Finalizar</button>
                 ) : (
                   <button onClick={() => setTxResult(null)} className="w-full py-4 px-6 bg-gray-800 hover:bg-gray-900 text-white text-lg font-bold rounded-xl transition-all active:scale-95">Intentar con otra tarjeta</button>
                 )}
