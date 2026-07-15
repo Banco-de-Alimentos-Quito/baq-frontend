@@ -1,6 +1,6 @@
 DESLINDE DE RESPONSABILIDAD
 
-Mediante el presente documento, manifiesto mi deseo de participar en el evento denominado Ruta Contra el Hambre - 4ta. Edición 2026 (en adelante “evento”), por lo que cumplo en declarar lo siguiente: Yo libero completamente y para siempre a la organización, sus subsidiarias, afiliadas, licenciatarias, directores, gerentes, empleados, agentes, aseguradores y todos los involucrados en el evento, de todas las pérdidas, daños, perjuicios (incluso muerte), reclamos, demandas, pleitos, gastos, costas, costos (incluyendo honorarios de abogados) y de alguna otra responsabilidad de cualquier clase, directa o indirecta, que surja en conexión con mi participación dentro o en atención al evento.
+Mediante el presente documento, manifiesto mi deseo de participar en el evento denominado Ruta Contra el Hambre - 6ta. Edición 2026 (en adelante “evento”), por lo que cumplo en declarar lo siguiente: Yo libero completamente y para siempre a la organización, sus subsidiarias, afiliadas, licenciatarias, directores, gerentes, empleados, agentes, aseguradores y todos los involucrados en el evento, de todas las pérdidas, daños, perjuicios (incluso muerte), reclamos, demandas, pleitos, gastos, costas, costos (incluyendo honorarios de abogados) y de alguna otra responsabilidad de cualquier clase, directa o indirecta, que surja en conexión con mi participación dentro o en atención al evento.
 
 Yo declaro conocer que el evento es un esfuerzo de las capacidades tanto físicas como mentales, por lo que asumo - en forma total y exclusiva - los riesgos que mi participación pueda eventualmente ocasionar a mi salud, durante y después de la competencia. Además, declaro que me encuentro físicamente apto y que tengo suficiente entrenamiento para este tipo de eventos. En este sentido, declaro no haber sido aconsejado en sentido contrario por médico certificado alguno. Dejo constancia que mi declaración en este documento es verdadera y será automáticamente aceptada por los organizadores del evento.
 
@@ -10,15 +10,11 @@ Doy mi expreso consentimiento para que la organización tome fotografías o vide
 
 Acepto, asimismo, que la organización pueda publicar en páginas web u otros medios de comunicación mi nombre dentro de la lista de participantes al evento o como promoción o publicidad del mismo. Doy mi expreso consentimiento para que la organización, sus subsidiarias y empresas afiliadas, me envíen correos electrónicos por publicidad, promoción y otros propósitos comerciales relacionados a este evento, futuros eventos deportivos y otras campañas.
 
-Acepto que recibiré el chip de cronometraje con el propósito de utilizarlo exclusivamente en la Ruta Contra el Hambre - 4ta. Edición 2026 (según mi categoría) para que mi tiempo personal pueda ser controlado y de esta manera pueda acceder a mi tiempo oficial a través de internet. Acepto que el uso de este chip es personal y no es intercambiable; del mismo modo, renuncio expresamente a cuestionar de modo alguno los resultados oficiales de la carrera que resulten del sistema de cronometraje. Cualquier controversia, desavenencia o reclamación resultante, relacionada o derivada de mi inscripción o mi participación en el evento, será resuelta conforme a las reglas establecidas por la organización.
+Acepto que recibiré el chip de cronometraje con el propósito de utilizarlo exclusivamente en la Ruta Contra el Hambre - 6ta. Edición 2026 (según mi categoría) para que mi tiempo personal pueda ser controlado y de esta manera pueda acceder a mi tiempo oficial a través de internet. Acepto que el uso de este chip es personal y no es intercambiable; del mismo modo, renuncio expresamente a cuestionar de modo alguno los resultados oficiales de la carrera que resulten del sistema de cronometraje. Cualquier controversia, desavenencia o reclamación resultante, relacionada o derivada de mi inscripción o mi participación en el evento, será resuelta conforme a las reglas establecidas por la organización.
 
 Acepto que la participación en el presente evento deportivo está permitido únicamente a personas mayores de 18 años cumplidos a la fecha de la carrera, en caso de que la organización compruebe que soy menor de edad y he falseado información, dicha inscripción quedará automáticamente anulada, sin derecho a reembolso, y la organización quedará exenta de toda responsabilidad legal, civil o penal derivada de la participación indebida.
 
-De conformidad con las políticas de la Ruta Contra el Hambre - 4ta. Edición 2026, no se efectuarán devoluciones ni reembolsos bajo ninguna circunstancia.
+De conformidad con las políticas de la Ruta Contra el Hambre - 6ta. Edición 2026, no se efectuarán devoluciones ni reembolsos bajo ninguna circunstancia.
 
 He leído cuidadosamente la presente declaración, entiendo por completo el contenido y voluntariamente acepto todos estos términos.
 
-Aceptado con fecha: 13/07/2026
-
-
-👈⚠️ ACEPTO LOS TÉRMINOS Y CONDICIONES DEL DESLINDE DE RESPONSABILIDAD. 
