@@ -66,8 +66,8 @@ interface ParticipantForm {
 
 // ── Constantes ──────────────────────────────────────────────────────────────
 
-const PRECIO_INDIVIDUAL = 35; // TODO: Cambiar a 35 en producción
-const PRECIO_GRUPAL = 30; // TODO: Cambiar a 30 en producción
+const PRECIO_INDIVIDUAL = 35; // Precio base mostrado en la UI
+const PRECIO_GRUPAL = 30; // Precio base mostrado en la UI
 const MIN_GRUPO = 5;
 
 const CATEGORIAS = [
@@ -165,6 +165,10 @@ function NuveiPageContent() {
   // Índice para el carrusel grupal (0 = Líder, 1 = Int 2, etc.)
   const [grupoIndex, setGrupoIndex] = useState(0);
 
+  // Método de pago: "tarjeta" | "transferencia"
+  const [metodoPago, setMetodoPago] = useState<"tarjeta" | "transferencia">("tarjeta");
+  const [comprobanteFile, setComprobanteFile] = useState<File | null>(null);
+
   // Integrantes del grupo (sin incluir al líder)
   const [integrantes, setIntegrantes] = useState<ParticipantForm[]>(() => {
     return Array.from({ length: MIN_GRUPO - 1 }, () => emptyParticipant());
@@ -202,8 +206,10 @@ function NuveiPageContent() {
 
   // Cálculos
   const totalPersonas = modalidad === "grupal" ? 1 + integrantes.length : 1;
-  const precioUnitario = modalidad === "grupal" && totalPersonas >= MIN_GRUPO ? PRECIO_GRUPAL : PRECIO_INDIVIDUAL;
-  const totalPagar = totalPersonas * precioUnitario;
+  const precioUnitario = modalidad === "grupal" && totalPersonas >= MIN_GRUPO 
+    ? (metodoPago === "transferencia" ? 30 : 31.63) 
+    : (metodoPago === "transferencia" ? 35 : 36.63);
+  const totalPagar = Number((totalPersonas * precioUnitario).toFixed(2));
 
   // Cargar políticas
   useEffect(() => {
@@ -315,7 +321,7 @@ function NuveiPageContent() {
   const validarPasoActual = (): boolean => {
     let currentErrors: Record<string, string> = {};
     const isLider = modalidad === "individual" || grupoIndex === 0;
-    
+
     if (isLider) {
       currentErrors = { ...validarParticipante(form, "") };
       if (!puntoRetiro) currentErrors.puntoRetiro = "Selecciona un punto de retiro";
@@ -325,7 +331,7 @@ function NuveiPageContent() {
 
     const newErrors = { ...errors };
     const prefix = isLider ? "" : `int${grupoIndex - 1}_`;
-    
+
     // Clear old errors for the current step
     Object.keys(newErrors).forEach(k => {
       if (prefix === "") {
@@ -363,6 +369,10 @@ function NuveiPageContent() {
   // Manejar envío del formulario
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (metodoPago === "transferencia" && !comprobanteFile) {
+      setErrors((prev) => ({ ...prev, comprobante: "Por favor sube el comprobante de transferencia" }));
+      return;
+    }
     handleSiguiente();
   };
 
@@ -374,18 +384,34 @@ function NuveiPageContent() {
 
   // Pagar
   const handlePay = async () => {
-    if (!checkoutInstance) {
+    if (metodoPago === "tarjeta" && !checkoutInstance) {
       setStatus("error");
       setMessage("El procesador de pagos aún no está listo.");
       return;
     }
+    if (metodoPago === "transferencia" && !comprobanteFile) {
+      setStatus("error");
+      setMessage("Por favor sube la foto de tu comprobante de transferencia.");
+      return;
+    }
 
     setStatus("loading");
-    setMessage("Registrando datos y preparando el pago...");
+    setMessage(metodoPago === "transferencia" ? "Subiendo comprobante y registrando..." : "Registrando datos y preparando el pago...");
 
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL;
       let devRef: string;
+
+      // Convertir archivo a base64 si es transferencia
+      let base64Comprobante = "";
+      if (metodoPago === "transferencia" && comprobanteFile) {
+        base64Comprobante = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(comprobanteFile);
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = error => reject(error);
+        });
+      }
 
       if (modalidad === "grupal") {
         // GRUPAL: registrar todos los integrantes juntos
@@ -410,6 +436,8 @@ function NuveiPageContent() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             puntoRetiroKit: puntoRetiro,
+            metodoPago,
+            comprobanteBase64: base64Comprobante,
             integrantes: allParticipants,
           }),
         });
@@ -441,6 +469,8 @@ function NuveiPageContent() {
             talla: form.talla,
             distancia: form.distancia,
             puntoRetiroKit: puntoRetiro,
+            metodoPago,
+            comprobanteBase64: base64Comprobante,
           }),
         });
 
@@ -451,6 +481,17 @@ function NuveiPageContent() {
 
         const registerData = await registerRes.json();
         devRef = registerData.devReference;
+      }
+
+      // Si es transferencia, terminamos aquí sin llamar a Nuvei
+      if (metodoPago === "transferencia") {
+        setTxResult({ 
+          status: "success", 
+          title: "¡Inscripción Recibida!", 
+          message: "Hemos recibido los datos de tu inscripción y tu comprobante. Lo verificaremos y te notificaremos pronto.", 
+          txId: devRef 
+        });
+        return;
       }
 
       // 2. Inicializar referencia de pago con Nuvei
@@ -526,45 +567,72 @@ function NuveiPageContent() {
         onError={() => { setStatus("error"); setMessage("No se pudo cargar el procesador de pagos."); }}
       />
 
-      <div className="w-full relative grid">
+      <div className="w-full relative grid bg-[#1a0f30]">
+
+        {/* IMAGEN DE FONDO COMPLETA - Invisible, define el alto natural de la imagen */}
+        <img
+          src="/carrera/LANDING-CARRERA.jpg.jpeg"
+          alt="Ruta Contra El Hambre Layout"
+          className="w-full h-auto col-start-1 row-start-1 opacity-0 pointer-events-none"
+        />
         
-        {/* IMAGEN DE FONDO COMPLETA - Define el alto del contenedor */}
-        <img 
-          src="/carrera/landing-carrera.png" 
-          alt="Ruta Contra El Hambre" 
-          className="w-full h-auto col-start-1 row-start-1 z-0 pointer-events-none"
+        {/* IMAGEN VISIBLE - Cubre todo el alto disponible, ajustándose si el form es más largo */}
+        <img
+          src="/carrera/LANDING-CARRERA.jpg.jpeg"
+          alt="Ruta Contra El Hambre"
+          className="absolute inset-0 w-full h-full object-cover object-top col-start-1 row-start-1 z-0 pointer-events-none"
         />
 
         {/* CONTENIDO SUPERPUESTO */}
         <div className="col-start-1 row-start-1 w-full relative z-10 flex flex-col items-center pb-20">
-          
+
           {/* FASE 0: LANDING HERO */}
           {fase === 0 && (
             <section className="w-full flex flex-col items-center justify-start pt-[50vw] md:pt-[30vw] lg:pt-[20vw] pb-20 relative z-10">
               <div className="bg-white/90 backdrop-blur-sm shadow-xl p-8 rounded-3xl text-center max-w-lg mx-auto border border-gray-100">
                 <h1 className="text-3xl md:text-4xl font-bold text-[#2F3388] mb-4">
-                  Inscripción Abierta
+                  Dona para la Ruta Contra El Hambre
                 </h1>
                 <p className="text-gray-600 mb-6 text-lg">
-                  Súmate a la Ruta Contra El Hambre y corre por una buena causa.
+                  Súmate a la carrera y corre por una buena causa.
                 </p>
-                
+
                 <div className="flex justify-center gap-4 mb-6">
-                  <div className="bg-gray-100 px-4 py-2 rounded-xl text-center shadow-sm">
-                    <div className="text-xs text-gray-500 uppercase font-semibold">Individual</div>
+                  <div className="bg-gray-100 px-4 py-2 rounded-xl text-center shadow-sm relative group">
+                    <div className="text-xs text-gray-500 uppercase font-semibold flex items-center justify-center gap-1 cursor-help">
+                      Individual
+                      <svg className="w-4 h-4 text-red-500 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
                     <div className="font-bold text-[#C800A1] text-xl">${PRECIO_INDIVIDUAL}</div>
+                    {/* Tooltip */}
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 p-3 bg-gray-800 text-white text-xs rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-20 shadow-xl pointer-events-none">
+                      <div className="font-bold mb-2 border-b border-gray-600 pb-1 text-center">Precios Finales</div>
+                      <div className="flex justify-between mb-1"><span>Transferencia:</span> <span className="font-semibold text-green-400">$35.00</span></div>
+                      <div className="flex justify-between"><span>Tarjeta Débito/Crédito:</span> <span>$36.63</span></div>
+                      <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
+                    </div>
                   </div>
-                  <div className="bg-gray-100 px-4 py-2 rounded-xl text-center shadow-sm">
-                    <div className="text-xs text-gray-500 uppercase font-semibold">Grupal (5+)</div>
+                  <div className="bg-gray-100 px-4 py-2 rounded-xl text-center shadow-sm relative group">
+                    <div className="text-xs text-gray-500 uppercase font-semibold flex items-center justify-center gap-1 cursor-help">
+                      Grupal (5+)
+                      <svg className="w-4 h-4 text-red-500 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
                     <div className="font-bold text-[#8CC541] text-xl">${PRECIO_GRUPAL}/c.u.</div>
+                    {/* Tooltip */}
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 p-3 bg-gray-800 text-white text-xs rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-20 shadow-xl pointer-events-none">
+                      <div className="font-bold mb-2 border-b border-gray-600 pb-1 text-center">Precios Finales (c.u.)</div>
+                      <div className="flex justify-between mb-1"><span>Transferencia:</span> <span className="font-semibold text-green-400">$30.00</span></div>
+                      <div className="flex justify-between"><span>Tarjeta Débito/Crédito:</span> <span>$31.63</span></div>
+                      <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
+                    </div>
                   </div>
-                  <div className="bg-gray-100 px-4 py-2 rounded-xl text-center shadow-sm">
+                  <div className="bg-gray-100 px-4 py-2 rounded-xl text-center shadow-sm flex flex-col justify-center">
                     <div className="text-xs text-gray-500 uppercase font-semibold">Distancias</div>
                     <div className="font-bold text-[#ED6F1D] text-xl">5K / 10K</div>
                   </div>
                 </div>
 
-                <button 
+                <button
                   onClick={() => { setFase(1); scrollToSection(formSectionRef); }}
                   className="bg-[#C800A1] text-white text-lg font-bold py-4 px-12 rounded-xl shadow-lg hover:bg-[#a00081] transition-all w-full"
                 >
@@ -578,7 +646,7 @@ function NuveiPageContent() {
           {fase >= 1 && (
             <section ref={formSectionRef} className="w-full px-4 pt-10 relative z-10">
               <div className="max-w-3xl mx-auto">
-                
+
                 {/* Stepper */}
                 <div className="flex items-center justify-center gap-3 mb-8 bg-white/80 backdrop-blur-md py-4 px-6 rounded-full shadow-sm max-w-md mx-auto">
                   {["Datos", "Políticas", "Pago"].map((step, i) => (
@@ -595,19 +663,93 @@ function NuveiPageContent() {
                 </div>
 
                 <div className="bg-white border border-gray-200 rounded-3xl p-6 md:p-10 shadow-xl relative z-10">
+                  
+                  {/* Selector Método de Pago */}
+                  <div className="mb-8 border-b border-gray-200 pb-8">
+                    <label className="block text-sm font-bold text-gray-700 mb-3">Método de Pago</label>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <button type="button" onClick={() => setMetodoPago("tarjeta")}
+                        className={`py-4 px-4 rounded-xl border-2 font-bold transition-all text-center flex flex-col items-center justify-center gap-1 ${metodoPago === "tarjeta" ? "border-[#C800A1] bg-[#C800A1]/10 text-[#C800A1]" : "border-gray-200 bg-gray-50 text-gray-500 hover:border-gray-300"}`}>
+                        <svg className="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
+                        <div className="text-lg">Tarjeta (Crédito/Débito)</div>
+                      </button>
+                      <button type="button" onClick={() => setMetodoPago("transferencia")}
+                        className={`py-4 px-4 rounded-xl border-2 font-bold transition-all text-center flex flex-col items-center justify-center gap-1 ${metodoPago === "transferencia" ? "border-green-500 bg-green-50 text-green-700" : "border-gray-200 bg-gray-50 text-gray-500 hover:border-gray-300"}`}>
+                        <svg className="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" /></svg>
+                        <div className="text-lg">Transferencia Bancaria</div>
+                      </button>
+                    </div>
+                    {metodoPago === "transferencia" && (
+                      <div className="mt-6 bg-green-50 border border-green-200 rounded-xl p-5 text-sm text-green-900 animate-in fade-in slide-in-from-top-2 duration-300">
+                        <h4 className="font-bold text-green-800 mb-3 uppercase tracking-wider text-xs">Datos para Depósito o Transferencia</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-4 mb-4">
+                          <p><span className="font-bold">Nombre:</span> Fundación de Ayuda Social Banco de Alimentos Quito</p>
+                          <p><span className="font-bold">RUC:</span> 1791921429001</p>
+                          <p><span className="font-bold">Número de cuenta:</span> 2100282580</p>
+                          <p><span className="font-bold">Tipo de cuenta:</span> Cta. Corriente</p>
+                          <p className="md:col-span-2"><span className="font-bold">Correo:</span> administracion@baq.ec</p>
+                        </div>
+                        
+                        {/* Subida del Comprobante (Movido a Fase 1) */}
+                        <div className="mt-4 pt-4 border-t border-green-200">
+                          <label className="block font-bold text-green-900 mb-2">Comprobante de Transferencia / Depósito *</label>
+                          <p className="text-xs text-green-700 mb-3">Sube la foto o captura de pantalla de tu comprobante. Formatos: JPG, PNG, PDF (máx. 5MB).</p>
+                          <div className="flex items-center justify-center w-full">
+                            <label className="flex flex-col items-center justify-center w-full h-28 border-2 border-green-300 border-dashed rounded-xl cursor-pointer bg-white hover:bg-green-50 transition-colors">
+                              <div className="flex flex-col items-center justify-center pt-3 pb-3">
+                                <svg className="w-6 h-6 mb-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                                <p className="mb-1 text-xs text-gray-500"><span className="font-semibold text-green-600">Haz clic para subir</span> o arrastra y suelta</p>
+                                <p className="text-xs font-bold text-gray-700 max-w-[200px] truncate">{comprobanteFile ? comprobanteFile.name : "Ningún archivo seleccionado"}</p>
+                              </div>
+                              <input type="file" className="hidden" accept="image/*,.pdf" onChange={(e) => setComprobanteFile(e.target.files?.[0] || null)} />
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
                   {/* Selector Individual / Grupal */}
                   <div className="mb-8">
                     <label className="block text-sm font-bold text-gray-700 mb-3">Tipo de Inscripción</label>
                     <div className="grid grid-cols-2 gap-4">
-                      <button type="button" onClick={() => setModalidad("individual")}
+                      <button type="button" onClick={() => {
+                          setModalidad("individual");
+                          setFase(1);
+                          setGrupoIndex(0);
+                        }}
                         className={`py-4 px-4 rounded-xl border-2 font-bold transition-all text-center ${modalidad === "individual" ? "border-[#C800A1] bg-[#C800A1]/10 text-[#C800A1]" : "border-gray-200 bg-gray-50 text-gray-500 hover:border-gray-300"}`}>
                         <div className="text-lg">Individual</div>
-                        <div className="text-xs mt-1 font-normal opacity-75">${PRECIO_INDIVIDUAL} USD por persona</div>
+                        <div className="text-xs mt-1 font-normal opacity-90 flex items-center justify-center gap-1 group relative cursor-help">
+                          <span>${PRECIO_INDIVIDUAL} USD por persona</span>
+                          {metodoPago !== "transferencia" && (
+                            <>
+                              <svg className="w-4 h-4 text-red-500 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 bg-gray-800 text-white text-xs rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-20 shadow-xl pointer-events-none font-medium">
+                                Con tarjeta de crédito/débito el precio es de $36.63 (incluye comisión).
+                              </div>
+                            </>
+                          )}
+                        </div>
                       </button>
-                      <button type="button" onClick={() => setModalidad("grupal")}
+                      <button type="button" onClick={() => {
+                          setModalidad("grupal");
+                          setFase(1);
+                          setGrupoIndex(0);
+                        }}
                         className={`py-4 px-4 rounded-xl border-2 font-bold transition-all text-center ${modalidad === "grupal" ? "border-[#8CC541] bg-[#8CC541]/10 text-[#8CC541]" : "border-gray-200 bg-gray-50 text-gray-500 hover:border-gray-300"}`}>
                         <div className="text-lg">Grupal (5+)</div>
-                        <div className="text-xs mt-1 font-normal opacity-75">${PRECIO_GRUPAL} USD por persona</div>
+                        <div className="text-xs mt-1 font-normal opacity-90 flex items-center justify-center gap-1 group relative cursor-help">
+                          <span>${PRECIO_GRUPAL} USD por persona</span>
+                          {metodoPago !== "transferencia" && (
+                            <>
+                              <svg className="w-4 h-4 text-red-500 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 bg-gray-800 text-white text-xs rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-20 shadow-xl pointer-events-none font-medium">
+                                Con tarjeta de crédito/débito el precio es de $31.63 (incluye comisión).
+                              </div>
+                            </>
+                          )}
+                        </div>
                       </button>
                     </div>
                   </div>
@@ -626,7 +768,7 @@ function NuveiPageContent() {
                     {grupoIndex === 0 && (
                       <p className="text-gray-500 text-sm mb-8 -mt-4">Completa todos los campos para registrarte en la carrera.</p>
                     )}
-                    
+
                     {/* Contenido del Formulario */}
                     {(modalidad === "individual" || grupoIndex === 0) ? (
                       <>
@@ -702,7 +844,7 @@ function NuveiPageContent() {
                         </div>
                       </div>
                     )}
-                    
+
                     {/* Botones de Navegación */}
                     <div className="flex gap-4 pt-4">
                       {modalidad === "grupal" && grupoIndex > 0 && (
@@ -729,11 +871,11 @@ function NuveiPageContent() {
                 <div className="bg-white border border-gray-200 rounded-3xl p-6 md:p-10 shadow-xl relative z-10">
                   <h2 className="text-2xl font-bold text-[#2F3388] mb-2">Deslinde de Responsabilidad</h2>
                   <p className="text-gray-500 text-sm mb-6">Lee cuidadosamente y acepta los términos para continuar.</p>
-                  
+
                   <div className="bg-gray-50 border border-gray-200 rounded-xl p-5 max-h-[300px] overflow-y-auto text-gray-700 text-sm leading-relaxed whitespace-pre-line mb-6 shadow-inner">
                     {politicasTexto || "Cargando políticas..."}
                   </div>
-                  
+
                   <label className="flex items-start gap-4 cursor-pointer group mb-8 p-4 border border-gray-200 rounded-xl hover:bg-gray-50 transition">
                     <div className="relative mt-1">
                       <input type="checkbox" checked={aceptoPoliticas} onChange={(e) => setAceptoPoliticas(e.target.checked)} className="sr-only" />
@@ -748,7 +890,7 @@ function NuveiPageContent() {
                       }
                     </span>
                   </label>
-                  
+
                   <div className="flex gap-4">
                     <button type="button" onClick={() => { setFase(1); scrollToSection(formSectionRef); }} className="w-1/3 py-3 rounded-xl border border-gray-300 text-gray-600 font-bold hover:bg-gray-50 transition-all">Atrás</button>
                     <button type="button" onClick={handlePoliticasSubmit} disabled={!aceptoPoliticas}
@@ -803,6 +945,8 @@ function NuveiPageContent() {
                     <SummaryRow label="Punto de Retiro" value={puntoRetiro} highlight />
                   </div>
 
+                  {/* Comprobante eliminado de aquí, ya se pide en Fase 1 */}
+
                   {/* Total */}
                   <div className="bg-blue-50 border border-blue-100 rounded-2xl p-5 mb-8">
                     <div className="flex justify-between items-center">
@@ -814,22 +958,22 @@ function NuveiPageContent() {
                     </div>
                   </div>
 
-                  <button onClick={handlePay} disabled={status === "loading" || status === "processing" || !sdkReady}
-                    className={`w-full py-4 rounded-xl font-bold text-xl transition-all shadow-lg active:scale-[0.98] flex items-center justify-center gap-2 ${status === "loading" || status === "processing" ? "bg-gray-400 text-white cursor-not-allowed" : !sdkReady ? "bg-gray-300 text-gray-600 cursor-wait" : "bg-[#C800A1] text-white hover:bg-[#a00081]"}`}>
-                    {!sdkReady ? "Cargando procesador..." : status === "loading" ? "Registrando datos..." : status === "processing" ? "Abriendo pago..." : (
+                  <button onClick={handlePay} disabled={status === "loading" || status === "processing" || (metodoPago === "tarjeta" && !sdkReady) || (metodoPago === "transferencia" && !comprobanteFile)}
+                    className={`w-full py-4 rounded-xl font-bold text-xl transition-all shadow-lg active:scale-[0.98] flex items-center justify-center gap-2 ${status === "loading" || status === "processing" ? "bg-gray-400 text-white cursor-not-allowed" : ((metodoPago === "tarjeta" && !sdkReady) || (metodoPago === "transferencia" && !comprobanteFile)) ? "bg-gray-300 text-gray-600 cursor-not-allowed" : "bg-[#C800A1] text-white hover:bg-[#a00081]"}`}>
+                    {metodoPago === "tarjeta" && !sdkReady ? "Cargando procesador..." : status === "loading" ? "Registrando datos..." : status === "processing" ? "Procesando..." : (
                       <>
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
-                        Pagar ${totalPagar} USD
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={metodoPago === "transferencia" ? "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" : "M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"} /></svg>
+                        {metodoPago === "transferencia" ? "Finalizar Registro" : `Pagar $${totalPagar} USD`}
                       </>
                     )}
                   </button>
-                  
+
                   {message && !txResult && (
                     <div className={`mt-4 p-4 rounded-xl text-sm w-full text-center font-medium ${status === "processing" || status === "loading" ? "bg-blue-50 text-blue-700 border border-blue-200" : status === "error" ? "bg-red-50 text-red-700 border border-red-200" : ""}`}>
                       {message}
                     </div>
                   )}
-                  
+
                   <div className="mt-8 text-center">
                     <button type="button" onClick={() => { setFase(2); scrollToSection(politicasSectionRef); }} className="text-gray-500 hover:text-gray-700 transition text-sm font-semibold underline">← Revisar Políticas</button>
                   </div>
@@ -901,19 +1045,19 @@ function ParticipantFormFields({ form, updateField, errors, prefix, edad, catego
         </div>
         {errors[`${prefix}distancia`] && <p className="text-red-500 text-xs mt-1">{errors[`${prefix}distancia`]}</p>}
       </div>
-      
+
       {/* Cédula + Teléfono */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <InputField label="Cédula *" name="cedula" value={form.cedula} onChange={(v) => updateField("cedula", v)} error={errors[`${prefix}cedula`]} placeholder="1712345678" />
         <InputField label="Teléfono Móvil *" name="tel" autoComplete="tel" value={form.telefonoMovil} onChange={(v) => updateField("telefonoMovil", v)} error={errors[`${prefix}telefonoMovil`]} placeholder="0991234567" />
       </div>
-      
+
       {/* Nombres + Apellidos */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <InputField label="Nombres *" name="nombres" autoComplete="given-name" value={form.nombres} onChange={(v) => updateField("nombres", v)} error={errors[`${prefix}nombres`]} placeholder="Juan Carlos" />
         <InputField label="Apellidos *" name="apellidos" autoComplete="family-name" value={form.apellidos} onChange={(v) => updateField("apellidos", v)} error={errors[`${prefix}apellidos`]} placeholder="Pérez López" />
       </div>
-      
+
       {/* Género */}
       <div>
         <label className="block text-sm font-bold text-gray-700 mb-2">Género *</label>
@@ -927,7 +1071,7 @@ function ParticipantFormFields({ form, updateField, errors, prefix, edad, catego
         </div>
         {errors[`${prefix}genero`] && <p className="text-red-500 text-xs mt-1">{errors[`${prefix}genero`]}</p>}
       </div>
-      
+
       {/* Fecha Nacimiento + Categoría */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <InputField label="Fecha de Nacimiento *" name="bday" autoComplete="bday" type="date" value={form.fechaNacimiento} onChange={(v) => updateField("fechaNacimiento", v)} error={errors[`${prefix}fechaNacimiento`]} />
@@ -938,16 +1082,16 @@ function ParticipantFormFields({ form, updateField, errors, prefix, edad, catego
             className={`w-full px-4 py-3 bg-gray-100 border border-gray-200 rounded-xl focus:outline-none transition font-semibold ${displayCategoria ? "text-[#C800A1]" : "text-gray-400"}`} />
         </div>
       </div>
-      
+
       {/* Correo */}
       <InputField label="Correo Electrónico *" name="email" autoComplete="email" type="email" value={form.correoElectronico} onChange={(v) => updateField("correoElectronico", v)} error={errors[`${prefix}correoElectronico`]} placeholder="tu@correo.com" />
-      
+
       {/* País + Ciudad */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <InputField label="País" name="country-name" autoComplete="country-name" value={form.pais} onChange={(v) => updateField("pais", v)} placeholder="Ecuador" />
         <InputField label="Ciudad *" name="address-level2" autoComplete="address-level2" value={form.ciudad} onChange={(v) => updateField("ciudad", v)} error={errors[`${prefix}ciudad`]} placeholder="Quito" />
       </div>
-      
+
       {/* Talla */}
       <div>
         <label className="block text-sm font-bold text-gray-700 mb-2">Talla de Camiseta *</label>
@@ -1005,7 +1149,8 @@ export default function NuveiPage() {
       </div>
     }>
       {/* Ocultar Header y Footer globalmente para esta página */}
-      <style dangerouslySetInnerHTML={{ __html: `
+      <style dangerouslySetInnerHTML={{
+        __html: `
         header, footer { display: none !important; }
       `}} />
       <NuveiPageContent />
