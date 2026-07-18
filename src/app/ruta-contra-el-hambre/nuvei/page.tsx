@@ -317,14 +317,20 @@ function NuveiPageContent() {
     return err;
   };
 
-  // Validar paso actual (carrusel)
+  // Avanzar desde Fase 1 (Opciones) a Fase 2 (Datos)
+  const handleContinuarOpciones = () => {
+    setFase(2);
+    setGrupoIndex(0);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Validar paso actual (Datos - Fase 2)
   const validarPasoActual = (): boolean => {
     let currentErrors: Record<string, string> = {};
     const isLider = modalidad === "individual" || grupoIndex === 0;
 
     if (isLider) {
       currentErrors = { ...validarParticipante(form, "") };
-      if (!puntoRetiro) currentErrors.puntoRetiro = "Selecciona un punto de retiro";
     } else {
       currentErrors = { ...validarParticipante(integrantes[grupoIndex - 1], `int${grupoIndex - 1}_`) };
     }
@@ -335,51 +341,56 @@ function NuveiPageContent() {
     // Clear old errors for the current step
     Object.keys(newErrors).forEach(k => {
       if (prefix === "") {
-        if (!k.startsWith("int") && k !== "puntoRetiro") delete newErrors[k];
+        if (!k.startsWith("int") && k !== "puntoRetiro" && k !== "comprobante") delete newErrors[k];
       } else {
         if (k.startsWith(prefix)) delete newErrors[k];
       }
     });
-    if (prefix === "") delete newErrors.puntoRetiro;
 
     const combined = { ...newErrors, ...currentErrors };
     setErrors(combined);
     return Object.keys(currentErrors).length === 0;
   };
 
-  const handleSiguiente = () => {
+  // Avanzar desde Fase 2 (Datos)
+  const handleSiguienteDatos = (e: React.FormEvent) => {
+    e.preventDefault();
     if (validarPasoActual()) {
       if (modalidad === "individual" || grupoIndex === integrantes.length) {
-        setFase(2);
-        scrollToSection(politicasSectionRef);
+        setFase(3);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
         setGrupoIndex(grupoIndex + 1);
-        scrollToSection(formSectionRef);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     }
   };
 
-  const handleAnterior = () => {
+  // Retroceder desde Fase 2 (Datos)
+  const handleAnteriorDatos = () => {
     if (grupoIndex > 0) {
       setGrupoIndex(grupoIndex - 1);
-      scrollToSection(formSectionRef);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      setFase(1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
-  // Manejar envío del formulario
-  const handleFormSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (metodoPago === "transferencia" && !comprobanteFile) {
-      setErrors((prev) => ({ ...prev, comprobante: "Por favor sube el comprobante de transferencia" }));
+  // Avanzar desde Fase 3 (Kit) a Fase 4 (Políticas)
+  const handleContinuarKit = () => {
+    if (!puntoRetiro) {
+      setErrors((prev) => ({ ...prev, puntoRetiro: "Selecciona un punto de retiro" }));
       return;
     }
-    handleSiguiente();
+    setFase(4);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Manejar aceptación de políticas
+  // Manejar aceptación de políticas (Fase 4 a 5)
   const handlePoliticasSubmit = () => {
-    setFase(3);
-    scrollToSection(pagoSectionRef);
+    setFase(5);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   // Pagar
@@ -567,34 +578,49 @@ function NuveiPageContent() {
         onError={() => { setStatus("error"); setMessage("No se pudo cargar el procesador de pagos."); }}
       />
 
-      <div className="w-full relative grid bg-[#1a0f30]">
+      <div className="w-full min-h-screen relative bg-[#1a0f30] overflow-x-hidden">
 
-        {/* IMAGEN DE FONDO COMPLETA - Invisible, define el alto natural de la imagen */}
-        <img
-          src="/carrera/LANDING-CARRERA.jpg.jpeg"
-          alt="Ruta Contra El Hambre Layout"
-          className="w-full h-auto col-start-1 row-start-1 opacity-0 pointer-events-none"
-        />
-        
-        {/* IMAGEN VISIBLE - Cubre todo el alto disponible, ajustándose si el form es más largo */}
-        <img
-          src="/carrera/LANDING-CARRERA.jpg.jpeg"
-          alt="Ruta Contra El Hambre"
-          className="absolute inset-0 w-full h-full object-cover object-top col-start-1 row-start-1 z-0 pointer-events-none"
-        />
+        {/* IMAGEN DE FONDO RESPONSIVE - Escala con el ancho de la pantalla sin recortarse */}
+        <picture className="absolute top-0 left-0 w-full z-0 pointer-events-none">
+          <source media="(min-width: 768px)" srcSet="/carrera/LANDING.png" />
+          <img
+            src="/carrera/LANDING-CARRERA.jpg.jpeg"
+            alt="Ruta Contra El Hambre"
+            className="w-full h-auto"
+          />
+        </picture>
 
         {/* CONTENIDO SUPERPUESTO */}
-        <div className="col-start-1 row-start-1 w-full relative z-10 flex flex-col items-center pb-20">
+        <div className="relative z-10 flex flex-col items-center pt-4 md:pt-6 pb-12 w-full min-h-screen">
+
+          {/* STEPPER GLOBAL (Visible desde Fase 1 en adelante) */}
+          {fase >= 1 && (
+            <div className="w-full max-w-3xl px-4 mx-auto relative z-20 animate-in fade-in duration-500 mb-4">
+              <div className="flex items-center justify-center gap-1 md:gap-3 bg-white/90 backdrop-blur-md py-2 px-2 md:px-6 rounded-2xl shadow-sm border border-gray-100">
+                {["Opciones", "Datos", "Kit", "Políticas", "Pago"].map((step, i) => (
+                  <React.Fragment key={step}>
+                    <div className={`flex flex-col items-center gap-1 ${fase > i + 1 ? "text-green-600" : fase === i + 1 ? "text-[#C800A1]" : "text-gray-400"}`}>
+                      <div className={`w-6 h-6 md:w-8 md:h-8 rounded-full flex items-center justify-center text-xs md:text-sm font-bold border-2 transition-all ${fase > i + 1 ? "border-green-600 bg-green-50 text-green-600" : fase === i + 1 ? "border-[#C800A1] bg-[#C800A1]/10 text-[#C800A1]" : "border-gray-300 text-gray-400"}`}>
+                        {fase > i + 1 ? "✓" : i + 1}
+                      </div>
+                      <span className="text-[10px] md:text-xs font-semibold">{step}</span>
+                    </div>
+                    {i < 4 && <div className={`flex-1 h-0.5 min-w-[15px] md:min-w-[30px] max-w-[50px] -mt-5 ${fase > i + 1 ? "bg-green-600" : "bg-gray-300"}`} />}
+                  </React.Fragment>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* FASE 0: LANDING HERO */}
           {fase === 0 && (
             <section className="w-full flex flex-col items-center justify-start pt-[50vw] md:pt-[30vw] lg:pt-[20vw] pb-20 relative z-10">
               <div className="bg-white/90 backdrop-blur-sm shadow-xl p-8 rounded-3xl text-center max-w-lg mx-auto border border-gray-100">
                 <h1 className="text-3xl md:text-4xl font-bold text-[#2F3388] mb-4">
-                  Dona para la Ruta Contra El Hambre
+                  Ruta contra el Hambre 2026
                 </h1>
                 <p className="text-gray-600 mb-6 text-lg">
-                  Súmate a la carrera y corre por una buena causa.
+                  Dona a la carrera y corre por una buena causa.
                 </p>
 
                 <div className="flex justify-center gap-4 mb-6">
@@ -642,234 +668,221 @@ function NuveiPageContent() {
             </section>
           )}
 
-          {/* FASE 1: FORMULARIO */}
-          {fase >= 1 && (
-            <section ref={formSectionRef} className="w-full px-4 pt-10 relative z-10">
-              <div className="max-w-3xl mx-auto">
-
-                {/* Stepper */}
-                <div className="flex items-center justify-center gap-3 mb-8 bg-white/80 backdrop-blur-md py-4 px-6 rounded-full shadow-sm max-w-md mx-auto">
-                  {["Datos", "Políticas", "Pago"].map((step, i) => (
-                    <React.Fragment key={step}>
-                      <div className={`flex items-center gap-2 ${fase > i + 1 ? "text-green-600" : fase === i + 1 ? "text-[#C800A1]" : "text-gray-400"}`}>
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-all ${fase > i + 1 ? "border-green-600 bg-green-50 text-green-600" : fase === i + 1 ? "border-[#C800A1] bg-[#C800A1]/10 text-[#C800A1]" : "border-gray-300 text-gray-400"}`}>
-                          {fase > i + 1 ? "✓" : i + 1}
-                        </div>
-                        <span className="text-sm font-semibold hidden sm:inline">{step}</span>
+          {/* FASE 1: OPCIONES BÁSICAS */}
+          {fase === 1 && (
+            <section className="w-full px-4 relative z-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="max-w-3xl mx-auto bg-white border border-gray-200 rounded-3xl p-6 md:p-10 shadow-xl">
+                <h2 className="text-2xl font-bold text-[#2F3388] mb-6 text-center">Paso 1: Opciones de Inscripción</h2>
+                
+                {/* Selector Método de Pago */}
+                <div className="mb-8 border-b border-gray-200 pb-8">
+                  <label className="block text-sm font-bold text-gray-700 mb-3">Método de Pago</label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <button type="button" onClick={() => setMetodoPago("tarjeta")}
+                      className={`py-4 px-4 rounded-xl border-2 font-bold transition-all text-center flex flex-col items-center justify-center gap-1 ${metodoPago === "tarjeta" ? "border-[#C800A1] bg-[#C800A1]/10 text-[#C800A1]" : "border-gray-200 bg-gray-50 text-gray-500 hover:border-gray-300"}`}>
+                      <svg className="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
+                      <div className="text-lg">Tarjeta (Crédito/Débito)</div>
+                    </button>
+                    <button type="button" onClick={() => setMetodoPago("transferencia")}
+                      className={`py-4 px-4 rounded-xl border-2 font-bold transition-all text-center flex flex-col items-center justify-center gap-1 ${metodoPago === "transferencia" ? "border-green-500 bg-green-50 text-green-700" : "border-gray-200 bg-gray-50 text-gray-500 hover:border-gray-300"}`}>
+                      <svg className="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" /></svg>
+                      <div className="text-lg">Transferencia Bancaria</div>
+                    </button>
+                  </div>
+                  {metodoPago === "transferencia" && (
+                    <div className="mt-6 bg-green-50 border border-green-200 rounded-xl p-5 text-sm text-green-900 animate-in fade-in slide-in-from-top-2 duration-300">
+                      <h4 className="font-bold text-green-800 mb-3 uppercase tracking-wider text-xs">Datos para Depósito o Transferencia</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-4 mb-4">
+                        <p><span className="font-bold">Nombre:</span> Fundación de Ayuda Social Banco de Alimentos Quito</p>
+                        <p><span className="font-bold">RUC:</span> 1791921429001</p>
+                        <p><span className="font-bold">Número de cuenta:</span> 2100282580</p>
+                        <p><span className="font-bold">Tipo de cuenta:</span> Cta. Corriente</p>
+                        <p className="md:col-span-2"><span className="font-bold">Correo:</span> administracion@baq.ec</p>
                       </div>
-                      {i < 2 && <div className={`w-10 h-0.5 ${fase > i + 1 ? "bg-green-600" : "bg-gray-300"}`} />}
-                    </React.Fragment>
-                  ))}
+                    </div>
+                  )}
                 </div>
 
-                <div className="bg-white border border-gray-200 rounded-3xl p-6 md:p-10 shadow-xl relative z-10">
-                  
-                  {/* Selector Método de Pago */}
-                  <div className="mb-8 border-b border-gray-200 pb-8">
-                    <label className="block text-sm font-bold text-gray-700 mb-3">Método de Pago</label>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <button type="button" onClick={() => setMetodoPago("tarjeta")}
-                        className={`py-4 px-4 rounded-xl border-2 font-bold transition-all text-center flex flex-col items-center justify-center gap-1 ${metodoPago === "tarjeta" ? "border-[#C800A1] bg-[#C800A1]/10 text-[#C800A1]" : "border-gray-200 bg-gray-50 text-gray-500 hover:border-gray-300"}`}>
-                        <svg className="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
-                        <div className="text-lg">Tarjeta (Crédito/Débito)</div>
-                      </button>
-                      <button type="button" onClick={() => setMetodoPago("transferencia")}
-                        className={`py-4 px-4 rounded-xl border-2 font-bold transition-all text-center flex flex-col items-center justify-center gap-1 ${metodoPago === "transferencia" ? "border-green-500 bg-green-50 text-green-700" : "border-gray-200 bg-gray-50 text-gray-500 hover:border-gray-300"}`}>
-                        <svg className="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" /></svg>
-                        <div className="text-lg">Transferencia Bancaria</div>
-                      </button>
-                    </div>
-                    {metodoPago === "transferencia" && (
-                      <div className="mt-6 bg-green-50 border border-green-200 rounded-xl p-5 text-sm text-green-900 animate-in fade-in slide-in-from-top-2 duration-300">
-                        <h4 className="font-bold text-green-800 mb-3 uppercase tracking-wider text-xs">Datos para Depósito o Transferencia</h4>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-4 mb-4">
-                          <p><span className="font-bold">Nombre:</span> Fundación de Ayuda Social Banco de Alimentos Quito</p>
-                          <p><span className="font-bold">RUC:</span> 1791921429001</p>
-                          <p><span className="font-bold">Número de cuenta:</span> 2100282580</p>
-                          <p><span className="font-bold">Tipo de cuenta:</span> Cta. Corriente</p>
-                          <p className="md:col-span-2"><span className="font-bold">Correo:</span> administracion@baq.ec</p>
-                        </div>
-                        
-                        {/* Subida del Comprobante (Movido a Fase 1) */}
-                        <div className="mt-4 pt-4 border-t border-green-200">
-                          <label className="block font-bold text-green-900 mb-2">Comprobante de Transferencia / Depósito *</label>
-                          <p className="text-xs text-green-700 mb-3">Sube la foto o captura de pantalla de tu comprobante. Formatos: JPG, PNG, PDF (máx. 5MB).</p>
-                          <div className="flex items-center justify-center w-full">
-                            <label className="flex flex-col items-center justify-center w-full h-28 border-2 border-green-300 border-dashed rounded-xl cursor-pointer bg-white hover:bg-green-50 transition-colors">
-                              <div className="flex flex-col items-center justify-center pt-3 pb-3">
-                                <svg className="w-6 h-6 mb-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
-                                <p className="mb-1 text-xs text-gray-500"><span className="font-semibold text-green-600">Haz clic para subir</span> o arrastra y suelta</p>
-                                <p className="text-xs font-bold text-gray-700 max-w-[200px] truncate">{comprobanteFile ? comprobanteFile.name : "Ningún archivo seleccionado"}</p>
-                              </div>
-                              <input type="file" className="hidden" accept="image/*,.pdf" onChange={(e) => setComprobanteFile(e.target.files?.[0] || null)} />
-                            </label>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Selector Individual / Grupal */}
-                  <div className="mb-8">
-                    <label className="block text-sm font-bold text-gray-700 mb-3">Tipo de Inscripción</label>
-                    <div className="grid grid-cols-2 gap-4">
-                      <button type="button" onClick={() => {
-                          setModalidad("individual");
-                          setFase(1);
-                          setGrupoIndex(0);
-                        }}
-                        className={`py-4 px-4 rounded-xl border-2 font-bold transition-all text-center ${modalidad === "individual" ? "border-[#C800A1] bg-[#C800A1]/10 text-[#C800A1]" : "border-gray-200 bg-gray-50 text-gray-500 hover:border-gray-300"}`}>
-                        <div className="text-lg">Individual</div>
-                        <div className="text-xs mt-1 font-normal opacity-90 flex items-center justify-center gap-1 group relative cursor-help">
-                          <span>${PRECIO_INDIVIDUAL} USD por persona</span>
-                          {metodoPago !== "transferencia" && (
-                            <>
-                              <svg className="w-4 h-4 text-red-500 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 bg-gray-800 text-white text-xs rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-20 shadow-xl pointer-events-none font-medium">
-                                Con tarjeta de crédito/débito el precio es de $36.63 (incluye comisión).
-                              </div>
-                            </>
-                          )}
-                        </div>
-                      </button>
-                      <button type="button" onClick={() => {
-                          setModalidad("grupal");
-                          setFase(1);
-                          setGrupoIndex(0);
-                        }}
-                        className={`py-4 px-4 rounded-xl border-2 font-bold transition-all text-center ${modalidad === "grupal" ? "border-[#8CC541] bg-[#8CC541]/10 text-[#8CC541]" : "border-gray-200 bg-gray-50 text-gray-500 hover:border-gray-300"}`}>
-                        <div className="text-lg">Grupal (5+)</div>
-                        <div className="text-xs mt-1 font-normal opacity-90 flex items-center justify-center gap-1 group relative cursor-help">
-                          <span>${PRECIO_GRUPAL} USD por persona</span>
-                          {metodoPago !== "transferencia" && (
-                            <>
-                              <svg className="w-4 h-4 text-red-500 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 bg-gray-800 text-white text-xs rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-20 shadow-xl pointer-events-none font-medium">
-                                Con tarjeta de crédito/débito el precio es de $31.63 (incluye comisión).
-                              </div>
-                            </>
-                          )}
-                        </div>
-                      </button>
-                    </div>
-                  </div>
-
-                  <form onSubmit={handleFormSubmit} className="space-y-6">
-                    <div className="flex justify-between items-center mb-6">
-                      <h2 className="text-2xl font-bold text-[#2F3388]">
-                        {modalidad === "individual" ? "Datos de Inscripción" : (grupoIndex === 0 ? "Datos del Líder del Grupo" : `Integrante ${grupoIndex + 1}`)}
-                      </h2>
-                      {modalidad === "grupal" && (
-                        <div className="text-sm font-bold text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
-                          Paso {grupoIndex + 1} de {totalPersonas}
-                        </div>
-                      )}
-                    </div>
-                    {grupoIndex === 0 && (
-                      <p className="text-gray-500 text-sm mb-8 -mt-4">Completa todos los campos para registrarte en la carrera.</p>
-                    )}
-
-                    {/* Contenido del Formulario */}
-                    {(modalidad === "individual" || grupoIndex === 0) ? (
-                      <>
-                        <ParticipantFormFields
-                          form={form}
-                          updateField={updateField}
-                          errors={errors}
-                          prefix=""
-                          edad={edad}
-                          categoria={categoria}
-                        />
-                        {/* Punto de retiro de kit */}
-                        <div className="mt-8 border-t border-gray-100 pt-6">
-                          <label className="block text-sm font-bold text-gray-700 mb-3">Punto de Retiro de Kit *</label>
-                          <div className="space-y-3">
-                            {PUNTOS_RETIRO.map((punto) => (
-                              <div key={punto.nombre}
-                                onClick={() => { setPuntoRetiro(punto.nombre); if (errors.puntoRetiro) setErrors((prev) => ({ ...prev, puntoRetiro: "" })); }}
-                                className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${puntoRetiro === punto.nombre ? "border-[#2F3388] bg-[#2F3388]/5" : "border-gray-200 bg-gray-50 hover:border-gray-300"}`}>
-                                <div className="flex justify-between items-start">
-                                  <div className="flex-1">
-                                    <div className={`font-bold text-sm ${puntoRetiro === punto.nombre ? "text-[#2F3388]" : "text-gray-700"}`}>{punto.nombre}</div>
-                                    <div className="text-xs text-gray-500 mt-1">{punto.fecha}</div>
-                                    <div className="text-xs text-gray-500">{punto.direccion}</div>
-                                    <span className={`inline-block mt-1 text-xs font-semibold px-2 py-0.5 rounded-full ${punto.zona === "Día del Evento" ? "bg-orange-100 text-orange-700" : "bg-blue-100 text-blue-700"}`}>{punto.zona}</span>
-                                  </div>
-                                  <a href={punto.mapsUrl} target="_blank" rel="noopener noreferrer"
-                                    onClick={(e) => e.stopPropagation()}
-                                    className="ml-3 text-xs text-blue-600 hover:text-blue-800 underline font-semibold shrink-0 flex items-center gap-1">
-                                    Ver Mapa
-                                  </a>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                          {errors.puntoRetiro && <p className="text-red-500 text-xs mt-1 font-medium">{errors.puntoRetiro}</p>}
-                        </div>
-                      </>
-                    ) : (
-                      <div className="bg-gray-50/50 p-2 md:p-6 rounded-2xl border border-gray-100">
-                        <ParticipantFormFields
-                          form={integrantes[grupoIndex - 1]}
-                          updateField={(field, value) => updateIntegrante(grupoIndex - 1, field, value)}
-                          errors={errors}
-                          prefix={`int${grupoIndex - 1}_`}
-                        />
-                      </div>
-                    )}
-
-                    {/* Resumen Total y Botón Agregar (solo Grupal) */}
-                    {modalidad === "grupal" && (
-                      <div className="mt-8 pt-6 border-t-2 border-dashed border-gray-200">
-                        {grupoIndex > 0 && grupoIndex === integrantes.length && (
-                          <div className="mb-6 space-y-3">
-                            <button type="button" onClick={addIntegrante}
-                              className="w-full py-4 rounded-xl border-2 border-dashed border-[#8CC541] text-[#8CC541] font-bold hover:bg-[#8CC541]/10 transition-all shadow-sm">
-                              + Agregar otro integrante al grupo
-                            </button>
-                            {integrantes.length > MIN_GRUPO - 1 && (
-                              <button type="button" onClick={() => {
-                                removeIntegrante(grupoIndex - 1);
-                                setGrupoIndex(grupoIndex - 1);
-                              }}
-                                className="w-full py-3 rounded-xl text-red-500 font-bold hover:bg-red-50 transition-all text-sm">
-                                Eliminar integrante actual
-                              </button>
-                            )}
-                          </div>
+                {/* Selector Individual / Grupal */}
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-3">Tipo de Inscripción</label>
+                  <div className="grid grid-cols-2 gap-4">
+                    <button type="button" onClick={() => { setModalidad("individual"); setFase(1); setGrupoIndex(0); }}
+                      className={`py-4 px-4 rounded-xl border-2 font-bold transition-all text-center ${modalidad === "individual" ? "border-[#C800A1] bg-[#C800A1]/10 text-[#C800A1]" : "border-gray-200 bg-gray-50 text-gray-500 hover:border-gray-300"}`}>
+                      <div className="text-lg">Individual</div>
+                      <div className="text-xs mt-1 font-normal opacity-90 flex items-center justify-center gap-1 group relative cursor-help">
+                        <span>${PRECIO_INDIVIDUAL} USD por persona</span>
+                        {metodoPago !== "transferencia" && (
+                          <>
+                            <svg className="w-4 h-4 text-red-500 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 bg-gray-800 text-white text-xs rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-20 shadow-xl pointer-events-none font-medium">
+                              Con tarjeta de crédito/débito el precio es de $36.63 (incluye comisión).
+                            </div>
+                          </>
                         )}
-                        <div className="bg-[#8CC541]/10 border border-[#8CC541]/30 rounded-xl p-5 flex items-center justify-between mb-6 shadow-sm">
-                          <div className="text-sm font-semibold text-gray-700">Total del Grupo:</div>
-                          <div className="font-black text-xl text-[#8CC541]">{totalPersonas} personas = ${totalPagar} USD</div>
-                        </div>
                       </div>
-                    )}
+                    </button>
+                    <button type="button" onClick={() => { setModalidad("grupal"); setFase(1); setGrupoIndex(0); }}
+                      className={`py-4 px-4 rounded-xl border-2 font-bold transition-all text-center ${modalidad === "grupal" ? "border-[#8CC541] bg-[#8CC541]/10 text-[#8CC541]" : "border-gray-200 bg-gray-50 text-gray-500 hover:border-gray-300"}`}>
+                      <div className="text-lg">Grupal (5+)</div>
+                      <div className="text-xs mt-1 font-normal opacity-90 flex items-center justify-center gap-1 group relative cursor-help">
+                        <span>${PRECIO_GRUPAL} USD por persona</span>
+                        {metodoPago !== "transferencia" && (
+                          <>
+                            <svg className="w-4 h-4 text-red-500 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 bg-gray-800 text-white text-xs rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-20 shadow-xl pointer-events-none font-medium">
+                              Con tarjeta de crédito/débito el precio es de $31.63 (incluye comisión).
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </button>
+                  </div>
+                </div>
 
-                    {/* Botones de Navegación */}
-                    <div className="flex gap-4 pt-4">
-                      {modalidad === "grupal" && grupoIndex > 0 && (
-                        <button type="button" onClick={handleAnterior}
-                          className="w-1/3 bg-gray-100 text-gray-700 py-4 rounded-xl font-bold text-lg hover:bg-gray-200 transition-all shadow-sm border border-gray-200">
-                          Anterior
-                        </button>
-                      )}
-                      <button type="submit"
-                        className={`${(modalidad === "grupal" && grupoIndex > 0) ? "w-2/3" : "w-full"} bg-[#C800A1] text-white py-4 rounded-xl font-bold text-lg hover:bg-[#a00081] transition-all shadow-md active:scale-[0.98]`}>
-                        {modalidad === "grupal" && grupoIndex < integrantes.length ? `Siguiente Integrante` : "Continuar a Políticas"}
-                      </button>
-                    </div>
-                  </form>
+                <div className="mt-8 pt-6 border-t border-gray-200">
+                  <button type="button" onClick={handleContinuarOpciones}
+                    className="w-full bg-[#C800A1] text-white py-4 rounded-xl font-bold text-lg hover:bg-[#a00081] transition-all shadow-md active:scale-[0.98]">
+                    Continuar a Datos
+                  </button>
                 </div>
               </div>
             </section>
           )}
 
-          {/* FASE 2: POLÍTICAS */}
-          {fase >= 2 && (
-            <section ref={politicasSectionRef} className="w-full px-4 pt-12 relative z-10">
+          {/* FASE 2: DATOS PERSONALES */}
+          {fase === 2 && (
+            <section ref={formSectionRef} className="w-full px-4 relative z-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="max-w-3xl mx-auto bg-white border border-gray-200 rounded-3xl p-6 md:p-10 shadow-xl">
+                <form onSubmit={handleSiguienteDatos} className="space-y-6">
+                  <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-2xl font-bold text-[#2F3388]">
+                      {modalidad === "individual" ? "Paso 2: Datos de Inscripción" : (grupoIndex === 0 ? "Paso 2: Datos del Líder" : `Integrante ${grupoIndex + 1}`)}
+                    </h2>
+                    {modalidad === "grupal" && (
+                      <div className="text-sm font-bold text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+                        Paso {grupoIndex + 1} de {totalPersonas}
+                      </div>
+                    )}
+                  </div>
+                  {grupoIndex === 0 && (
+                    <p className="text-gray-500 text-sm mb-8 -mt-4">Completa todos los campos para registrarte en la carrera.</p>
+                  )}
+
+                  {/* Contenido del Formulario */}
+                  {(modalidad === "individual" || grupoIndex === 0) ? (
+                    <ParticipantFormFields
+                      form={form}
+                      updateField={updateField}
+                      errors={errors}
+                      prefix=""
+                      edad={edad}
+                      categoria={categoria}
+                    />
+                  ) : (
+                    <div className="bg-gray-50/50 p-2 md:p-6 rounded-2xl border border-gray-100">
+                      <ParticipantFormFields
+                        form={integrantes[grupoIndex - 1]}
+                        updateField={(field, value) => updateIntegrante(grupoIndex - 1, field, value)}
+                        errors={errors}
+                        prefix={`int${grupoIndex - 1}_`}
+                      />
+                    </div>
+                  )}
+
+                  {/* Resumen Total y Botón Agregar (solo Grupal) */}
+                  {modalidad === "grupal" && (
+                    <div className="mt-4 pt-4 border-t-2 border-dashed border-gray-200">
+                      {grupoIndex > 0 && grupoIndex === integrantes.length && (
+                        <div className="mb-4 space-y-2">
+                          <button type="button" onClick={addIntegrante}
+                            className="w-full py-2.5 rounded-xl border-2 border-dashed border-[#8CC541] text-[#8CC541] font-bold hover:bg-[#8CC541]/10 transition-all shadow-sm">
+                            + Agregar otro integrante al grupo
+                          </button>
+                          {integrantes.length > MIN_GRUPO - 1 && (
+                            <button type="button" onClick={() => {
+                              removeIntegrante(grupoIndex - 1);
+                              setGrupoIndex(grupoIndex - 1);
+                            }}
+                              className="w-full py-2 rounded-xl text-red-500 font-bold hover:bg-red-50 transition-all text-sm">
+                              Eliminar integrante actual
+                            </button>
+                          )}
+                        </div>
+                      )}
+                      <div className="bg-[#8CC541]/10 border border-[#8CC541]/30 rounded-xl p-3 flex items-center justify-between mb-4 shadow-sm">
+                        <div className="text-sm font-semibold text-gray-700">Total del Grupo:</div>
+                        <div className="font-black text-xl text-[#8CC541]">{totalPersonas} personas = ${totalPagar} USD</div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Botones de Navegación Fase 2 */}
+                  <div className="flex gap-4 pt-2">
+                    <button type="button" onClick={handleAnteriorDatos}
+                      className="w-1/3 bg-gray-100 text-gray-700 py-3 rounded-xl font-bold text-lg hover:bg-gray-200 transition-all shadow-sm border border-gray-200">
+                      Anterior
+                    </button>
+                    <button type="submit"
+                      className="w-2/3 bg-[#C800A1] text-white py-3 rounded-xl font-bold text-lg hover:bg-[#a00081] transition-all shadow-md active:scale-[0.98]">
+                      {modalidad === "grupal" && grupoIndex < integrantes.length ? `Siguiente Integrante` : "Continuar a Kit"}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </section>
+          )}
+
+          {/* FASE 3: PUNTO DE RETIRO DE KIT */}
+          {fase === 3 && (
+            <section className="w-full px-4 relative z-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="max-w-3xl mx-auto bg-white border border-gray-200 rounded-3xl p-6 md:p-10 shadow-xl">
+                <h2 className="text-2xl font-bold text-[#2F3388] mb-6">Paso 3: Punto de Retiro de Kit</h2>
+                <p className="text-gray-500 text-sm mb-6">Selecciona dónde retirarás el kit de participación {modalidad === "grupal" && "para todo tu grupo"}.</p>
+                
+                <div className="space-y-3">
+                  {PUNTOS_RETIRO.map((punto) => (
+                    <div key={punto.nombre}
+                      onClick={() => { setPuntoRetiro(punto.nombre); if (errors.puntoRetiro) setErrors((prev) => ({ ...prev, puntoRetiro: "" })); }}
+                      className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${puntoRetiro === punto.nombre ? "border-[#2F3388] bg-[#2F3388]/5" : "border-gray-200 bg-gray-50 hover:border-gray-300"}`}>
+                      <div className="flex justify-between items-start">
+                        <div className="flex-1">
+                          <div className={`font-bold text-sm ${puntoRetiro === punto.nombre ? "text-[#2F3388]" : "text-gray-700"}`}>{punto.nombre}</div>
+                          <div className="text-xs text-gray-500 mt-1">{punto.fecha}</div>
+                          <div className="text-xs text-gray-500">{punto.direccion}</div>
+                          <span className={`inline-block mt-1 text-xs font-semibold px-2 py-0.5 rounded-full ${punto.zona === "Día del Evento" ? "bg-orange-100 text-orange-700" : "bg-blue-100 text-blue-700"}`}>{punto.zona}</span>
+                        </div>
+                        <a href={punto.mapsUrl} target="_blank" rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          className="ml-3 text-xs text-blue-600 hover:text-blue-800 underline font-semibold shrink-0 flex items-center gap-1">
+                          Ver Mapa
+                        </a>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                {errors.puntoRetiro && <p className="text-red-500 text-xs mt-1 font-medium">{errors.puntoRetiro}</p>}
+
+                <div className="flex gap-4 pt-4 mt-8 border-t border-gray-100">
+                  <button type="button" onClick={() => { setFase(2); if(modalidad==="grupal") setGrupoIndex(integrantes.length); }}
+                    className="w-1/3 bg-gray-100 text-gray-700 py-4 rounded-xl font-bold text-lg hover:bg-gray-200 transition-all shadow-sm border border-gray-200">
+                    Anterior
+                  </button>
+                  <button type="button" onClick={handleContinuarKit}
+                    className="w-2/3 bg-[#C800A1] text-white py-4 rounded-xl font-bold text-lg hover:bg-[#a00081] transition-all shadow-md active:scale-[0.98]">
+                    Continuar a Políticas
+                  </button>
+                </div>
+              </div>
+            </section>
+          )}
+
+          {/* FASE 4: POLÍTICAS */}
+          {fase === 4 && (
+            <section ref={politicasSectionRef} className="w-full px-4 relative z-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="max-w-3xl mx-auto">
                 <div className="bg-white border border-gray-200 rounded-3xl p-6 md:p-10 shadow-xl relative z-10">
-                  <h2 className="text-2xl font-bold text-[#2F3388] mb-2">Deslinde de Responsabilidad</h2>
+                  <h2 className="text-2xl font-bold text-[#2F3388] mb-2">Paso 4: Deslinde de Responsabilidad</h2>
                   <p className="text-gray-500 text-sm mb-6">Lee cuidadosamente y acepta los términos para continuar.</p>
 
                   <div className="bg-gray-50 border border-gray-200 rounded-xl p-5 max-h-[300px] overflow-y-auto text-gray-700 text-sm leading-relaxed whitespace-pre-line mb-6 shadow-inner">
@@ -892,7 +905,7 @@ function NuveiPageContent() {
                   </label>
 
                   <div className="flex gap-4">
-                    <button type="button" onClick={() => { setFase(1); scrollToSection(formSectionRef); }} className="w-1/3 py-3 rounded-xl border border-gray-300 text-gray-600 font-bold hover:bg-gray-50 transition-all">Atrás</button>
+                    <button type="button" onClick={() => { setFase(3); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="w-1/3 py-3 rounded-xl border border-gray-300 text-gray-600 font-bold hover:bg-gray-50 transition-all">Atrás</button>
                     <button type="button" onClick={handlePoliticasSubmit} disabled={!aceptoPoliticas}
                       className={`w-2/3 py-3 rounded-xl font-bold text-lg transition-all shadow-md ${aceptoPoliticas ? "bg-[#C800A1] text-white hover:bg-[#a00081] active:scale-[0.98]" : "bg-gray-300 text-gray-500 cursor-not-allowed shadow-none"}`}>
                       Continuar al Pago
@@ -903,10 +916,10 @@ function NuveiPageContent() {
             </section>
           )}
 
-          {/* FASE 3: RESUMEN + PAGO */}
-          {fase >= 3 && (
-            <section ref={pagoSectionRef} className="w-full px-4 pt-12 relative z-10">
-              <div className="max-w-3xl mx-auto">
+          {/* FASE 5: RESUMEN + PAGO */}
+          {fase === 5 && (
+            <section ref={pagoSectionRef} className="w-full px-4 relative z-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="max-w-5xl mx-auto">
                 <div className="bg-white border border-gray-200 rounded-3xl p-6 md:p-10 shadow-xl relative z-10">
                   <div className="flex items-center gap-3 mb-6">
                     <div className="bg-[#2F3388]/10 p-3 rounded-xl">
@@ -918,64 +931,98 @@ function NuveiPageContent() {
                     </div>
                   </div>
 
-                  {/* Resumen del líder */}
-                  <div className="bg-blue-50 border border-blue-100 rounded-2xl p-5 mb-4 space-y-3 text-sm">
-                    <div className="text-xs font-bold text-[#2F3388] uppercase mb-2">{modalidad === "grupal" ? "Líder del Grupo" : "Participante"}</div>
-                    <SummaryRow label="Nombre" value={`${form.nombres} ${form.apellidos}`} />
-                    <SummaryRow label="Cédula" value={form.cedula} />
-                    <SummaryRow label="Email" value={form.correoElectronico} />
-                    <SummaryRow label="Categoría" value={categoria} highlight />
-                    <SummaryRow label="Distancia" value={form.distancia} highlightOrange />
-                    <SummaryRow label="Talla" value={form.talla} highlightGreen />
-                  </div>
-
-                  {/* Resumen integrantes (grupal) */}
-                  {modalidad === "grupal" && integrantes.map((p, i) => (
-                    <div key={i} className="bg-gray-50 border border-gray-200 rounded-2xl p-4 mb-3 space-y-2 text-sm">
-                      <div className="text-xs font-bold text-[#2F3388] uppercase">Integrante {i + 2}</div>
-                      <SummaryRow label="Nombre" value={`${p.nombres} ${p.apellidos}`} />
-                      <SummaryRow label="Cédula" value={p.cedula} />
-                      <SummaryRow label="Distancia" value={p.distancia} highlightOrange />
-                      <SummaryRow label="Talla" value={p.talla} highlightGreen />
-                    </div>
-                  ))}
-
-                  {/* Punto retiro */}
-                  <div className="bg-purple-50 border border-purple-100 rounded-2xl p-4 mb-4 text-sm">
-                    <SummaryRow label="Punto de Retiro" value={puntoRetiro} highlight />
-                  </div>
-
-                  {/* Comprobante eliminado de aquí, ya se pide en Fase 1 */}
-
-                  {/* Total */}
-                  <div className="bg-blue-50 border border-blue-100 rounded-2xl p-5 mb-8">
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <span className="font-bold text-gray-700 uppercase text-sm">Total a Pagar</span>
-                        {modalidad === "grupal" && <div className="text-xs text-gray-500">{totalPersonas} personas × ${precioUnitario}</div>}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    {/* COLUMNA IZQUIERDA: Resumen de Datos */}
+                    <div>
+                      {/* Resumen del líder */}
+                      <div className="bg-blue-50 border border-blue-100 rounded-2xl p-5 mb-4 space-y-3 text-sm">
+                        <div className="text-xs font-bold text-[#2F3388] uppercase mb-2">{modalidad === "grupal" ? "Líder del Grupo" : "Participante"}</div>
+                        <SummaryRow label="Nombre" value={`${form.nombres} ${form.apellidos}`} />
+                        <SummaryRow label="Cédula" value={form.cedula} />
+                        <SummaryRow label="Email" value={form.correoElectronico} />
+                        <SummaryRow label="Categoría" value={categoria} highlight />
+                        <SummaryRow label="Distancia" value={form.distancia} highlightOrange />
+                        <SummaryRow label="Talla" value={form.talla} highlightGreen />
                       </div>
-                      <span className="font-black text-2xl text-[#C800A1]">${totalPagar} USD</span>
+
+                      {/* Resumen integrantes (grupal) */}
+                      {modalidad === "grupal" && integrantes.length > 0 && (
+                        <div className="mb-4">
+                          <div className="flex overflow-x-auto snap-x space-x-3 pb-3 [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full">
+                            {integrantes.map((p, i) => (
+                              <div key={i} className="min-w-[240px] shrink-0 snap-start bg-gray-50 border border-gray-200 rounded-2xl p-4 space-y-2 text-sm">
+                                <div className="text-xs font-bold text-[#2F3388] uppercase">Integrante {i + 2}</div>
+                                <SummaryRow label="Nombre" value={p.nombres ? `${p.nombres} ${p.apellidos}` : "Pendiente"} />
+                                <SummaryRow label="Cédula" value={p.cedula || "-"} />
+                                <SummaryRow label="Distancia" value={p.distancia || "-"} highlightOrange />
+                                <SummaryRow label="Talla" value={p.talla || "-"} highlightGreen />
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Punto retiro */}
+                      <div className="bg-purple-50 border border-purple-100 rounded-2xl p-4 text-sm">
+                        <SummaryRow label="Punto de Retiro" value={puntoRetiro} highlight />
+                      </div>
                     </div>
-                  </div>
 
-                  <button onClick={handlePay} disabled={status === "loading" || status === "processing" || (metodoPago === "tarjeta" && !sdkReady) || (metodoPago === "transferencia" && !comprobanteFile)}
-                    className={`w-full py-4 rounded-xl font-bold text-xl transition-all shadow-lg active:scale-[0.98] flex items-center justify-center gap-2 ${status === "loading" || status === "processing" ? "bg-gray-400 text-white cursor-not-allowed" : ((metodoPago === "tarjeta" && !sdkReady) || (metodoPago === "transferencia" && !comprobanteFile)) ? "bg-gray-300 text-gray-600 cursor-not-allowed" : "bg-[#C800A1] text-white hover:bg-[#a00081]"}`}>
-                    {metodoPago === "tarjeta" && !sdkReady ? "Cargando procesador..." : status === "loading" ? "Registrando datos..." : status === "processing" ? "Procesando..." : (
-                      <>
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={metodoPago === "transferencia" ? "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" : "M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"} /></svg>
-                        {metodoPago === "transferencia" ? "Finalizar Registro" : `Pagar $${totalPagar} USD`}
-                      </>
-                    )}
-                  </button>
+                    {/* COLUMNA DERECHA: Pago y Envío */}
+                    <div className="flex flex-col h-full justify-center">
+                      {/* Subida del Comprobante (Movido a Fase 5) */}
+                      {metodoPago === "transferencia" && (
+                        <div className="bg-green-50 border border-green-200 rounded-2xl p-5 mb-6">
+                          <label className="block font-bold text-green-900 mb-2">Comprobante de Transferencia / Depósito *</label>
+                          <p className="text-xs text-green-700 mb-3">Sube la foto o captura de pantalla de tu comprobante. Formatos: JPG, PNG, PDF (máx. 5MB).</p>
+                          <div className="flex items-center justify-center w-full">
+                            <label className="flex flex-col items-center justify-center w-full h-28 border-2 border-green-300 border-dashed rounded-xl cursor-pointer bg-white hover:bg-green-50 transition-colors">
+                              <div className="flex flex-col items-center justify-center pt-3 pb-3">
+                                <svg className="w-6 h-6 mb-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                                <p className="mb-1 text-xs text-gray-500"><span className="font-semibold text-green-600">Haz clic para subir</span> o arrastra y suelta</p>
+                                <p className="text-xs font-bold text-gray-700 max-w-[200px] truncate">{comprobanteFile ? comprobanteFile.name : "Ningún archivo seleccionado"}</p>
+                              </div>
+                              <input type="file" className="hidden" accept="image/*,.pdf" onChange={(e) => {
+                                setComprobanteFile(e.target.files?.[0] || null);
+                                if (errors.comprobante) setErrors((prev) => ({ ...prev, comprobante: "" }));
+                              }} />
+                            </label>
+                          </div>
+                          {errors.comprobante && <p className="text-red-500 text-xs mt-2 font-medium text-center">{errors.comprobante}</p>}
+                        </div>
+                      )}
 
-                  {message && !txResult && (
-                    <div className={`mt-4 p-4 rounded-xl text-sm w-full text-center font-medium ${status === "processing" || status === "loading" ? "bg-blue-50 text-blue-700 border border-blue-200" : status === "error" ? "bg-red-50 text-red-700 border border-red-200" : ""}`}>
-                      {message}
+                      {/* Total */}
+                      <div className="bg-blue-50 border border-blue-100 rounded-2xl p-5 mb-6">
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <span className="font-bold text-gray-700 uppercase text-sm">Total a Pagar</span>
+                            {modalidad === "grupal" && <div className="text-xs text-gray-500">{totalPersonas} personas × ${precioUnitario}</div>}
+                          </div>
+                          <span className="font-black text-2xl text-[#C800A1]">${totalPagar} USD</span>
+                        </div>
+                      </div>
+
+                      <button onClick={handlePay} disabled={status === "loading" || status === "processing" || (metodoPago === "tarjeta" && !sdkReady) || (metodoPago === "transferencia" && !comprobanteFile)}
+                        className={`w-full py-4 rounded-xl font-bold text-xl transition-all shadow-lg active:scale-[0.98] flex items-center justify-center gap-2 ${status === "loading" || status === "processing" ? "bg-gray-400 text-white cursor-not-allowed" : ((metodoPago === "tarjeta" && !sdkReady) || (metodoPago === "transferencia" && !comprobanteFile)) ? "bg-gray-300 text-gray-600 cursor-not-allowed" : "bg-[#C800A1] text-white hover:bg-[#a00081]"}`}>
+                        {metodoPago === "tarjeta" && !sdkReady ? "Cargando procesador..." : status === "loading" ? "Registrando datos..." : status === "processing" ? "Procesando..." : (
+                          <>
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={metodoPago === "transferencia" ? "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" : "M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"} /></svg>
+                            {metodoPago === "transferencia" ? "Finalizar Registro" : `Pagar $${totalPagar} USD`}
+                          </>
+                        )}
+                      </button>
+
+                      {message && !txResult && (
+                        <div className={`mt-4 p-4 rounded-xl text-sm w-full text-center font-medium ${status === "processing" || status === "loading" ? "bg-blue-50 text-blue-700 border border-blue-200" : status === "error" ? "bg-red-50 text-red-700 border border-red-200" : ""}`}>
+                          {message}
+                        </div>
+                      )}
+
+                      <div className="mt-8 text-center">
+                        <button type="button" onClick={() => { setFase(4); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="text-gray-500 hover:text-gray-700 transition text-sm font-semibold underline">← Revisar Políticas</button>
+                      </div>
                     </div>
-                  )}
-
-                  <div className="mt-8 text-center">
-                    <button type="button" onClick={() => { setFase(2); scrollToSection(politicasSectionRef); }} className="text-gray-500 hover:text-gray-700 transition text-sm font-semibold underline">← Revisar Políticas</button>
                   </div>
                 </div>
               </div>
@@ -1047,13 +1094,13 @@ function ParticipantFormFields({ form, updateField, errors, prefix, edad, catego
       </div>
 
       {/* Cédula + Teléfono */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <InputField label="Cédula *" name="cedula" value={form.cedula} onChange={(v) => updateField("cedula", v)} error={errors[`${prefix}cedula`]} placeholder="1712345678" />
         <InputField label="Teléfono Móvil *" name="tel" autoComplete="tel" value={form.telefonoMovil} onChange={(v) => updateField("telefonoMovil", v)} error={errors[`${prefix}telefonoMovil`]} placeholder="0991234567" />
       </div>
 
-      {/* Nombres + Apellidos */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+      {/* Nombres y Apellidos */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <InputField label="Nombres *" name="nombres" autoComplete="given-name" value={form.nombres} onChange={(v) => updateField("nombres", v)} error={errors[`${prefix}nombres`]} placeholder="Juan Carlos" />
         <InputField label="Apellidos *" name="apellidos" autoComplete="family-name" value={form.apellidos} onChange={(v) => updateField("apellidos", v)} error={errors[`${prefix}apellidos`]} placeholder="Pérez López" />
       </div>
@@ -1073,13 +1120,13 @@ function ParticipantFormFields({ form, updateField, errors, prefix, edad, catego
       </div>
 
       {/* Fecha Nacimiento + Categoría */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <InputField label="Fecha de Nacimiento *" name="bday" autoComplete="bday" type="date" value={form.fechaNacimiento} onChange={(v) => updateField("fechaNacimiento", v)} error={errors[`${prefix}fechaNacimiento`]} />
         <div>
           <label className="block text-sm font-bold text-gray-700 mb-1.5">Categoría (Auto)</label>
           <input type="text" readOnly
             value={displayCategoria ? `${displayCategoria} (${displayEdad} años)` : "Selecciona fecha de nacimiento"}
-            className={`w-full px-4 py-3 bg-gray-100 border border-gray-200 rounded-xl focus:outline-none transition font-semibold ${displayCategoria ? "text-[#C800A1]" : "text-gray-400"}`} />
+            className={`w-full px-3 py-2 bg-gray-100 border border-gray-200 rounded-xl focus:outline-none transition font-semibold ${displayCategoria ? "text-[#C800A1]" : "text-gray-400"}`} />
         </div>
       </div>
 
@@ -1087,7 +1134,7 @@ function ParticipantFormFields({ form, updateField, errors, prefix, edad, catego
       <InputField label="Correo Electrónico *" name="email" autoComplete="email" type="email" value={form.correoElectronico} onChange={(v) => updateField("correoElectronico", v)} error={errors[`${prefix}correoElectronico`]} placeholder="tu@correo.com" />
 
       {/* País + Ciudad */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <InputField label="País" name="country-name" autoComplete="country-name" value={form.pais} onChange={(v) => updateField("pais", v)} placeholder="Ecuador" />
         <InputField label="Ciudad *" name="address-level2" autoComplete="address-level2" value={form.ciudad} onChange={(v) => updateField("ciudad", v)} error={errors[`${prefix}ciudad`]} placeholder="Quito" />
       </div>
@@ -1095,10 +1142,10 @@ function ParticipantFormFields({ form, updateField, errors, prefix, edad, catego
       {/* Talla */}
       <div>
         <label className="block text-sm font-bold text-gray-700 mb-2">Talla de Camiseta *</label>
-        <div className="grid grid-cols-4 gap-3">
+        <div className="grid grid-cols-4 gap-2">
           {TALLAS.map((t) => (
             <button key={t} type="button" onClick={() => updateField("talla", t)}
-              className={`py-3 rounded-xl border-2 text-sm font-bold transition-all ${form.talla === t ? "border-[#8CC541] bg-[#8CC541]/10 text-[#8CC541]" : "border-gray-200 bg-gray-50 text-gray-500 hover:border-gray-300"}`}>
+              className={`py-2 rounded-xl border-2 text-sm font-bold transition-all ${form.talla === t ? "border-[#8CC541] bg-[#8CC541]/10 text-[#8CC541]" : "border-gray-200 bg-gray-50 text-gray-500 hover:border-gray-300"}`}>
               {t}
             </button>
           ))}
@@ -1116,7 +1163,7 @@ function InputField({ label, value, onChange, error, placeholder, type = "text",
     <div>
       <label className="block text-sm font-bold text-gray-700 mb-1.5">{label}</label>
       <input type={type} name={name} autoComplete={autoComplete} value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder}
-        className={`w-full px-4 py-3 bg-white border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#C800A1] focus:border-transparent transition text-gray-800 placeholder-gray-400 ${error ? "border-red-500 bg-red-50" : "border-gray-300"}`} />
+        className={`w-full px-3 py-2 bg-white border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#C800A1] focus:border-transparent transition text-gray-800 placeholder-gray-400 ${error ? "border-red-500 bg-red-50" : "border-gray-300"}`} />
       {error && <p className="text-red-500 text-xs mt-1 font-medium">{error}</p>}
     </div>
   );
