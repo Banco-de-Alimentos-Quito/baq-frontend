@@ -591,7 +591,7 @@ function NuveiPageContent() {
         </picture>
 
         {/* CONTENIDO SUPERPUESTO */}
-        <div className="relative z-10 flex flex-col items-center pt-4 md:pt-6 pb-12 w-full min-h-screen">
+        <div className="relative z-10 flex flex-col items-center pt-2 pb-6 w-full min-h-screen">
 
           {/* STEPPER GLOBAL (Visible desde Fase 1 en adelante) */}
           {fase >= 1 && (
@@ -671,28 +671,28 @@ function NuveiPageContent() {
           {/* FASE 1: OPCIONES BÁSICAS */}
           {fase === 1 && (
             <section className="w-full px-4 relative z-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <div className="max-w-3xl mx-auto bg-white border border-gray-200 rounded-3xl p-6 md:p-10 shadow-xl">
-                <h2 className="text-2xl font-bold text-[#2F3388] mb-6 text-center">Paso 1: Opciones de Inscripción</h2>
+              <div className="max-w-3xl mx-auto bg-white border border-gray-200 rounded-3xl p-4 md:p-6 shadow-xl">
+                <h2 className="text-xl md:text-2xl font-bold text-[#2F3388] mb-4 text-center">Paso 1: Opciones de Inscripción</h2>
                 
                 {/* Selector Método de Pago */}
-                <div className="mb-8 border-b border-gray-200 pb-8">
-                  <label className="block text-sm font-bold text-gray-700 mb-3">Método de Pago</label>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="mb-4 border-b border-gray-200 pb-4">
+                  <label className="block text-sm font-bold text-gray-700 mb-2">Método de Pago</label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <button type="button" onClick={() => setMetodoPago("tarjeta")}
-                      className={`py-4 px-4 rounded-xl border-2 font-bold transition-all text-center flex flex-col items-center justify-center gap-1 ${metodoPago === "tarjeta" ? "border-[#C800A1] bg-[#C800A1]/10 text-[#C800A1]" : "border-gray-200 bg-gray-50 text-gray-500 hover:border-gray-300"}`}>
+                      className={`py-3 px-3 rounded-xl border-2 font-bold transition-all text-center flex flex-col items-center justify-center gap-1 ${metodoPago === "tarjeta" ? "border-[#C800A1] bg-[#C800A1]/10 text-[#C800A1]" : "border-gray-200 bg-gray-50 text-gray-500 hover:border-gray-300"}`}>
                       <svg className="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
-                      <div className="text-lg">Tarjeta (Crédito/Débito)</div>
+                      <div className="text-base">Tarjeta (Crédito/Débito)</div>
                     </button>
                     <button type="button" onClick={() => setMetodoPago("transferencia")}
-                      className={`py-4 px-4 rounded-xl border-2 font-bold transition-all text-center flex flex-col items-center justify-center gap-1 ${metodoPago === "transferencia" ? "border-green-500 bg-green-50 text-green-700" : "border-gray-200 bg-gray-50 text-gray-500 hover:border-gray-300"}`}>
+                      className={`py-3 px-3 rounded-xl border-2 font-bold transition-all text-center flex flex-col items-center justify-center gap-1 ${metodoPago === "transferencia" ? "border-green-500 bg-green-50 text-green-700" : "border-gray-200 bg-gray-50 text-gray-500 hover:border-gray-300"}`}>
                       <svg className="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" /></svg>
-                      <div className="text-lg">Transferencia Bancaria</div>
+                      <div className="text-base">Transferencia Bancaria</div>
                     </button>
                   </div>
                   {metodoPago === "transferencia" && (
-                    <div className="mt-6 bg-green-50 border border-green-200 rounded-xl p-5 text-sm text-green-900 animate-in fade-in slide-in-from-top-2 duration-300">
-                      <h4 className="font-bold text-green-800 mb-3 uppercase tracking-wider text-xs">Datos para Depósito o Transferencia</h4>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-4 mb-4">
+                    <div className="mt-4 bg-green-50 border border-green-200 rounded-xl p-3 text-xs text-green-900 animate-in fade-in slide-in-from-top-2 duration-300">
+                      <h4 className="font-bold text-green-800 mb-2 uppercase tracking-wider text-[10px]">Datos para Depósito o Transferencia</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-y-1 gap-x-2 mb-2">
                         <p><span className="font-bold">Nombre:</span> Fundación de Ayuda Social Banco de Alimentos Quito</p>
                         <p><span className="font-bold">RUC:</span> 1791921429001</p>
                         <p><span className="font-bold">Número de cuenta:</span> 2100282580</p>
@@ -705,17 +705,17 @@ function NuveiPageContent() {
 
                 {/* Selector Individual / Grupal */}
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-3">Tipo de Inscripción</label>
-                  <div className="grid grid-cols-2 gap-4">
+                  <label className="block text-sm font-bold text-gray-700 mb-2">Tipo de Inscripción</label>
+                  <div className="grid grid-cols-2 gap-3">
                     <button type="button" onClick={() => { setModalidad("individual"); setFase(1); setGrupoIndex(0); }}
-                      className={`py-4 px-4 rounded-xl border-2 font-bold transition-all text-center ${modalidad === "individual" ? "border-[#C800A1] bg-[#C800A1]/10 text-[#C800A1]" : "border-gray-200 bg-gray-50 text-gray-500 hover:border-gray-300"}`}>
-                      <div className="text-lg">Individual</div>
-                      <div className="text-xs mt-1 font-normal opacity-90 flex items-center justify-center gap-1 group relative cursor-help">
+                      className={`py-3 px-3 rounded-xl border-2 font-bold transition-all text-center ${modalidad === "individual" ? "border-[#C800A1] bg-[#C800A1]/10 text-[#C800A1]" : "border-gray-200 bg-gray-50 text-gray-500 hover:border-gray-300"}`}>
+                      <div className="text-base">Individual</div>
+                      <div className="text-[10px] mt-1 font-normal opacity-90 flex items-center justify-center gap-1 group relative cursor-help">
                         <span>${PRECIO_INDIVIDUAL} USD por persona</span>
                         {metodoPago !== "transferencia" && (
                           <>
-                            <svg className="w-4 h-4 text-red-500 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 bg-gray-800 text-white text-xs rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-20 shadow-xl pointer-events-none font-medium">
+                            <svg className="w-3 h-3 text-red-500 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 w-48 p-2 bg-gray-800 text-white text-[10px] rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-20 shadow-xl pointer-events-none font-medium">
                               Con tarjeta de crédito/débito el precio es de $36.63 (incluye comisión).
                             </div>
                           </>
@@ -723,14 +723,14 @@ function NuveiPageContent() {
                       </div>
                     </button>
                     <button type="button" onClick={() => { setModalidad("grupal"); setFase(1); setGrupoIndex(0); }}
-                      className={`py-4 px-4 rounded-xl border-2 font-bold transition-all text-center ${modalidad === "grupal" ? "border-[#8CC541] bg-[#8CC541]/10 text-[#8CC541]" : "border-gray-200 bg-gray-50 text-gray-500 hover:border-gray-300"}`}>
-                      <div className="text-lg">Grupal (5+)</div>
-                      <div className="text-xs mt-1 font-normal opacity-90 flex items-center justify-center gap-1 group relative cursor-help">
+                      className={`py-3 px-3 rounded-xl border-2 font-bold transition-all text-center ${modalidad === "grupal" ? "border-[#8CC541] bg-[#8CC541]/10 text-[#8CC541]" : "border-gray-200 bg-gray-50 text-gray-500 hover:border-gray-300"}`}>
+                      <div className="text-base">Grupal (5+)</div>
+                      <div className="text-[10px] mt-1 font-normal opacity-90 flex items-center justify-center gap-1 group relative cursor-help">
                         <span>${PRECIO_GRUPAL} USD por persona</span>
                         {metodoPago !== "transferencia" && (
                           <>
-                            <svg className="w-4 h-4 text-red-500 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 bg-gray-800 text-white text-xs rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-20 shadow-xl pointer-events-none font-medium">
+                            <svg className="w-3 h-3 text-red-500 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 w-48 p-2 bg-gray-800 text-white text-[10px] rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-20 shadow-xl pointer-events-none font-medium">
                               Con tarjeta de crédito/débito el precio es de $31.63 (incluye comisión).
                             </div>
                           </>
@@ -740,9 +740,9 @@ function NuveiPageContent() {
                   </div>
                 </div>
 
-                <div className="mt-8 pt-6 border-t border-gray-200">
-                  <button type="button" onClick={handleContinuarOpciones}
-                    className="w-full bg-[#C800A1] text-white py-4 rounded-xl font-bold text-lg hover:bg-[#a00081] transition-all shadow-md active:scale-[0.98]">
+                <div className="mt-6 flex gap-4">
+                  <button type="button" onClick={handleContinuarOpciones} disabled={!metodoPago}
+                    className={`w-full py-3 rounded-xl font-bold text-base transition-all shadow-md ${!metodoPago ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-[#C800A1] text-white hover:bg-[#a00081] active:scale-[0.98]"}`}>
                     Continuar a Datos
                   </button>
                 </div>
@@ -753,82 +753,75 @@ function NuveiPageContent() {
           {/* FASE 2: DATOS PERSONALES */}
           {fase === 2 && (
             <section ref={formSectionRef} className="w-full px-4 relative z-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <div className="max-w-3xl mx-auto bg-white border border-gray-200 rounded-3xl p-6 md:p-10 shadow-xl">
-                <form onSubmit={handleSiguienteDatos} className="space-y-6">
-                  <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-2xl font-bold text-[#2F3388]">
-                      {modalidad === "individual" ? "Paso 2: Datos de Inscripción" : (grupoIndex === 0 ? "Paso 2: Datos del Líder" : `Integrante ${grupoIndex + 1}`)}
-                    </h2>
-                    {modalidad === "grupal" && (
-                      <div className="text-sm font-bold text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
-                        Paso {grupoIndex + 1} de {totalPersonas}
+              <div className="max-w-3xl mx-auto">
+                <div className="bg-white border border-gray-200 rounded-3xl p-4 md:p-6 shadow-xl relative z-10">
+                  <h2 className="text-xl md:text-2xl font-bold text-[#2F3388] mb-1">
+                    {modalidad === "grupal" ? `Datos del Grupo (${grupoIndex === 0 ? "Líder" : `Integrante ${grupoIndex + 1}`})` : "Paso 2: Datos de Inscripción"}
+                  </h2>
+                  <p className="text-gray-500 text-xs mb-3">Completa todos los campos para registrarte en la carrera.</p>
+
+                  <form onSubmit={handleSiguienteDatos} className="space-y-4">
+                    {/* Contenido del Formulario */}
+                    {(modalidad === "individual" || grupoIndex === 0) ? (
+                      <ParticipantFormFields
+                        form={form}
+                        updateField={updateField}
+                        errors={errors}
+                        prefix=""
+                        edad={edad}
+                        categoria={categoria}
+                      />
+                    ) : (
+                      <div className="bg-gray-50/50 p-3 md:p-4 rounded-2xl border border-gray-100">
+                        <ParticipantFormFields
+                          form={integrantes[grupoIndex - 1]}
+                          updateField={(field, value) => updateIntegrante(grupoIndex - 1, field, value)}
+                          errors={errors}
+                          prefix={`int${grupoIndex - 1}_`}
+                        />
                       </div>
                     )}
-                  </div>
-                  {grupoIndex === 0 && (
-                    <p className="text-gray-500 text-sm mb-8 -mt-4">Completa todos los campos para registrarte en la carrera.</p>
-                  )}
 
-                  {/* Contenido del Formulario */}
-                  {(modalidad === "individual" || grupoIndex === 0) ? (
-                    <ParticipantFormFields
-                      form={form}
-                      updateField={updateField}
-                      errors={errors}
-                      prefix=""
-                      edad={edad}
-                      categoria={categoria}
-                    />
-                  ) : (
-                    <div className="bg-gray-50/50 p-2 md:p-6 rounded-2xl border border-gray-100">
-                      <ParticipantFormFields
-                        form={integrantes[grupoIndex - 1]}
-                        updateField={(field, value) => updateIntegrante(grupoIndex - 1, field, value)}
-                        errors={errors}
-                        prefix={`int${grupoIndex - 1}_`}
-                      />
-                    </div>
-                  )}
-
-                  {/* Resumen Total y Botón Agregar (solo Grupal) */}
-                  {modalidad === "grupal" && (
-                    <div className="mt-4 pt-4 border-t-2 border-dashed border-gray-200">
-                      {grupoIndex > 0 && grupoIndex === integrantes.length && (
-                        <div className="mb-4 space-y-2">
-                          <button type="button" onClick={addIntegrante}
-                            className="w-full py-2.5 rounded-xl border-2 border-dashed border-[#8CC541] text-[#8CC541] font-bold hover:bg-[#8CC541]/10 transition-all shadow-sm">
-                            + Agregar otro integrante al grupo
-                          </button>
-                          {integrantes.length > MIN_GRUPO - 1 && (
-                            <button type="button" onClick={() => {
-                              removeIntegrante(grupoIndex - 1);
-                              setGrupoIndex(grupoIndex - 1);
-                            }}
-                              className="w-full py-2 rounded-xl text-red-500 font-bold hover:bg-red-50 transition-all text-sm">
-                              Eliminar integrante actual
+                    {/* Resumen Total y Botón Agregar (solo Grupal) */}
+                    {modalidad === "grupal" && (
+                      <div className="mt-2 pt-2 border-t-2 border-dashed border-gray-200">
+                        {grupoIndex > 0 && grupoIndex === integrantes.length && (
+                          <div className="mb-2 space-y-1">
+                            <button type="button" onClick={addIntegrante}
+                              className="w-full py-1.5 rounded-lg border border-dashed border-[#8CC541] text-[#8CC541] font-bold hover:bg-[#8CC541]/10 transition-all text-[10px]">
+                              + Agregar otro integrante
                             </button>
-                          )}
+                            {integrantes.length > MIN_GRUPO - 1 && (
+                              <button type="button" onClick={() => {
+                                removeIntegrante(grupoIndex - 1);
+                                setGrupoIndex(grupoIndex - 1);
+                              }}
+                                className="w-full py-1 rounded-lg text-red-500 font-bold hover:bg-red-50 transition-all text-[10px]">
+                                Eliminar integrante
+                              </button>
+                            )}
+                          </div>
+                        )}
+                        <div className="bg-[#8CC541]/10 border border-[#8CC541]/30 rounded-xl p-2 flex items-center justify-between">
+                          <div className="text-[10px] font-semibold text-gray-700">Total:</div>
+                          <div className="font-black text-sm text-[#8CC541]">{totalPersonas} pers. = ${totalPagar} USD</div>
                         </div>
-                      )}
-                      <div className="bg-[#8CC541]/10 border border-[#8CC541]/30 rounded-xl p-3 flex items-center justify-between mb-4 shadow-sm">
-                        <div className="text-sm font-semibold text-gray-700">Total del Grupo:</div>
-                        <div className="font-black text-xl text-[#8CC541]">{totalPersonas} personas = ${totalPagar} USD</div>
                       </div>
-                    </div>
-                  )}
+                    )}
 
-                  {/* Botones de Navegación Fase 2 */}
-                  <div className="flex gap-4 pt-2">
-                    <button type="button" onClick={handleAnteriorDatos}
-                      className="w-1/3 bg-gray-100 text-gray-700 py-3 rounded-xl font-bold text-lg hover:bg-gray-200 transition-all shadow-sm border border-gray-200">
-                      Anterior
-                    </button>
-                    <button type="submit"
-                      className="w-2/3 bg-[#C800A1] text-white py-3 rounded-xl font-bold text-lg hover:bg-[#a00081] transition-all shadow-md active:scale-[0.98]">
-                      {modalidad === "grupal" && grupoIndex < integrantes.length ? `Siguiente Integrante` : "Continuar a Kit"}
-                    </button>
-                  </div>
-                </form>
+                    {/* Botones de Navegación Fase 2 */}
+                    <div className="flex gap-2 pt-2">
+                      <button type="button" onClick={handleAnteriorDatos}
+                        className="w-1/3 bg-gray-100 text-gray-700 py-2.5 rounded-xl font-bold text-xs hover:bg-gray-200 transition-all shadow-sm border border-gray-200">
+                        Anterior
+                      </button>
+                      <button type="submit"
+                        className="w-2/3 bg-[#C800A1] text-white py-2.5 rounded-xl font-bold text-xs hover:bg-[#a00081] transition-all shadow-md active:scale-[0.98]">
+                        {modalidad === "grupal" && grupoIndex < integrantes.length ? `Siguiente` : "Continuar"}
+                      </button>
+                    </div>
+                  </form>
+                </div>
               </div>
             </section>
           )}
@@ -836,25 +829,25 @@ function NuveiPageContent() {
           {/* FASE 3: PUNTO DE RETIRO DE KIT */}
           {fase === 3 && (
             <section className="w-full px-4 relative z-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <div className="max-w-3xl mx-auto bg-white border border-gray-200 rounded-3xl p-6 md:p-10 shadow-xl">
-                <h2 className="text-2xl font-bold text-[#2F3388] mb-6">Paso 3: Punto de Retiro de Kit</h2>
-                <p className="text-gray-500 text-sm mb-6">Selecciona dónde retirarás el kit de participación {modalidad === "grupal" && "para todo tu grupo"}.</p>
+              <div className="max-w-3xl mx-auto bg-white border border-gray-200 rounded-3xl p-4 md:p-6 shadow-xl">
+                <h2 className="text-xl md:text-2xl font-bold text-[#2F3388] mb-2">Paso 3: Punto de Retiro de Kit</h2>
+                <p className="text-gray-500 text-xs mb-4">Selecciona dónde retirarás el kit de participación {modalidad === "grupal" && "para todo tu grupo"}.</p>
                 
-                <div className="space-y-3">
+                <div className="space-y-2">
                   {PUNTOS_RETIRO.map((punto) => (
                     <div key={punto.nombre}
                       onClick={() => { setPuntoRetiro(punto.nombre); if (errors.puntoRetiro) setErrors((prev) => ({ ...prev, puntoRetiro: "" })); }}
-                      className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${puntoRetiro === punto.nombre ? "border-[#2F3388] bg-[#2F3388]/5" : "border-gray-200 bg-gray-50 hover:border-gray-300"}`}>
+                      className={`p-3 rounded-xl border-2 cursor-pointer transition-all ${puntoRetiro === punto.nombre ? "border-[#2F3388] bg-[#2F3388]/5" : "border-gray-200 bg-gray-50 hover:border-gray-300"}`}>
                       <div className="flex justify-between items-start">
                         <div className="flex-1">
                           <div className={`font-bold text-sm ${puntoRetiro === punto.nombre ? "text-[#2F3388]" : "text-gray-700"}`}>{punto.nombre}</div>
                           <div className="text-xs text-gray-500 mt-1">{punto.fecha}</div>
                           <div className="text-xs text-gray-500">{punto.direccion}</div>
-                          <span className={`inline-block mt-1 text-xs font-semibold px-2 py-0.5 rounded-full ${punto.zona === "Día del Evento" ? "bg-orange-100 text-orange-700" : "bg-blue-100 text-blue-700"}`}>{punto.zona}</span>
+                          <span className={`inline-block mt-1 text-[10px] font-semibold px-2 py-0.5 rounded-full ${punto.zona === "Día del Evento" ? "bg-orange-100 text-orange-700" : "bg-blue-100 text-blue-700"}`}>{punto.zona}</span>
                         </div>
                         <a href={punto.mapsUrl} target="_blank" rel="noopener noreferrer"
                           onClick={(e) => e.stopPropagation()}
-                          className="ml-3 text-xs text-blue-600 hover:text-blue-800 underline font-semibold shrink-0 flex items-center gap-1">
+                          className="ml-3 text-[10px] text-blue-600 hover:text-blue-800 underline font-semibold shrink-0 flex items-center gap-1">
                           Ver Mapa
                         </a>
                       </div>
@@ -863,13 +856,13 @@ function NuveiPageContent() {
                 </div>
                 {errors.puntoRetiro && <p className="text-red-500 text-xs mt-1 font-medium">{errors.puntoRetiro}</p>}
 
-                <div className="flex gap-4 pt-4 mt-8 border-t border-gray-100">
+                <div className="flex gap-3 pt-3 mt-4 border-t border-gray-100">
                   <button type="button" onClick={() => { setFase(2); if(modalidad==="grupal") setGrupoIndex(integrantes.length); }}
-                    className="w-1/3 bg-gray-100 text-gray-700 py-4 rounded-xl font-bold text-lg hover:bg-gray-200 transition-all shadow-sm border border-gray-200">
+                    className="w-1/3 bg-gray-100 text-gray-700 py-2.5 rounded-xl font-bold text-sm hover:bg-gray-200 transition-all shadow-sm border border-gray-200">
                     Anterior
                   </button>
                   <button type="button" onClick={handleContinuarKit}
-                    className="w-2/3 bg-[#C800A1] text-white py-4 rounded-xl font-bold text-lg hover:bg-[#a00081] transition-all shadow-md active:scale-[0.98]">
+                    className="w-2/3 bg-[#C800A1] text-white py-2.5 rounded-xl font-bold text-sm hover:bg-[#a00081] transition-all shadow-md active:scale-[0.98]">
                     Continuar a Políticas
                   </button>
                 </div>
@@ -920,7 +913,7 @@ function NuveiPageContent() {
           {fase === 5 && (
             <section ref={pagoSectionRef} className="w-full px-4 relative z-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="max-w-5xl mx-auto">
-                <div className="bg-white border border-gray-200 rounded-3xl p-6 md:p-10 shadow-xl relative z-10">
+                <div className="bg-white border border-gray-200 rounded-3xl p-4 md:p-6 shadow-xl relative z-10">
                   <div className="flex items-center gap-3 mb-6">
                     <div className="bg-[#2F3388]/10 p-3 rounded-xl">
                       <svg className="w-6 h-6 text-[#2F3388]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
@@ -931,11 +924,11 @@ function NuveiPageContent() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                     {/* COLUMNA IZQUIERDA: Resumen de Datos */}
                     <div>
                       {/* Resumen del líder */}
-                      <div className="bg-blue-50 border border-blue-100 rounded-2xl p-5 mb-4 space-y-3 text-sm">
+                      <div className="bg-blue-50 border border-blue-100 rounded-2xl p-3 mb-3 space-y-1 text-xs">
                         <div className="text-xs font-bold text-[#2F3388] uppercase mb-2">{modalidad === "grupal" ? "Líder del Grupo" : "Participante"}</div>
                         <SummaryRow label="Nombre" value={`${form.nombres} ${form.apellidos}`} />
                         <SummaryRow label="Cédula" value={form.cedula} />
@@ -947,10 +940,10 @@ function NuveiPageContent() {
 
                       {/* Resumen integrantes (grupal) */}
                       {modalidad === "grupal" && integrantes.length > 0 && (
-                        <div className="mb-4">
-                          <div className="flex overflow-x-auto snap-x space-x-3 pb-3 [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full">
+                        <div className="mb-3">
+                          <div className="flex overflow-x-auto snap-x space-x-2 pb-2 [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full">
                             {integrantes.map((p, i) => (
-                              <div key={i} className="min-w-[240px] shrink-0 snap-start bg-gray-50 border border-gray-200 rounded-2xl p-4 space-y-2 text-sm">
+                              <div key={i} className="min-w-[200px] shrink-0 snap-start bg-gray-50 border border-gray-200 rounded-2xl p-3 space-y-1 text-xs">
                                 <div className="text-xs font-bold text-[#2F3388] uppercase">Integrante {i + 2}</div>
                                 <SummaryRow label="Nombre" value={p.nombres ? `${p.nombres} ${p.apellidos}` : "Pendiente"} />
                                 <SummaryRow label="Cédula" value={p.cedula || "-"} />
@@ -963,7 +956,7 @@ function NuveiPageContent() {
                       )}
 
                       {/* Punto retiro */}
-                      <div className="bg-purple-50 border border-purple-100 rounded-2xl p-4 text-sm">
+                      <div className="bg-purple-50 border border-purple-100 rounded-2xl p-3 text-xs mb-4 md:mb-0">
                         <SummaryRow label="Punto de Retiro" value={puntoRetiro} highlight />
                       </div>
                     </div>
@@ -972,14 +965,24 @@ function NuveiPageContent() {
                     <div className="flex flex-col h-full justify-center">
                       {/* Subida del Comprobante (Movido a Fase 5) */}
                       {metodoPago === "transferencia" && (
-                        <div className="bg-green-50 border border-green-200 rounded-2xl p-5 mb-6">
-                          <label className="block font-bold text-green-900 mb-2">Comprobante de Transferencia / Depósito *</label>
-                          <p className="text-xs text-green-700 mb-3">Sube la foto o captura de pantalla de tu comprobante. Formatos: JPG, PNG, PDF (máx. 5MB).</p>
+                        <div className="bg-green-50 border border-green-200 rounded-2xl p-3 mb-3">
+                          <div className="mb-2 p-2 bg-white/60 rounded-xl text-[10px] text-green-900 border border-green-100 shadow-sm">
+                            <h4 className="font-bold text-green-800 mb-1 uppercase tracking-wider">Datos para Depósito o Transferencia</h4>
+                            <div className="grid grid-cols-1 gap-y-1">
+                              <p><span className="font-bold">Nombre:</span> Fundación de Ayuda Social Banco de Alimentos Quito</p>
+                              <p><span className="font-bold">RUC:</span> 1791921429001</p>
+                              <p><span className="font-bold">Cuenta:</span> 2100282580 (Cta. Corriente)</p>
+                              <p><span className="font-bold">Correo:</span> administracion@baq.ec</p>
+                            </div>
+                          </div>
+                          
+                          <label className="block font-bold text-green-900 mb-1 text-sm">Comprobante de Transferencia / Depósito *</label>
+                          <p className="text-[10px] text-green-700 mb-2">Sube la foto o captura de tu comprobante. JPG, PNG, PDF (máx. 5MB).</p>
                           <div className="flex items-center justify-center w-full">
-                            <label className="flex flex-col items-center justify-center w-full h-28 border-2 border-green-300 border-dashed rounded-xl cursor-pointer bg-white hover:bg-green-50 transition-colors">
-                              <div className="flex flex-col items-center justify-center pt-3 pb-3">
-                                <svg className="w-6 h-6 mb-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
-                                <p className="mb-1 text-xs text-gray-500"><span className="font-semibold text-green-600">Haz clic para subir</span> o arrastra y suelta</p>
+                            <label className="flex flex-col items-center justify-center w-full h-20 border-2 border-green-300 border-dashed rounded-xl cursor-pointer bg-white hover:bg-green-50 transition-colors">
+                              <div className="flex flex-col items-center justify-center pt-2 pb-2">
+                                <svg className="w-5 h-5 mb-1 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                                <p className="mb-1 text-[10px] text-gray-500"><span className="font-semibold text-green-600">Haz clic para subir</span> o arrastra y suelta</p>
                                 <p className="text-xs font-bold text-gray-700 max-w-[200px] truncate">{comprobanteFile ? comprobanteFile.name : "Ningún archivo seleccionado"}</p>
                               </div>
                               <input type="file" className="hidden" accept="image/*,.pdf" onChange={(e) => {
@@ -993,18 +996,18 @@ function NuveiPageContent() {
                       )}
 
                       {/* Total */}
-                      <div className="bg-blue-50 border border-blue-100 rounded-2xl p-5 mb-6">
+                      <div className="bg-blue-50 border border-blue-100 rounded-2xl p-3 mb-3">
                         <div className="flex justify-between items-center">
                           <div>
-                            <span className="font-bold text-gray-700 uppercase text-sm">Total a Pagar</span>
-                            {modalidad === "grupal" && <div className="text-xs text-gray-500">{totalPersonas} personas × ${precioUnitario}</div>}
+                            <span className="font-bold text-gray-700 uppercase text-xs">Total a Pagar</span>
+                            {modalidad === "grupal" && <div className="text-[10px] text-gray-500">{totalPersonas} personas × ${precioUnitario}</div>}
                           </div>
-                          <span className="font-black text-2xl text-[#C800A1]">${totalPagar} USD</span>
+                          <span className="font-black text-xl text-[#C800A1]">${totalPagar} USD</span>
                         </div>
                       </div>
 
                       <button onClick={handlePay} disabled={status === "loading" || status === "processing" || (metodoPago === "tarjeta" && !sdkReady) || (metodoPago === "transferencia" && !comprobanteFile)}
-                        className={`w-full py-4 rounded-xl font-bold text-xl transition-all shadow-lg active:scale-[0.98] flex items-center justify-center gap-2 ${status === "loading" || status === "processing" ? "bg-gray-400 text-white cursor-not-allowed" : ((metodoPago === "tarjeta" && !sdkReady) || (metodoPago === "transferencia" && !comprobanteFile)) ? "bg-gray-300 text-gray-600 cursor-not-allowed" : "bg-[#C800A1] text-white hover:bg-[#a00081]"}`}>
+                        className={`w-full py-3 rounded-xl font-bold text-lg transition-all shadow-lg active:scale-[0.98] flex items-center justify-center gap-2 ${status === "loading" || status === "processing" ? "bg-gray-400 text-white cursor-not-allowed" : ((metodoPago === "tarjeta" && !sdkReady) || (metodoPago === "transferencia" && !comprobanteFile)) ? "bg-gray-300 text-gray-600 cursor-not-allowed" : "bg-[#C800A1] text-white hover:bg-[#a00081]"}`}>
                         {metodoPago === "tarjeta" && !sdkReady ? "Cargando procesador..." : status === "loading" ? "Registrando datos..." : status === "processing" ? "Procesando..." : (
                           <>
                             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={metodoPago === "transferencia" ? "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" : "M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"} /></svg>
@@ -1019,7 +1022,7 @@ function NuveiPageContent() {
                         </div>
                       )}
 
-                      <div className="mt-8 text-center">
+                      <div className="mt-4 text-center">
                         <button type="button" onClick={() => { setFase(4); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="text-gray-500 hover:text-gray-700 transition text-sm font-semibold underline">← Revisar Políticas</button>
                       </div>
                     </div>
@@ -1078,79 +1081,73 @@ function ParticipantFormFields({ form, updateField, errors, prefix, edad, catego
   const displayCategoria = categoria !== undefined ? categoria : intCategoria;
 
   return (
-    <div className="space-y-5">
-      {/* Distancia */}
-      <div>
-        <label className="block text-sm font-bold text-gray-700 mb-2">Distancia *</label>
-        <div className="grid grid-cols-2 gap-4">
-          {DISTANCIAS.map((d) => (
-            <button key={d} type="button" onClick={() => updateField("distancia", d)}
-              className={`py-3 px-4 rounded-xl border-2 font-bold transition-all ${form.distancia === d ? "border-[#ED6F1D] bg-[#ED6F1D]/10 text-[#ED6F1D]" : "border-gray-200 bg-gray-50 text-gray-500 hover:border-gray-300"}`}>
-              {d}
-            </button>
-          ))}
-        </div>
-        {errors[`${prefix}distancia`] && <p className="text-red-500 text-xs mt-1">{errors[`${prefix}distancia`]}</p>}
-      </div>
-
-      {/* Cédula + Teléfono */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+    <div className="flex flex-col gap-3">
+      {/* Fila 1: Nombres, Apellidos, Cédula */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <InputField label="Nombres *" name="nombres" autoComplete="given-name" value={form.nombres} onChange={(v) => updateField("nombres", v)} error={errors[`${prefix}nombres`]} placeholder="Ej. Juan Carlos" />
+        <InputField label="Apellidos *" name="apellidos" autoComplete="family-name" value={form.apellidos} onChange={(v) => updateField("apellidos", v)} error={errors[`${prefix}apellidos`]} placeholder="Ej. Pérez" />
         <InputField label="Cédula *" name="cedula" value={form.cedula} onChange={(v) => updateField("cedula", v)} error={errors[`${prefix}cedula`]} placeholder="1712345678" />
+      </div>
+
+      {/* Fila 2: Correo, Teléfono, Ciudad */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <InputField label="Correo Electrónico *" name="email" autoComplete="email" type="email" value={form.correoElectronico} onChange={(v) => updateField("correoElectronico", v)} error={errors[`${prefix}correoElectronico`]} placeholder="tu@correo.com" />
         <InputField label="Teléfono Móvil *" name="tel" autoComplete="tel" value={form.telefonoMovil} onChange={(v) => updateField("telefonoMovil", v)} error={errors[`${prefix}telefonoMovil`]} placeholder="0991234567" />
+        <InputField label="Ciudad (País: Opcional) *" name="address-level2" autoComplete="address-level2" value={form.ciudad} onChange={(v) => updateField("ciudad", v)} error={errors[`${prefix}ciudad`]} placeholder="Quito" />
       </div>
 
-      {/* Nombres y Apellidos */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        <InputField label="Nombres *" name="nombres" autoComplete="given-name" value={form.nombres} onChange={(v) => updateField("nombres", v)} error={errors[`${prefix}nombres`]} placeholder="Juan Carlos" />
-        <InputField label="Apellidos *" name="apellidos" autoComplete="family-name" value={form.apellidos} onChange={(v) => updateField("apellidos", v)} error={errors[`${prefix}apellidos`]} placeholder="Pérez López" />
-      </div>
-
-      {/* Género */}
-      <div>
-        <label className="block text-sm font-bold text-gray-700 mb-2">Género *</label>
-        <div className="grid grid-cols-3 gap-3">
-          {GENEROS.map((g) => (
-            <button key={g} type="button" onClick={() => updateField("genero", g)}
-              className={`py-2.5 px-3 rounded-xl border-2 text-sm font-semibold transition-all ${form.genero === g ? "border-[#2F3388] bg-[#2F3388]/10 text-[#2F3388]" : "border-gray-200 bg-gray-50 text-gray-500 hover:border-gray-300"}`}>
-              {g}
-            </button>
-          ))}
-        </div>
-        {errors[`${prefix}genero`] && <p className="text-red-500 text-xs mt-1">{errors[`${prefix}genero`]}</p>}
-      </div>
-
-      {/* Fecha Nacimiento + Categoría */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      {/* Fila 3: Fecha Nacimiento, Categoría, Distancia */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         <InputField label="Fecha de Nacimiento *" name="bday" autoComplete="bday" type="date" value={form.fechaNacimiento} onChange={(v) => updateField("fechaNacimiento", v)} error={errors[`${prefix}fechaNacimiento`]} />
         <div>
-          <label className="block text-sm font-bold text-gray-700 mb-1.5">Categoría (Auto)</label>
+          <label className="block text-xs font-bold text-gray-700 mb-1">Categoría (Auto)</label>
           <input type="text" readOnly
-            value={displayCategoria ? `${displayCategoria} (${displayEdad} años)` : "Selecciona fecha de nacimiento"}
-            className={`w-full px-3 py-2 bg-gray-100 border border-gray-200 rounded-xl focus:outline-none transition font-semibold ${displayCategoria ? "text-[#C800A1]" : "text-gray-400"}`} />
+            value={displayCategoria ? `${displayCategoria} (${displayEdad} años)` : "Selecciona fecha"}
+            className={`w-full px-3 py-2 bg-gray-100 border border-gray-200 rounded-xl focus:outline-none transition text-xs font-bold ${displayCategoria ? "text-[#C800A1]" : "text-gray-400"}`} />
+        </div>
+        <div>
+          <label className="block text-xs font-bold text-gray-700 mb-1">Distancia *</label>
+          <div className="grid grid-cols-2 gap-2">
+            {DISTANCIAS.map((d) => (
+              <button key={d} type="button" onClick={() => updateField("distancia", d)}
+                className={`py-2 rounded-xl border-2 text-xs font-bold transition-all ${form.distancia === d ? "border-[#ED6F1D] bg-[#ED6F1D]/10 text-[#ED6F1D]" : "border-gray-200 bg-gray-50 text-gray-500 hover:border-gray-300"}`}>
+                {d}
+              </button>
+            ))}
+          </div>
+          {errors[`${prefix}distancia`] && <p className="text-red-500 text-[10px] mt-1">{errors[`${prefix}distancia`]}</p>}
         </div>
       </div>
 
-      {/* Correo */}
-      <InputField label="Correo Electrónico *" name="email" autoComplete="email" type="email" value={form.correoElectronico} onChange={(v) => updateField("correoElectronico", v)} error={errors[`${prefix}correoElectronico`]} placeholder="tu@correo.com" />
-
-      {/* País + Ciudad */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        <InputField label="País" name="country-name" autoComplete="country-name" value={form.pais} onChange={(v) => updateField("pais", v)} placeholder="Ecuador" />
-        <InputField label="Ciudad *" name="address-level2" autoComplete="address-level2" value={form.ciudad} onChange={(v) => updateField("ciudad", v)} error={errors[`${prefix}ciudad`]} placeholder="Quito" />
-      </div>
-
-      {/* Talla */}
-      <div>
-        <label className="block text-sm font-bold text-gray-700 mb-2">Talla de Camiseta *</label>
-        <div className="grid grid-cols-4 gap-2">
-          {TALLAS.map((t) => (
-            <button key={t} type="button" onClick={() => updateField("talla", t)}
-              className={`py-2 rounded-xl border-2 text-sm font-bold transition-all ${form.talla === t ? "border-[#8CC541] bg-[#8CC541]/10 text-[#8CC541]" : "border-gray-200 bg-gray-50 text-gray-500 hover:border-gray-300"}`}>
-              {t}
-            </button>
-          ))}
+      {/* Fila 4: Género y Talla */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-gray-100 pt-3">
+        {/* Género */}
+        <div>
+          <label className="block text-xs font-bold text-gray-700 mb-2">Género *</label>
+          <div className="grid grid-cols-3 gap-2">
+            {GENEROS.map((g) => (
+              <button key={g} type="button" onClick={() => updateField("genero", g)}
+                className={`py-2 px-1 rounded-xl border-2 text-xs font-semibold transition-all ${form.genero === g ? "border-[#2F3388] bg-[#2F3388]/10 text-[#2F3388]" : "border-gray-200 bg-gray-50 text-gray-500 hover:border-gray-300"}`}>
+                {g}
+              </button>
+            ))}
+          </div>
+          {errors[`${prefix}genero`] && <p className="text-red-500 text-[10px] mt-1">{errors[`${prefix}genero`]}</p>}
         </div>
-        {errors[`${prefix}talla`] && <p className="text-red-500 text-xs mt-1">{errors[`${prefix}talla`]}</p>}
+
+        {/* Talla */}
+        <div>
+          <label className="block text-xs font-bold text-gray-700 mb-2">Talla de Camiseta *</label>
+          <div className="grid grid-cols-4 gap-2">
+            {TALLAS.map((t) => (
+              <button key={t} type="button" onClick={() => updateField("talla", t)}
+                className={`py-2 rounded-xl border-2 text-xs font-bold transition-all ${form.talla === t ? "border-[#8CC541] bg-[#8CC541]/10 text-[#8CC541]" : "border-gray-200 bg-gray-50 text-gray-500 hover:border-gray-300"}`}>
+                {t}
+              </button>
+            ))}
+          </div>
+          {errors[`${prefix}talla`] && <p className="text-red-500 text-[10px] mt-1">{errors[`${prefix}talla`]}</p>}
+        </div>
       </div>
     </div>
   );
@@ -1161,10 +1158,10 @@ function InputField({ label, value, onChange, error, placeholder, type = "text",
 }) {
   return (
     <div>
-      <label className="block text-sm font-bold text-gray-700 mb-1.5">{label}</label>
+      <label className="block text-xs font-bold text-gray-700 mb-1">{label}</label>
       <input type={type} name={name} autoComplete={autoComplete} value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder}
-        className={`w-full px-3 py-2 bg-white border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#C800A1] focus:border-transparent transition text-gray-800 placeholder-gray-400 ${error ? "border-red-500 bg-red-50" : "border-gray-300"}`} />
-      {error && <p className="text-red-500 text-xs mt-1 font-medium">{error}</p>}
+        className={`w-full px-3 py-2 text-sm bg-white border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#C800A1] focus:border-transparent transition text-gray-800 placeholder-gray-400 ${error ? "border-red-500 bg-red-50" : "border-gray-300"}`} />
+      {error && <p className="text-red-500 text-[10px] mt-1 font-medium">{error}</p>}
     </div>
   );
 }
