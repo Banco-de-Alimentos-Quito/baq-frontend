@@ -58,6 +58,7 @@ export default function RootLayout({
             `}
         </Script>
 
+
         <StoreInitializer />
 
         <LoadingWrapper>

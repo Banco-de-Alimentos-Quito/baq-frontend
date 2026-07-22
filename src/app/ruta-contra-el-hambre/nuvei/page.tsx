@@ -8,6 +8,7 @@ import Script from "next/script";
 
 declare global {
   interface Window {
+    fbq?: (...args: any[]) => void;
     PaymentCheckout: {
       modal: new (config: {
         client_app_code?: string;
@@ -270,6 +271,10 @@ function NuveiPageContent() {
           if (tx.status === "success" && tx.status_detail === 3) {
             setStatus("success");
             setTxResult({ status: "success", title: "¡Inscripción Exitosa!", message: "Tu pago fue aprobado exitosamente. ¡Gracias por inscribirte en la Ruta Contra El Hambre!", txId: tx.id });
+            if (typeof window !== "undefined" && window.fbq) {
+              window.fbq("track", "CompleteRegistration", { value: totalPagar, currency: "USD" });
+              window.fbq("track", "Purchase", { value: totalPagar, currency: "USD" });
+            }
           } else {
             setStatus("error");
             setTxResult({ status: "error", title: "Pago Rechazado", message: tx.message || `No se pudo procesar la tarjeta. Intenta con otra. (Código: ${tx.status_detail})`, txId: tx.id });
@@ -322,6 +327,9 @@ function NuveiPageContent() {
     setFase(2);
     setGrupoIndex(0);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (typeof window !== "undefined" && window.fbq) {
+      window.fbq("track", "InitiateCheckout");
+    }
   };
 
   // Validar paso actual (Datos - Fase 2)
@@ -502,6 +510,10 @@ function NuveiPageContent() {
           message: "Hemos recibido los datos de tu inscripción y tu comprobante. Lo verificaremos y te notificaremos pronto.", 
           txId: devRef 
         });
+        if (typeof window !== "undefined" && window.fbq) {
+          window.fbq("track", "CompleteRegistration", { value: totalPagar, currency: "USD" });
+          window.fbq("track", "Purchase", { value: totalPagar, currency: "USD" });
+        }
         return;
       }
 
@@ -570,6 +582,31 @@ function NuveiPageContent() {
 
   return (
     <>
+      {/* Meta Pixel Code - Exclusivo para la Ruta Contra El Hambre */}
+      <Script id="meta-pixel-carrera" strategy="afterInteractive">
+        {`
+          !function(f,b,e,v,n,t,s)
+          {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+          n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+          if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+          n.queue=[];t=b.createElement(e);t.async=!0;
+          t.src=v;s=b.getElementsByTagName(e)[0];
+          s.parentNode.insertBefore(t,s)}(window, document,'script',
+          'https://connect.facebook.net/en_US/fbevents.js');
+          fbq('init', '1556590362516166');
+          fbq('track', 'PageView');
+        `}
+      </Script>
+      <noscript>
+        <img
+          height="1"
+          width="1"
+          style={{ display: "none" }}
+          src="https://www.facebook.com/tr?id=1556590362516166&ev=PageView&noscript=1"
+          alt=""
+        />
+      </noscript>
+
       {/* SDK de Nuvei */}
       <Script
         src="https://cdn.paymentez.com/ccapi/sdk/payment_checkout_3.0.0.min.js"
