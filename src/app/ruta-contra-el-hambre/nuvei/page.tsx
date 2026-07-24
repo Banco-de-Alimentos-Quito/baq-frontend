@@ -619,7 +619,7 @@ function NuveiPageContent() {
 
         {/* IMAGEN DE FONDO RESPONSIVE - Escala con el ancho de la pantalla sin recortarse */}
         <picture className="absolute top-0 left-0 w-full z-0 pointer-events-none">
-          <source media="(min-width: 768px)" srcSet="/carrera/LANDING.png" />
+          <source media="(min-width: 768px)" srcSet="/carrera/LANDING-22072026.jpg.jpeg" />
           <img
             src="/carrera/LANDING-CARRERA.jpg.jpeg"
             alt="Ruta Contra El Hambre"
