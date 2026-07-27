@@ -730,6 +730,7 @@ function NuveiPageContent() {
                     <div className="mt-4 bg-green-50 border border-green-200 rounded-xl p-3 text-xs text-green-900 animate-in fade-in slide-in-from-top-2 duration-300">
                       <h4 className="font-bold text-green-800 mb-2 uppercase tracking-wider text-[10px]">Datos para Depósito o Transferencia</h4>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-y-1 gap-x-2 mb-2">
+                        <p><span className="font-bold">Banco:</span> Banco Pichincha</p>
                         <p><span className="font-bold">Nombre:</span> Fundación de Ayuda Social Banco de Alimentos Quito</p>
                         <p><span className="font-bold">RUC:</span> 1791921429001</p>
                         <p><span className="font-bold">Número de cuenta:</span> 2100282580</p>
@@ -1006,6 +1007,7 @@ function NuveiPageContent() {
                           <div className="mb-2 p-2 bg-white/60 rounded-xl text-[10px] text-green-900 border border-green-100 shadow-sm">
                             <h4 className="font-bold text-green-800 mb-1 uppercase tracking-wider">Datos para Depósito o Transferencia</h4>
                             <div className="grid grid-cols-1 gap-y-1">
+                              <p><span className="font-bold">Banco:</span> Banco Pichincha</p>
                               <p><span className="font-bold">Nombre:</span> Fundación de Ayuda Social Banco de Alimentos Quito</p>
                               <p><span className="font-bold">RUC:</span> 1791921429001</p>
                               <p><span className="font-bold">Cuenta:</span> 2100282580 (Cta. Corriente)</p>
