@@ -55,8 +55,8 @@ export default function CampaignPopup() {
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/popup/ruta-contra-el-hambre.png"
-            alt="Ruta contra el hambre 2026"
+            src="/POP-PÁGINA-WEB-29072026.png"
+            alt="Campaña Banco de Alimentos"
             className="w-auto h-auto max-w-[90vw] max-h-[85vh] object-contain rounded-2xl"
           />
         </Link>
