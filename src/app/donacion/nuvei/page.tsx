@@ -887,7 +887,7 @@ function NuveiPageContent() {
                 <div className="w-full">
                   {txResult.status === "success" ? (
                     <button
-                      onClick={() => router.push("/thank-you")}
+                      onClick={() => window.location.href = "/thank-you"}
                       className="w-full py-4 px-6 bg-green-500 hover:bg-green-600 text-white text-lg font-bold rounded-2xl transition-all shadow-md hover:shadow-lg active:scale-95"
                     >
                       Continuar

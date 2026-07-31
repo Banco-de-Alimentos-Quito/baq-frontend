@@ -6,6 +6,7 @@ import ScrollLink from '@/components/ScrollLink';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 
 // Type for Google Analytics gtag function
 declare global {
@@ -35,6 +36,7 @@ const NavLinks = ({ onClick }: { onClick?: () => void }) => (
 export default function Header() {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const pathname = usePathname() || '';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -43,6 +45,11 @@ export default function Header() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Ocultar header en la ruta de la carrera
+  if (pathname.startsWith('/ruta-contra-el-hambre')) {
+    return null;
+  }
 
   return (
     <div className="fixed top-0 left-0 right-0 z-50 transition-all duration-300">

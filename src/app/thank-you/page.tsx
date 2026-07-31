@@ -47,15 +47,8 @@ export default function ThankYou() {
   useEffect(() => {
     // Modificar el historial para prevenir la navegación hacia atrás a payment-confirmation
     const preventReturn = () => {
-      // Reemplazar la entrada anterior en el historial (payment-confirmation)
-      window.history.replaceState(null, "", "/thank-you");
-
-      // Agregar una nueva entrada para que el botón atrás vaya a una ruta segura
-      window.history.pushState(null, "", "/thank-you");
-
-      // Cuando el usuario presione atrás, redirigir a donacion
       const handlePopState = () => {
-        router.replace("/donacion");
+        router.replace("/");
       };
 
       window.addEventListener("popstate", handlePopState);

@@ -10,27 +10,15 @@ export default function CampaignPopup() {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    // Check if the cookie exists
-    const cookies = document.cookie.split(";");
-    const hasClosedPopup = cookies.some((cookie) =>
-      cookie.trim().startsWith(`${COOKIE_NAME}=`)
-    );
-
-    if (!hasClosedPopup) {
-      // Delay showing the popup slightly for better UX
-      const timer = setTimeout(() => {
-        setIsOpen(true);
-      }, 500);
-      return () => clearTimeout(timer);
-    }
+    // Delay showing the popup slightly for better UX
+    const timer = setTimeout(() => {
+      setIsOpen(true);
+    }, 500);
+    return () => clearTimeout(timer);
   }, []);
 
   const handleClose = () => {
     setIsOpen(false);
-    // Set cookie to expire in 3 hours
-    const date = new Date();
-    date.setTime(date.getTime() + 3 * 60 * 60 * 1000); // 3 hours
-    document.cookie = `${COOKIE_NAME}=true;expires=${date.toUTCString()};path=/`;
   };
 
   if (!isOpen) return null;
@@ -47,9 +35,7 @@ export default function CampaignPopup() {
         </button>
 
         <Link
-          href="https://go.kanpastimingec.com/ruta-hambre-2026"
-          target="_blank"
-          rel="noopener noreferrer"
+          href="/ruta-contra-el-hambre/nuvei"
           onClick={handleClose}
           className="block w-full h-full"
         >
