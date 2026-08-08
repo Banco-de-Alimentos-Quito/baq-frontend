@@ -651,14 +651,17 @@ function NuveiPageContent() {
 
           {/* FASE 0: LANDING HERO */}
           {fase === 0 && (
-            <section className="w-full flex flex-col items-center justify-start pt-[50vw] md:pt-[30vw] lg:pt-[20vw] pb-20 relative z-10">
-              <div className="bg-white/90 backdrop-blur-sm shadow-xl p-8 rounded-3xl text-center max-w-lg mx-auto border border-gray-100">
-                <h1 className="text-3xl md:text-4xl font-bold text-[#2F3388] mb-4">
+            <section className="w-full flex flex-col items-center justify-start pt-[45vw] md:pt-[25vw] lg:pt-[15vw] pb-12 relative z-10">
+              <div className="bg-white/90 backdrop-blur-sm shadow-xl p-6 md:p-8 rounded-3xl text-center max-w-lg mx-auto border border-gray-100">
+                <h1 className="text-2xl md:text-3xl font-bold text-[#2F3388] mb-2">
                   Ruta contra el Hambre 2026
                 </h1>
-                <p className="text-gray-600 mb-6 text-lg">
+                <p className="text-gray-600 mb-3 text-base md:text-lg">
                   Dona a la carrera y corre por una buena causa.
                 </p>
+                <div className="mb-5 text-xs text-red-600 font-semibold bg-red-50 py-1 px-2.5 rounded-lg inline-block border border-red-200 shadow-sm leading-tight">
+                  Las inscripciones se cierran el lunes 10 de agosto a las 11:59.
+                </div>
 
                 <div className="flex justify-center gap-4 mb-6">
                   <div className="bg-gray-100 px-4 py-2 rounded-xl text-center shadow-sm relative group">
