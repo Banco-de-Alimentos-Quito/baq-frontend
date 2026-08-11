@@ -14,12 +14,10 @@ import EnvironmentalImpactSection from "@/components/sections/EnvironmentalImpac
 import AmbassadorsSection from "@/components/sections/Ambassadors";
 import WhyWeDoExist from "@/components/sections/WhyWeDoExist";
 import QuickDonateButton from "./quick-donate/QuickDoanteButton";
-import CampaignPopup from "@/components/ui/CampaignPopup";
 
 export default function Home() {
   return (
     <div className="min-h-screen">
-      <CampaignPopup />
       <HeroSection />
       <WhatWeDoSection />
       <WhyWeDoExist />

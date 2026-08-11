@@ -29,7 +29,7 @@ const NavLinks = ({ onClick }: { onClick?: () => void }) => (
     <Link href="/blog" className="text-sm font-medium hover:text-primary transition-colors" onClick={onClick}>
       Blog
     </Link>
-    
+
   </>
 );
 
@@ -47,7 +47,7 @@ export default function Header() {
   }, []);
 
   // Ocultar header en la ruta de la carrera
-  if (pathname.startsWith('/ruta-contra-el-hambre')) {
+  if (pathname.startsWith('/carrera')) {
     return null;
   }
 
@@ -66,9 +66,9 @@ export default function Header() {
           </Link>
           <nav className="hidden md:flex items-center gap-6">
             <NavLinks />
-            <Button 
-              asChild 
-              size="sm" 
+            <Button
+              asChild
+              size="sm"
               className="bg-primary text-[#ed6f1d] hover:bg-orange-400 text-primary-foreground"
               onClick={() => {
                 if (typeof window !== 'undefined' && window.gtag) {

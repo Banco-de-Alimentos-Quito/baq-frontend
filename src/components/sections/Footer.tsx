@@ -14,7 +14,7 @@ import { usePathname } from 'next/navigation';
 
 export default function Footer() {
   const pathname = usePathname() || '';
-  if (pathname.startsWith('/ruta-contra-el-hambre')) {
+  if (pathname.startsWith('/carrera')) {
     return null;
   }
   const currentYear = new Date().getFullYear();
@@ -96,7 +96,7 @@ export default function Footer() {
                 <span>baqalimentosoficial</span>
               </Link>
             </div>
-            
+
             {/* Enlaces legales */}
             <div>
               <h4 className="text-lg font-semibold text-gray-100 mb-3">

@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
+import yaml from 'js-yaml';
 
 export interface BlogPost {
   slug: string;
@@ -39,7 +40,11 @@ export function getAllPosts(): BlogPost[] {
       const fileContents = fs.readFileSync(fullPath, 'utf8');
 
       // Usar gray-matter para parsear la metadata del post
-      const matterResult = matter(fileContents);
+      const matterResult = matter(fileContents, {
+        engines: {
+          yaml: (s) => yaml.load(s, { schema: yaml.JSON_SCHEMA }) as object
+        }
+      });
 
       return {
         slug,
@@ -78,7 +83,11 @@ export function getPostBySlug(slug: string): BlogPost | null {
     }
 
     const fileContents = fs.readFileSync(fullPath, 'utf8');
-    const matterResult = matter(fileContents);
+    const matterResult = matter(fileContents, {
+      engines: {
+        yaml: (s) => yaml.load(s, { schema: yaml.JSON_SCHEMA }) as object
+      }
+    });
 
     return {
       slug,
