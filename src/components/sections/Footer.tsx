@@ -97,17 +97,27 @@ export default function Footer() {
               </Link>
             </div>
 
-            {/* Enlaces legales */}
+            {/* Enlaces e Informes */}
             <div>
               <h4 className="text-lg font-semibold text-gray-100 mb-3">
-                Información legal
+                Transparencia
               </h4>
-              <Link
-                href="/politicas"
-                className="text-gray-400 hover:text-primary transition-colors text-sm underline decoration-dotted"
-              >
-                Políticas de Privacidad
-              </Link>
+              <div className="flex flex-col space-y-2">
+                <Link
+                  href="/politicas"
+                  className="text-gray-400 hover:text-primary transition-colors text-sm underline decoration-dotted"
+                >
+                  Políticas de Privacidad
+                </Link>
+                <a
+                  href="/informes/informe-gestion-2025.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-400 hover:text-primary transition-colors text-sm underline decoration-dotted"
+                >
+                  Informe de Gestión 2025
+                </a>
+              </div>
             </div>
           </div>
         </div>

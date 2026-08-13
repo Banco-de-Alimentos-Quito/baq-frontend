@@ -155,29 +155,56 @@ const AchievementsSection: React.FC = () => {
               </div>
             </div>
 
-            {/* "Entregando:" section — centered */}
-            <div className="flex flex-col items-center">
-              <h3 className="text-3xl font-bold tracking-tight sm:text-4xl text-primary mb-4">
-                Entregando:
-              </h3>
+            {/* "Entregando:" and Report section */}
+            <div className="flex flex-col md:flex-row items-center justify-between gap-8 bg-orange-50/50 p-6 rounded-3xl border border-orange-100/50 mt-4">
+              {/* Left: Entregando */}
+              <div className="flex flex-col items-center md:items-start flex-1">
+                <h3 className="text-3xl font-bold tracking-tight sm:text-4xl text-primary mb-4 text-center md:text-left">
+                  Entregando:
+                </h3>
 
-              <div className="flex flex-col items-center">
-                <div className="relative w-32 h-32 md:w-40 md:h-40">
-                  <img
-                    src="/achievements/ALIMENTOS.png"
-                    alt="Ilustración de bolsa de alimentos"
-                    className="absolute inset-0 w-full h-full object-contain"
-                  />
+                <div className="flex flex-col items-center md:items-start w-full">
+                  <div className="relative w-32 h-32 md:w-40 md:h-40">
+                    <img
+                      src="/achievements/ALIMENTOS.png"
+                      alt="Ilustración de bolsa de alimentos"
+                      className="absolute inset-0 w-full h-full object-contain"
+                    />
+                  </div>
+                  <span
+                    ref={kilosRef}
+                    className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-800 mt-2 tabular-nums"
+                  >
+                    {formatKilos(kilosCount)}
+                  </span>
+                  <span className="text-sm md:text-base font-semibold text-gray-700 bg-orange-100 px-5 py-1.5 rounded-full mt-2">
+                    Kilos de Alimento
+                  </span>
                 </div>
-                <span
-                  ref={kilosRef}
-                  className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-800 mt-2 tabular-nums"
-                >
-                  {formatKilos(kilosCount)}
-                </span>
-                <span className="text-sm md:text-base font-semibold text-gray-700 bg-orange-100 px-5 py-1.5 rounded-full mt-2">
-                  Kilos de Alimento
-                </span>
+              </div>
+
+              {/* Right: Informe de Gestión */}
+              <div className="flex flex-col justify-center items-start p-6 bg-gradient-to-br from-primary to-orange-600 rounded-2xl shadow-xl flex-1 w-full max-w-sm text-white overflow-hidden relative">
+                {/* Decorative element */}
+                <div className="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-white opacity-10 rounded-full blur-2xl"></div>
+                <div className="absolute bottom-0 left-0 -mb-4 -ml-4 w-24 h-24 bg-white opacity-10 rounded-full blur-xl"></div>
+                
+                <div className="relative z-10 w-full">
+                  <h4 className="text-2xl md:text-3xl font-extrabold mb-3 leading-tight">
+                    Mira nuestro Informe de Gestión
+                  </h4>
+                  <p className="text-orange-100 mb-6 text-sm md:text-base font-medium">
+                    Conoce en detalle nuestro impacto durante el 2025 (versión comunicacional).
+                  </p>
+                  <a
+                    href="/informes/informe-gestion-2025.pdf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block w-full sm:w-auto text-center px-6 py-3 bg-white text-primary font-extrabold rounded-full hover:bg-gray-50 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
+                  >
+                    Descargar Informe
+                  </a>
+                </div>
               </div>
             </div>
           </div>
