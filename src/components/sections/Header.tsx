@@ -29,7 +29,14 @@ const NavLinks = ({ onClick }: { onClick?: () => void }) => (
     <Link href="/blog" className="text-sm font-medium hover:text-primary transition-colors" onClick={onClick}>
       Blog
     </Link>
-
+    <Link
+      href="/huevos-zen"
+      className="text-sm font-medium hover:text-primary transition-colors relative group"
+      onClick={onClick}
+    >
+      Otras formas de ayuda
+      <span className="absolute -bottom-0.5 left-0 right-0 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
+    </Link>
   </>
 );
 

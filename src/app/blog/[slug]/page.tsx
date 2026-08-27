@@ -1,7 +1,13 @@
 import { getPostBySlug } from "@/lib/blog";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
+import HuevosZenLandingPage from "@/components/mdx/HuevosZenLandingPage";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+
+// Posts with custom landing page experiences
+const CUSTOM_PAGES: Record<string, React.ComponentType> = {
+  "huevos-zen": HuevosZenLandingPage,
+};
 
 interface PostPageProps {
   params: Promise<{
@@ -11,6 +17,13 @@ interface PostPageProps {
 
 export default async function PostPage({ params }: PostPageProps) {
   const { slug } = await params;
+
+  // Check if this slug has a custom landing page
+  const CustomPage = CUSTOM_PAGES[slug];
+  if (CustomPage) {
+    return <CustomPage />;
+  }
+
   const post = getPostBySlug(slug);
 
   if (!post) {
@@ -91,11 +104,13 @@ export default async function PostPage({ params }: PostPageProps) {
 
 // Genera rutas estáticas para cada post
 export async function generateStaticParams() {
-  // Importa la función con dynamic imports para evitar errores en tiempo de construcción
   const { getAllSlugs } = await import("@/lib/blog");
   const slugs = getAllSlugs();
 
-  return slugs.map((slug) => ({
+  // Also add custom page slugs
+  const customSlugs = Object.keys(CUSTOM_PAGES);
+
+  return [...new Set([...slugs, ...customSlugs])].map((slug) => ({
     slug,
   }));
 }

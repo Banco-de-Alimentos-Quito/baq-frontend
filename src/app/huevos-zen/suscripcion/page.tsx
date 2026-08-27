@@ -5,7 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import {
   BANK_OPTIONS,
   ACCOUNT_TYPE_OPTIONS,
-} from "../donacion/mensual/constants/formOptions";
+} from "../../donacion/mensual/constants/formOptions";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Upload,
@@ -19,13 +19,13 @@ import {
   ArrowRight,
   Truck,
 } from "lucide-react";
-import { CedulaValidator } from "../donacion/mensual/validators/documentValidators";
-import { EggPresentation, DeliveryFrequency } from "./types/huevo-zen";
-import { getPricingOption } from "./constants/pricing";
-import { PresentationSelector } from "./components/PresentationSelector";
-import { FrequencyPricingCard } from "./components/FrequencyPricingCard";
-import { GoogleMapsAddressPicker } from "./components/GoogleMapsAddressPicker";
-import { HuevoZenService } from "./services/huevoZenService";
+import { CedulaValidator } from "../../donacion/mensual/validators/documentValidators";
+import { EggPresentation, DeliveryFrequency } from "../types/huevo-zen";
+import { getPricingOption } from "../constants/pricing";
+import { PresentationSelector } from "../components/PresentationSelector";
+import { FrequencyPricingCard } from "../components/FrequencyPricingCard";
+import { GoogleMapsAddressPicker } from "../components/GoogleMapsAddressPicker";
+import { HuevoZenService } from "../services/huevoZenService";
 
 function HuevoZenContent() {
   const searchParams = useSearchParams();
@@ -197,6 +197,12 @@ function HuevoZenContent() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-orange-50/40 via-white to-gray-50 pt-28 pb-16 sm:pt-36 sm:pb-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
+        <button 
+           onClick={() => router.push('/huevos-zen')}
+           className="mb-6 flex items-center gap-2 px-4 py-2 text-sm font-bold text-gray-600 bg-white border border-gray-200 rounded-xl hover:text-green-700 hover:border-green-200 hover:bg-green-50/50 shadow-sm transition-all cursor-pointer w-fit"
+        >
+           ← Volver a los programas
+        </button>
         {/* Modal de Conflicto 409 */}
         <AnimatePresence>
           {showConflictModal && (
