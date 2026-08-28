@@ -29,52 +29,6 @@ const SECTIONS = [
     cta: "Conocer el Programa",
     tag: "🥚 Nutrición",
   },
-  {
-    id: "animal-en-accion",
-    slug: "animal-en-accion",
-    title: "Animal en Acción",
-    subtitle: "Protegiendo animales.",
-    description:
-      "Nuestra red de rescate y cuidado animal trabaja incansablemente para dar una segunda oportunidad a los animales más vulnerables de Quito.",
-    bg: "/animal-accion-bg.jpg",
-    accent: "#fb923c",
-    accentGlow: "rgba(251,146,60,0.55)",
-    palette: {
-      overlay: "linear-gradient(135deg, rgba(154,52,18,0.80) 0%, rgba(194,65,12,0.65) 50%, rgba(251,146,60,0.35) 100%)",
-      grid: "rgba(251,146,60,0.15)",
-      titleColor: "#fff7ed",
-      subtitleColor: "#ffedd5",
-      descColor: "#fed7aa",
-      btnBg: "#ea580c",
-      btnHover: "#c2410c",
-      btnText: "#ffffff",
-    },
-    cta: "Apoyar Animales",
-    tag: "🐾 Rescate Animal",
-  },
-  {
-    id: "empresa-solidaria",
-    slug: "empresa-solidaria",
-    title: "Empresa Solidaria",
-    subtitle: "Soluciones a Gran Escala para Organizaciones.",
-    description:
-      "Seguridad de nivel empresarial y soporte dedicado para que tu organización lidere el cambio con impacto medible y sostenible.",
-    bg: "/empresa-solidaria-bg.jpg",
-    accent: "#f97316",
-    accentGlow: "rgba(249,115,22,0.55)",
-    palette: {
-      overlay: "linear-gradient(135deg, rgba(120,53,15,0.88) 0%, rgba(154,52,18,0.72) 50%, rgba(194,65,12,0.45) 100%)",
-      grid: "rgba(249,115,22,0.15)",
-      titleColor: "#fff7ed",
-      subtitleColor: "#ffedd5",
-      descColor: "#fed7aa",
-      btnBg: "#f97316",
-      btnHover: "#ea580c",
-      btnText: "#ffffff",
-    },
-    cta: "Contactar Ventas",
-    tag: "🏢 Empresas",
-  },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -304,6 +258,7 @@ export default function HuevosZenPage() {
         .hz-wrapper {
           width: 100%;
           height: calc(100vh - 64px);
+          margin-top: 64px;
           display: flex;
           flex-direction: column;
           overflow: hidden;
