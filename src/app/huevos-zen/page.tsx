@@ -13,7 +13,7 @@ const SECTIONS = [
     subtitle: "Infancias nutridas, gallinas felices.",
     description:
       "Un programa único que conecta el bienestar animal con la nutrición infantil. Cada huevo donado es un paso hacia un Ecuador más saludable y equitativo.",
-    bg: "/huevos-zen-bg.jpg",
+    bg: "/huevos-zen/huevos_zen_caja.jpeg",
     accent: "#4ade80",
     accentGlow: "rgba(74,222,128,0.55)",
     palette: {
