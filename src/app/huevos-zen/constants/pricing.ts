@@ -4,7 +4,7 @@ export const PRICING_MATRIX: Record<EggPresentation, Record<DeliveryFrequency, P
   30: {
     1: {
       entregas_al_mes: 1,
-      frecuenciaNombre: "Mensual",
+      frecuenciaNombre: "1 Entrega",
       frecuenciaDescripcion: "1 entrega al mes",
       precioPorCubeta: 11.0,
       totalMensual: 11.0,
@@ -15,7 +15,7 @@ export const PRICING_MATRIX: Record<EggPresentation, Record<DeliveryFrequency, P
     },
     2: {
       entregas_al_mes: 2,
-      frecuenciaNombre: "Quincenal",
+      frecuenciaNombre: "2 Entregas",
       frecuenciaDescripcion: "2 entregas al mes (cada 15 días)",
       precioPorCubeta: 10.0,
       totalMensual: 20.0,
@@ -26,7 +26,7 @@ export const PRICING_MATRIX: Record<EggPresentation, Record<DeliveryFrequency, P
     },
     4: {
       entregas_al_mes: 4,
-      frecuenciaNombre: "Semanal",
+      frecuenciaNombre: "4 Entregas",
       frecuenciaDescripcion: "4 entregas al mes (cada semana)",
       precioPorCubeta: 9.5,
       totalMensual: 38.0,
@@ -39,7 +39,7 @@ export const PRICING_MATRIX: Record<EggPresentation, Record<DeliveryFrequency, P
   12: {
     1: {
       entregas_al_mes: 1,
-      frecuenciaNombre: "Mensual",
+      frecuenciaNombre: "1 Entrega",
       frecuenciaDescripcion: "1 entrega al mes",
       precioPorCubeta: 5.0,
       totalMensual: 5.0,
@@ -50,7 +50,7 @@ export const PRICING_MATRIX: Record<EggPresentation, Record<DeliveryFrequency, P
     },
     2: {
       entregas_al_mes: 2,
-      frecuenciaNombre: "Quincenal",
+      frecuenciaNombre: "2 Entregas",
       frecuenciaDescripcion: "2 entregas al mes (cada 15 días)",
       precioPorCubeta: 4.5,
       totalMensual: 9.0,
@@ -61,7 +61,7 @@ export const PRICING_MATRIX: Record<EggPresentation, Record<DeliveryFrequency, P
     },
     4: {
       entregas_al_mes: 4,
-      frecuenciaNombre: "Semanal",
+      frecuenciaNombre: "4 Entregas",
       frecuenciaDescripcion: "4 entregas al mes (cada semana)",
       precioPorCubeta: 4.0,
       totalMensual: 16.0,

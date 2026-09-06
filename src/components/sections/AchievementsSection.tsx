@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { Download, ChevronDown, FileText } from "lucide-react";
 
 // ── Animated counter hook ──────────────────────────────────────────────
 function useCountUp(end: number, duration = 2000, startOnView = true) {
@@ -101,6 +102,65 @@ const AchievementsSection: React.FC = () => {
     return `${millions}'${thousands}.${units}`;
   };
 
+  // ── Informes de Gestión ──────────────────────────────────────────────
+  const reports = [
+    {
+      year: "2025",
+      title: "Informe de Gestión 2025",
+      desc: "Versión comunicacional",
+      note: "versión comunicacional",
+      badge: "Más reciente",
+      file: "/informes/informe-gestion-2025.pdf",
+    },
+    {
+      year: "2024",
+      title: "Informe de Gestión 2024",
+      desc: "Informe anual de impacto",
+      note: "informe anual",
+      badge: null,
+      file: "/informes/informe-gestion-2024.pdf",
+    },
+    {
+      year: "2023",
+      title: "Informe de Gestión 2023",
+      desc: "Informe anual de impacto",
+      note: "informe anual",
+      badge: null,
+      file: "/informes/informe-gestion-2023.pdf",
+    },
+  ];
+
+  const [selectedYear, setSelectedYear] = useState<string>("2025");
+  const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const currentReport =
+    reports.find((r) => r.year === selectedYear) || reports[0];
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEscape);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, []);
+
   return (
     <section id="achievements-section" className="py-16 md:py-20 bg-white">
       <div className="container mx-auto px-4">
@@ -184,26 +244,102 @@ const AchievementsSection: React.FC = () => {
               </div>
 
               {/* Right: Informe de Gestión */}
-              <div className="flex flex-col justify-center items-start p-6 bg-gradient-to-br from-primary to-orange-600 rounded-2xl shadow-xl flex-1 w-full max-w-sm text-white overflow-hidden relative">
-                {/* Decorative element */}
-                <div className="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-white opacity-10 rounded-full blur-2xl"></div>
-                <div className="absolute bottom-0 left-0 -mb-4 -ml-4 w-24 h-24 bg-white opacity-10 rounded-full blur-xl"></div>
-                
+              <div className="flex flex-col justify-center items-start p-6 bg-gradient-to-br from-primary to-orange-600 rounded-2xl shadow-xl flex-1 w-full max-w-sm text-white relative">
+                {/* Decorative element contained so dropdown is not clipped */}
+                <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
+                  <div className="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-white opacity-10 rounded-full blur-2xl"></div>
+                  <div className="absolute bottom-0 left-0 -mb-4 -ml-4 w-24 h-24 bg-white opacity-10 rounded-full blur-xl"></div>
+                </div>
+
                 <div className="relative z-10 w-full">
                   <h4 className="text-2xl md:text-3xl font-extrabold mb-3 leading-tight">
                     Mira nuestro Informe de Gestión
                   </h4>
-                  <p className="text-orange-100 mb-6 text-sm md:text-base font-medium">
-                    Conoce en detalle nuestro impacto durante el 2025 (versión comunicacional).
+                  <p className="text-orange-100 mb-6 text-sm md:text-base font-medium transition-all duration-200">
+                    Conoce en detalle nuestro impacto durante el {selectedYear} ({currentReport.note}).
                   </p>
-                  <a
-                    href="/informes/informe-gestion-2025.pdf"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-block w-full sm:w-auto text-center px-6 py-3 bg-white text-primary font-extrabold rounded-full hover:bg-gray-50 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
-                  >
-                    Descargar Informe
-                  </a>
+
+                  {/* Dropdown de descarga de informes */}
+                  <div className="relative inline-block w-full" ref={dropdownRef}>
+                    <button
+                      type="button"
+                      id="download-report-dropdown-btn"
+                      onClick={() => setIsDropdownOpen((prev) => !prev)}
+                      className="inline-flex items-center justify-between gap-3 w-full sm:w-auto px-6 py-3.5 bg-white text-primary font-extrabold rounded-full hover:bg-orange-50 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 shadow-lg group cursor-pointer text-sm md:text-base select-none"
+                      aria-expanded={isDropdownOpen}
+                      aria-haspopup="true"
+                    >
+                      <div className="flex items-center gap-2">
+                        <Download className="w-4 h-4 text-primary transition-transform group-hover:scale-110" />
+                        <span>Descargar Informe</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 pl-2.5 border-l border-orange-200 text-xs text-orange-600 font-bold">
+                        <span>{selectedYear}</span>
+                        <ChevronDown
+                          className={`w-3.5 h-3.5 text-primary transition-transform duration-200 ${
+                            isDropdownOpen ? "rotate-180" : ""
+                          }`}
+                        />
+                      </div>
+                    </button>
+
+                    {/* Menú Desplegable */}
+                    {isDropdownOpen && (
+                      <div className="absolute left-0 mt-2 w-full sm:w-72 bg-white rounded-2xl shadow-2xl border border-orange-100 py-2 z-50 animate-in fade-in slide-in-from-top-2">
+                        <div className="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100 flex items-center justify-between">
+                          <span>Informes de Gestión</span>
+                          <span className="text-[10px] bg-orange-100 text-primary px-2 py-0.5 rounded-full font-bold">
+                            3 Años
+                          </span>
+                        </div>
+                        <div className="divide-y divide-gray-50">
+                          {reports.map((report) => {
+                            const isCurrent = selectedYear === report.year;
+                            return (
+                              <a
+                                key={report.year}
+                                href={report.file}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={() => {
+                                  setSelectedYear(report.year);
+                                  setIsDropdownOpen(false);
+                                }}
+                                className={`flex items-center justify-between px-4 py-3 text-sm font-bold transition-colors ${
+                                  isCurrent
+                                    ? "bg-orange-50 text-primary"
+                                    : "text-gray-700 hover:bg-orange-50/60 hover:text-primary"
+                                }`}
+                              >
+                                <div className="flex items-center gap-2.5">
+                                  <FileText
+                                    className={`w-4 h-4 flex-shrink-0 ${
+                                      isCurrent ? "text-primary" : "text-gray-400"
+                                    }`}
+                                  />
+                                  <div className="text-left">
+                                    <div className="leading-tight">
+                                      Informe {report.year}
+                                    </div>
+                                    <div className="text-[11px] font-normal text-gray-500">
+                                      {report.desc}
+                                    </div>
+                                  </div>
+                                </div>
+                                {report.badge ? (
+                                  <span className="text-[10px] bg-primary text-white px-2 py-0.5 rounded-full font-semibold whitespace-nowrap ml-2">
+                                    {report.badge}
+                                  </span>
+                                ) : (
+                                  <Download className="w-3.5 h-3.5 text-gray-400 opacity-60 ml-2" />
+                                )}
+                              </a>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>

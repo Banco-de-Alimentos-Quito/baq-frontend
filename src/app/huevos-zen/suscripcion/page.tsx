@@ -8,9 +8,7 @@ import {
 } from "../../donacion/mensual/constants/formOptions";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Upload,
   X,
-  CheckCircle,
   ShieldCheck,
   Lock,
   HeartHandshake,
@@ -18,6 +16,7 @@ import {
   Sparkles,
   ArrowRight,
   Truck,
+  CheckCircle,
 } from "lucide-react";
 import { CedulaValidator } from "../../donacion/mensual/validators/documentValidators";
 import { EggPresentation, DeliveryFrequency } from "../types/huevo-zen";
@@ -50,11 +49,7 @@ function HuevoZenContent() {
   // 4. Ubicación y Dirección
   const [direccion, setDireccion] = useState("");
 
-  // 5. Archivos de identidad
-  const [cedulaFile, setCedulaFile] = useState<File | null>(null);
-  const [cedulaPreview, setCedulaPreview] = useState<string | null>(null);
-  const [cedulaFileBack, setCedulaFileBack] = useState<File | null>(null);
-  const [cedulaPreviewBack, setCedulaPreviewBack] = useState<string | null>(null);
+
 
   // 6. Estados de UI y validación
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -111,20 +106,7 @@ function HuevoZenContent() {
       newErrors.direccion = "La dirección detallada es requerida para el envío";
     }
 
-    // Validar fotos de cédula y tamaño máximo (5 MB)
-    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
 
-    if (!cedulaFile) {
-      newErrors.archivo_cedula = "La foto frontal de la cédula es requerida";
-    } else if (cedulaFile.size > MAX_FILE_SIZE) {
-      newErrors.archivo_cedula = `La imagen frontal supera el límite de 5 MB (pesa ${(cedulaFile.size / (1024 * 1024)).toFixed(1)} MB)`;
-    }
-
-    if (!cedulaFileBack) {
-      newErrors.archivo_cedula_trasera = "La foto trasera de la cédula es requerida";
-    } else if (cedulaFileBack.size > MAX_FILE_SIZE) {
-      newErrors.archivo_cedula_trasera = `La imagen trasera supera el límite de 5 MB (pesa ${(cedulaFileBack.size / (1024 * 1024)).toFixed(1)} MB)`;
-    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -157,14 +139,6 @@ function HuevoZenContent() {
       // 1. Registrar datos de la suscripción
       await HuevoZenService.submitHuevoZen(payload);
 
-      // 2. Subir fotos de comprobante de cédula
-      if (cedulaFile) {
-        await HuevoZenService.submitImage(cedula, cedulaFile);
-      }
-      if (cedulaFileBack) {
-        await HuevoZenService.submitImage(cedula, cedulaFileBack);
-      }
-
       setLoading(false);
       setIsSubmitted(true);
     } catch (err: any) {
@@ -195,14 +169,8 @@ function HuevoZenContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-orange-50/40 via-white to-gray-50 pt-28 pb-16 sm:pt-36 sm:pb-20 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-b from-orange-50/40 via-white to-gray-50 pt-20 pb-12 sm:pt-24 sm:pb-16 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
-        <button 
-           onClick={() => router.push('/huevos-zen')}
-           className="mb-6 flex items-center gap-2 px-4 py-2 text-sm font-bold text-gray-600 bg-white border border-gray-200 rounded-xl hover:text-green-700 hover:border-green-200 hover:bg-green-50/50 shadow-sm transition-all cursor-pointer w-fit"
-        >
-           ← Volver a los programas
-        </button>
         {/* Modal de Conflicto 409 */}
         <AnimatePresence>
           {showConflictModal && (
@@ -253,9 +221,16 @@ function HuevoZenContent() {
             <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2">
               ¡Suscripción a Huevo Zen Confirmada!
             </h2>
-            <p className="text-gray-600 max-w-md mx-auto text-sm sm:text-base mb-6">
+            <p className="text-gray-600 max-w-md mx-auto text-sm sm:text-base mb-4">
               Gracias por unirte, <strong>{nombre}</strong>. Hemos enviado la confirmación y tu contrato de débito bancario en PDF a <strong>{email}</strong>.
             </p>
+
+            <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 max-w-md mx-auto mb-6 text-sm text-amber-900 text-left flex items-start gap-3">
+              <span className="text-xl">✍️</span>
+              <p>
+                <strong>Ten en cuenta:</strong> Tu contrato de débito ha sido enviado en PDF a tu correo. En tu <strong>primera entrega</strong> se te solicitará firmarlo presencialmente para formalizar tu suscripción.
+              </p>
+            </div>
 
             {/* Resumen del pedido */}
             <div className="bg-orange-50/60 border border-orange-200 rounded-2xl p-6 text-left max-w-md mx-auto mb-8 space-y-2.5">
@@ -352,7 +327,7 @@ function HuevoZenContent() {
                       name="cedula"
                       type="text"
                       maxLength={13}
-                      autoComplete="off"
+                      autoComplete="on"
                       placeholder="1712345678"
                       value={cedula}
                       onChange={(e) => {
@@ -491,11 +466,14 @@ function HuevoZenContent() {
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-gray-600 uppercase">
+                    <label htmlFor="cuenta" className="text-xs font-bold text-gray-600 uppercase">
                       Número de Cuenta *
                     </label>
                     <input
+                      id="cuenta"
+                      name="numero_cuenta"
                       type="text"
+                      autoComplete="on"
                       placeholder="2200123456"
                       value={cuenta}
                       onChange={(e) => {
@@ -515,155 +493,7 @@ function HuevoZenContent() {
                 </div>
               </div>
 
-              <hr className="border-gray-100" />
 
-              {/* SECCIÓN 6: Fotos de Cédula */}
-              <div className="space-y-4">
-                <div>
-                  <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">
-                    6. Fotos del Documento de Identidad
-                  </h3>
-                  <p className="text-xs text-gray-500 mt-0.5">
-                    Requeridas para la emisión y validez legal del contrato de autorización de débito.
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Foto Frontal */}
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-center">
-                      <label className="text-xs font-bold text-gray-600 uppercase">
-                        Parte Frontal *
-                      </label>
-                      <span className="text-[11px] text-gray-400">Máx. 5 MB</span>
-                    </div>
-                    <div
-                      className={`relative flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-2xl transition-all ${
-                        cedulaFile
-                          ? "border-green-400 bg-green-50/50"
-                          : errors.archivo_cedula
-                            ? "border-red-300 bg-red-50/50"
-                            : "border-gray-300 bg-gray-50 hover:bg-gray-100/80 hover:border-orange-400"
-                      }`}
-                    >
-                      <input
-                        type="file"
-                        accept="image/jpeg,image/png,image/webp,image/jpg"
-                        onChange={(e) => {
-                          if (e.target.files && e.target.files[0]) {
-                            const file = e.target.files[0];
-                            const MAX_SIZE = 5 * 1024 * 1024;
-                            if (file.size > MAX_SIZE) {
-                              setCedulaFile(null);
-                              setCedulaPreview(null);
-                              setErrors((prev) => ({
-                                ...prev,
-                                archivo_cedula: `El archivo pesa ${(file.size / (1024 * 1024)).toFixed(1)} MB. El tamaño máximo permitido es de 5 MB.`,
-                              }));
-                            } else {
-                              setCedulaFile(file);
-                              setCedulaPreview(URL.createObjectURL(file));
-                              setErrors((prev) => ({ ...prev, archivo_cedula: "" }));
-                            }
-                          }
-                        }}
-                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                      />
-                      {cedulaPreview ? (
-                        <div className="relative w-full h-32">
-                          <img
-                            src={cedulaPreview}
-                            alt="Cédula Frontal"
-                            className="w-full h-full object-contain rounded-lg"
-                          />
-                          <div className="absolute top-1 right-1 bg-white rounded-full p-1 shadow">
-                            <CheckCircle className="w-5 h-5 text-green-500" />
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="flex flex-col items-center text-gray-400 gap-2">
-                          <Upload className="w-7 h-7 text-orange-500" />
-                          <span className="text-xs font-medium text-gray-600">
-                            Subir foto frontal
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                    {errors.archivo_cedula && (
-                      <p className="text-red-500 text-xs pl-1">
-                        {errors.archivo_cedula}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Foto Trasera */}
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-center">
-                      <label className="text-xs font-bold text-gray-600 uppercase">
-                        Parte Posterior *
-                      </label>
-                      <span className="text-[11px] text-gray-400">Máx. 5 MB</span>
-                    </div>
-                    <div
-                      className={`relative flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-2xl transition-all ${
-                        cedulaFileBack
-                          ? "border-green-400 bg-green-50/50"
-                          : errors.archivo_cedula_trasera
-                            ? "border-red-300 bg-red-50/50"
-                            : "border-gray-300 bg-gray-50 hover:bg-gray-100/80 hover:border-orange-400"
-                      }`}
-                    >
-                      <input
-                        type="file"
-                        accept="image/jpeg,image/png,image/webp,image/jpg"
-                        onChange={(e) => {
-                          if (e.target.files && e.target.files[0]) {
-                            const file = e.target.files[0];
-                            const MAX_SIZE = 5 * 1024 * 1024;
-                            if (file.size > MAX_SIZE) {
-                              setCedulaFileBack(null);
-                              setCedulaPreviewBack(null);
-                              setErrors((prev) => ({
-                                ...prev,
-                                archivo_cedula_trasera: `El archivo pesa ${(file.size / (1024 * 1024)).toFixed(1)} MB. El tamaño máximo permitido es de 5 MB.`,
-                              }));
-                            } else {
-                              setCedulaFileBack(file);
-                              setCedulaPreviewBack(URL.createObjectURL(file));
-                              setErrors((prev) => ({ ...prev, archivo_cedula_trasera: "" }));
-                            }
-                          }
-                        }}
-                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                      />
-                      {cedulaPreviewBack ? (
-                        <div className="relative w-full h-32">
-                          <img
-                            src={cedulaPreviewBack}
-                            alt="Cédula Posterior"
-                            className="w-full h-full object-contain rounded-lg"
-                          />
-                          <div className="absolute top-1 right-1 bg-white rounded-full p-1 shadow">
-                            <CheckCircle className="w-5 h-5 text-green-500" />
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="flex flex-col items-center text-gray-400 gap-2">
-                          <Upload className="w-7 h-7 text-orange-500" />
-                          <span className="text-xs font-medium text-gray-600">
-                            Subir foto posterior
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                    {errors.archivo_cedula_trasera && (
-                      <p className="text-red-500 text-xs pl-1">
-                        {errors.archivo_cedula_trasera}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </div>
 
               {/* Resumen Final de Débito y Botón de Envío */}
               <div className="pt-4 space-y-4">

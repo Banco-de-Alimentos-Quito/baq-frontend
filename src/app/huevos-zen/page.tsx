@@ -1,277 +1,163 @@
 "use client";
 
-import { useState } from "react";
+import Link from "next/link";
+import { motion } from "framer-motion";
+import {
+  ArrowRight,
+  HeartHandshake,
+  ShieldCheck,
+  Truck,
+  Egg,
+  CheckCircle2,
+} from "lucide-react";
 
-// ─────────────────────────────────────────────────────────────────────────────
-// DATA
-// ─────────────────────────────────────────────────────────────────────────────
-const SECTIONS = [
-  {
-    id: "huevos-zen",
-    slug: "huevos-zen",
-    title: "Huevos Zen",
-    subtitle: "Infancias nutridas, gallinas felices.",
-    description:
-      "Un programa único que conecta el bienestar animal con la nutrición infantil. Cada huevo donado es un paso hacia un Ecuador más saludable y equitativo.",
-    bg: "/huevos-zen/huevos_zen_caja.jpeg",
-    accent: "#4ade80",
-    accentGlow: "rgba(74,222,128,0.55)",
-    palette: {
-      overlay: "linear-gradient(135deg, rgba(234,179,8,0.82) 0%, rgba(202,138,4,0.65) 50%, rgba(161,98,7,0.4) 100%)",
-      grid: "rgba(74,222,128,0.18)",
-      titleColor: "#1a2e05",
-      subtitleColor: "#14532d",
-      descColor: "#1c4a27",
-      btnBg: "#16a34a",
-      btnHover: "#15803d",
-      btnText: "#ffffff",
-    },
-    cta: "Conocer el Programa",
-    tag: "🥚 Nutrición",
-  },
-];
-
-// ─────────────────────────────────────────────────────────────────────────────
-// BLUEPRINT GRID
-// ─────────────────────────────────────────────────────────────────────────────
-function BlueprintGrid({ color, id }: { color: string; id: string }) {
-  return (
-    <svg
-      style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none", opacity: 0.45 }}
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <defs>
-        <pattern id={`g-${id}`} width="48" height="48" patternUnits="userSpaceOnUse">
-          <path d="M 48 0 L 0 0 0 48" fill="none" stroke={color} strokeWidth="0.7" />
-        </pattern>
-        <pattern id={`gm-${id}`} width="192" height="192" patternUnits="userSpaceOnUse">
-          <rect width="192" height="192" fill={`url(#g-${id})`} />
-          <path d="M 192 0 L 0 0 0 192" fill="none" stroke={color} strokeWidth="1.5" />
-        </pattern>
-      </defs>
-      <rect width="100%" height="100%" fill={`url(#gm-${id})`} />
-    </svg>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// SECTION BANNER
-// ─────────────────────────────────────────────────────────────────────────────
-function SectionBanner({ section, index }: { section: (typeof SECTIONS)[0]; index: number }) {
-  const [hovered, setHovered] = useState(false);
-
-  const getTargetUrl = () => {
-    if (section.slug === "huevos-zen") return "/huevos-zen/suscripcion";
-    return `/blog/${section.slug}`;
-  };
-
-  const handleClick = () => {
-    window.open(getTargetUrl(), "_blank");
-  };
-
-  const handleCtaClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    window.open(getTargetUrl(), "_blank");
-  };
-
-  return (
-    <div
-      id={section.id}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      onClick={handleClick}
-      style={{
-        flex: hovered ? "1.4 1 0" : "1 1 0",
-        minHeight: 0,
-        position: "relative",
-        width: "100%",
-        cursor: "pointer",
-        overflow: "hidden",
-        border: hovered ? `2.5px solid ${section.accent}` : "2.5px solid transparent",
-        boxShadow: hovered
-          ? `0 0 0 4px ${section.accentGlow}, 0 0 40px 8px ${section.accentGlow}, inset 0 0 30px 2px ${section.accentGlow}`
-          : "none",
-        transition: "flex 0.45s cubic-bezier(0.34,1.1,0.64,1), box-shadow 0.25s ease, border-color 0.25s ease",
-        zIndex: hovered ? 10 : 1,
-      }}
-    >
-      {/* BG photo */}
-      <div
-        style={{
-          position: "absolute", inset: 0,
-          backgroundImage: `url(${section.bg})`,
-          backgroundSize: "cover", backgroundPosition: "center",
-          transition: "transform 0.55s ease",
-          transform: hovered ? "scale(1.04)" : "scale(1)",
-        }}
-      />
-
-      {/* Color overlay */}
-      <div
-        style={{
-          position: "absolute", inset: 0,
-          background: section.palette.overlay,
-          transition: "opacity 0.3s ease",
-          opacity: hovered ? 0.72 : 0.88,
-        }}
-      />
-
-      {/* Blueprint grid */}
-      <BlueprintGrid color={section.palette.grid} id={section.id} />
-
-      {/* Glow border pulse */}
-      {hovered && (
-        <div style={{
-          position: "absolute", inset: 0,
-          border: `3px solid ${section.accent}`,
-          boxShadow: `0 0 24px 6px ${section.accentGlow}`,
-          pointerEvents: "none",
-          animation: "borderPulse 0.9s ease-in-out infinite alternate",
-        }} />
-      )}
-
-      {/* Content */}
-      <div style={{
-        position: "relative", zIndex: 2, height: "100%",
-        display: "flex", alignItems: "center",
-        padding: "0 5vw", gap: "2rem",
-      }}>
-        {/* Text block */}
-        <div style={{ flex: "0 0 auto", maxWidth: "580px" }}>
-          {/* Tag */}
-          <span style={{
-            display: "inline-block", padding: "4px 14px", borderRadius: "999px",
-            fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase",
-            background: "rgba(255,255,255,0.15)", color: section.palette.titleColor,
-            border: `1px solid ${section.accent}`, marginBottom: "0.8rem", backdropFilter: "blur(4px)",
-          }}>
-            {section.tag}
-          </span>
-
-          {/* Title */}
-          <h2 style={{
-            margin: 0,
-            fontSize: "clamp(2rem, 4.5vw, 3.5rem)",
-            fontWeight: 900, lineHeight: 1.05,
-            color: section.palette.titleColor, letterSpacing: "-0.02em",
-            textShadow: "0 2px 16px rgba(0,0,0,0.25)",
-            transition: "transform 0.3s ease",
-            transform: hovered ? "translateX(8px)" : "translateX(0)",
-          }}>
-            {section.title}
-          </h2>
-
-          {/* Subtitle */}
-          <p style={{
-            margin: "0.45rem 0 0.9rem",
-            fontSize: "clamp(0.95rem, 2vw, 1.25rem)",
-            fontWeight: 500, color: section.palette.subtitleColor, lineHeight: 1.4,
-            transition: "transform 0.35s ease",
-            transform: hovered ? "translateX(8px)" : "translateX(0)",
-          }}>
-            {section.subtitle}
-          </p>
-
-          {/* Description */}
-          <p style={{
-            margin: "0 0 1.1rem",
-            fontSize: "clamp(0.8rem, 1.4vw, 1rem)",
-            color: section.palette.descColor, lineHeight: 1.6, maxWidth: "460px",
-            opacity: hovered ? 1 : 0,
-            transform: hovered ? "translateY(0)" : "translateY(10px)",
-            transition: "opacity 0.35s ease, transform 0.35s ease",
-          }}>
-            {section.description}
-          </p>
-
-          {/* CTA */}
-          <button
-            onClick={handleCtaClick}
-            style={{
-              display: "inline-flex", alignItems: "center", gap: "0.5rem",
-              padding: "0.65rem 1.6rem", borderRadius: "8px",
-              background: section.palette.btnBg, color: section.palette.btnText,
-              fontWeight: 700, fontSize: "0.92rem", border: "none", cursor: "pointer",
-              opacity: hovered ? 1 : 0,
-              transform: hovered ? "translateY(0) scale(1)" : "translateY(12px) scale(0.95)",
-              transition: "opacity 0.35s ease 0.05s, transform 0.35s ease 0.05s, background 0.2s ease",
-              boxShadow: `0 4px 20px ${section.accentGlow}`,
-              letterSpacing: "0.02em",
-            }}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = section.palette.btnHover; }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = section.palette.btnBg; }}
-          >
-            {section.cta}
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M5 12h14M12 5l7 7-7 7" />
-            </svg>
-          </button>
-        </div>
-
-        {/* Index number */}
-        <div style={{ flex: "1 1 auto", display: "flex", justifyContent: "flex-end", alignItems: "center", paddingRight: "2vw" }}>
-          <span style={{
-            fontSize: "clamp(5rem, 14vw, 11rem)",
-            fontWeight: 900, lineHeight: 1,
-            color: section.accent,
-            opacity: hovered ? 0.28 : 0.1,
-            transition: "opacity 0.4s ease",
-            userSelect: "none", letterSpacing: "-0.05em",
-          }}>
-            0{index + 1}
-          </span>
-        </div>
-      </div>
-
-      {/* Click tooltip */}
-      {hovered && (
-        <div style={{
-          position: "absolute", bottom: "14px", right: "24px",
-          background: "rgba(0,0,0,0.6)", backdropFilter: "blur(8px)",
-          borderRadius: "8px", padding: "6px 14px",
-          color: "#fff", fontSize: "0.75rem", fontWeight: 600, letterSpacing: "0.05em",
-          display: "flex", alignItems: "center", gap: "6px",
-          animation: "fadeInUp 0.25s ease",
-        }}>
-          🔗 Haga clic para ver más →
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// PAGE
-// ─────────────────────────────────────────────────────────────────────────────
 export default function HuevosZenPage() {
-  return (
-    <>
-      <style>{`
-        @keyframes borderPulse {
-          0%   { opacity: 0.6; }
-          100% { opacity: 1; box-shadow: 0 0 48px 16px currentColor; }
-        }
-        @keyframes fadeInUp {
-          from { opacity: 0; transform: translateY(8px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-        .hz-wrapper {
-          width: 100%;
-          height: calc(100vh - 64px);
-          margin-top: 64px;
-          display: flex;
-          flex-direction: column;
-          overflow: hidden;
-          box-sizing: border-box;
-        }
-      `}</style>
+  const highlights = [
+    {
+      icon: <Egg className="w-5 h-5 text-amber-400" />,
+      title: "Huevos Orgánicos",
+      desc: "Huevos 100% orgánicos, frescos y con los más altos estándares de calidad y nutrición.",
+    },
+    {
+      icon: <HeartHandshake className="w-5 h-5 text-orange-400" />,
+      title: "Impacto Solidario",
+      desc: "Cada cubeta entregada financia nutrición digna para niños vulnerables de Quito.",
+    },
+    {
+      icon: <Truck className="w-5 h-5 text-amber-300" />,
+      title: "A tu Domicilio",
+      desc: "Entregas programadas mensuales, quincenales o semanales en todo Quito.",
+    },
+  ];
 
-      {/* Stacked banners — full viewport minus main header */}
-      <div className="hz-wrapper">
-        {SECTIONS.map((section, i) => (
-          <SectionBanner key={section.id} section={section} index={i} />
-        ))}
+  return (
+    <main className="relative min-h-screen bg-slate-950 text-white overflow-hidden pt-20 lg:pt-0 flex flex-col justify-center">
+      {/* Background Image con degradado cinemático */}
+      <div className="absolute inset-0 z-0">
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105 transition-transform duration-1000"
+          style={{
+            backgroundImage: `url('/huevos-zen/huevos_zen_caja.jpeg')`,
+          }}
+        />
+        {/* Capas de gradientes suaves para máxima legibilidad y estética premium */}
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/75 to-slate-900/60" />
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/80 to-transparent" />
       </div>
-    </>
+
+      {/* Decorative ambient lights */}
+      <div className="absolute -top-40 -left-40 w-96 h-96 bg-orange-500/15 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/2 right-0 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+
+      {/* Slide Index Number Indicator (01) */}
+      <div className="absolute top-20 right-6 sm:right-12 lg:right-16 select-none pointer-events-none z-0 opacity-15">
+        <span className="font-black text-7xl sm:text-9xl lg:text-[11rem] tracking-tighter text-white/40 font-mono">
+          01
+        </span>
+      </div>
+
+      {/* Content Container */}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 flex-1 flex flex-col justify-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+          
+          {/* Columna Principal: Texto y CTA */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="lg:col-span-7 space-y-6"
+          >
+            {/* Título Principal */}
+            <div className="space-y-2">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-[1.1]">
+                Huevos <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-amber-300 to-yellow-200">Zen</span>
+              </h1>
+              <p className="text-xl sm:text-2xl font-medium text-orange-100/90 leading-snug">
+                Infancias nutridas, gallinas felices.
+              </p>
+            </div>
+
+            {/* Descripción */}
+            <p className="text-base sm:text-lg text-slate-300/90 max-w-2xl leading-relaxed">
+              Un programa único que conecta la producción de huevos orgánicos con la nutrición infantil en el Ecuador. Disfruta huevos frescos de la más alta calidad mientras apoyas a miles de niños.
+            </p>
+
+            {/* Lista de beneficios breves */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+              <div className="flex items-center gap-2.5 text-sm text-slate-200">
+                <CheckCircle2 className="w-4 h-4 text-orange-400 shrink-0" />
+                <span>Cobro automático seguro mensual</span>
+              </div>
+              <div className="flex items-center gap-2.5 text-sm text-slate-200">
+                <CheckCircle2 className="w-4 h-4 text-orange-400 shrink-0" />
+                <span>Presentaciones de 12 y 30 unidades</span>
+              </div>
+              <div className="flex items-center gap-2.5 text-sm text-slate-200">
+                <CheckCircle2 className="w-4 h-4 text-orange-400 shrink-0" />
+                <span>Descuento por frecuencia mensual, quincenal y semanal</span>
+              </div>
+              <div className="flex items-center gap-2.5 text-sm text-slate-200">
+                <CheckCircle2 className="w-4 h-4 text-orange-400 shrink-0" />
+                <span>Cobertura en todo Quito</span>
+              </div>
+            </div>
+
+            {/* Botón CTA Principal */}
+            <div className="pt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+              <Link
+                href="/huevos-zen/suscripcion"
+                className="inline-flex items-center justify-center gap-3 px-8 py-4 rounded-xl bg-gradient-to-r from-[#ED6F1D] to-orange-500 hover:from-orange-600 hover:to-[#ED6F1D] text-white text-base font-bold shadow-lg shadow-orange-500/25 hover:shadow-orange-500/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 group"
+              >
+                <span>Suscribirme al Programa</span>
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </div>
+          </motion.div>
+
+          {/* Columna Derecha: Tarjetas informativas con estética limpia */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.96 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, delay: 0.15 }}
+            className="lg:col-span-5 space-y-4"
+          >
+            <div className="bg-slate-900/60 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl space-y-5">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-orange-400 flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4" />
+                ¿Por qué elegir Huevo Zen?
+              </h3>
+
+              <div className="space-y-4">
+                {highlights.map((h, idx) => (
+                  <div
+                    key={idx}
+                    className="flex items-start gap-4 p-3.5 rounded-xl bg-white/[0.03] border border-white/5 hover:border-orange-500/30 transition-colors"
+                  >
+                    <div className="p-2.5 rounded-lg bg-orange-500/10 border border-orange-500/20 shrink-0">
+                      {h.icon}
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-semibold text-white">
+                        {h.title}
+                      </h4>
+                      <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">
+                        {h.desc}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Banner de Garantía */}
+              <div className="pt-2 border-t border-white/10 flex items-center justify-between text-xs text-slate-400">
+                <span>Banco de Alimentos Quito</span>
+                <span className="text-orange-400 font-semibold">100% Solidario</span>
+              </div>
+            </div>
+          </motion.div>
+
+        </div>
+      </div>
+    </main>
   );
 }

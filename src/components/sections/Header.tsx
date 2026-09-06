@@ -4,7 +4,7 @@ import { Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ScrollLink from '@/components/ScrollLink';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 
@@ -43,13 +43,28 @@ const NavLinks = ({ onClick }: { onClick?: () => void }) => (
 export default function Header() {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const lastScrollY = useRef(0);
   const pathname = usePathname() || '';
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      const currentScrollY = window.scrollY;
+      setIsScrolled(currentScrollY > 10);
+
+      // Al estar en el tope, siempre visible
+      if (currentScrollY <= 10) {
+        setIsVisible(true);
+      } else if (currentScrollY > lastScrollY.current) {
+        // Desplazamiento hacia abajo: ocultar de inmediato
+        setIsVisible(false);
+      } else if (lastScrollY.current - currentScrollY > 5) {
+        // Desplazamiento hacia arriba: mostrar
+        setIsVisible(true);
+      }
+      lastScrollY.current = currentScrollY;
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -58,9 +73,11 @@ export default function Header() {
     return null;
   }
 
+  const isDarkPage = pathname.startsWith('/huevos-zen');
+
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
-      <div className={`w-full ${isScrolled ? 'bg-white/95 shadow-md backdrop-blur-sm' : 'bg-transparent'}`}>
+    <div className={`fixed top-0 left-0 right-0 z-50 transition-transform duration-200 ease-in-out ${isVisible ? 'translate-y-0' : '-translate-y-full'}`}>
+      <div className={`w-full ${isScrolled || isDarkPage ? 'bg-white/95 shadow-md backdrop-blur-sm' : 'bg-transparent'}`}>
         <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
           <Link href="/" className="flex items-center gap-2">
             <Image
