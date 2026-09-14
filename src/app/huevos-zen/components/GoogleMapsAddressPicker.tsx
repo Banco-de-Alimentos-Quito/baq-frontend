@@ -15,8 +15,11 @@ import {
 interface GoogleMapsAddressPickerProps {
   direccion: string;
   onDireccionChange: (direccion: string) => void;
+  referencias?: string;
+  onReferenciasChange?: (referencias: string) => void;
   onGoogleMapsUrlChange: (url: string) => void;
   error?: string;
+  errorReferencias?: string;
 }
 
 // Coordenadas centrales por defecto (Quito, Ecuador)
@@ -49,8 +52,11 @@ interface Suggestion {
 export function GoogleMapsAddressPicker({
   direccion,
   onDireccionChange,
+  referencias = "",
+  onReferenciasChange,
   onGoogleMapsUrlChange,
   error,
+  errorReferencias,
 }: GoogleMapsAddressPickerProps) {
   const [coords, setCoords] = useState<{ lat: number; lng: number }>({
     lat: DEFAULT_LAT,
@@ -143,7 +149,7 @@ export function GoogleMapsAddressPicker({
           leafletMarkerRef.current.setLatLng([userLat, userLng]);
         }
 
-        reverseGeocode(userLat, userLng, false);
+        reverseGeocode(userLat, userLng, true);
       },
       (err) => {
         console.warn("Geolocation warning:", err.message);
@@ -152,6 +158,7 @@ export function GoogleMapsAddressPicker({
           "Puedes mover el pin en el mapa de Quito o buscar tu dirección."
         );
         updateMapsUrl(DEFAULT_LAT, DEFAULT_LNG);
+        reverseGeocode(DEFAULT_LAT, DEFAULT_LNG, false);
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
     );
@@ -512,26 +519,36 @@ export function GoogleMapsAddressPicker({
         </span>
       </div>
 
-      {/* Input de dirección textual */}
+      {/* Dirección oculta (se envía al backend con la geocodificación del mapa) */}
+      <input type="hidden" name="direccion" value={direccion} />
+
+      {/* Alerta si falta fijar la ubicación en el mapa */}
+      {error && (
+        <div className="p-2.5 bg-red-50 border border-red-200 rounded-xl text-red-700 text-xs flex items-center gap-2">
+          <AlertCircle className="w-4 h-4 shrink-0 text-red-500" />
+          <span>{error}</span>
+        </div>
+      )}
+
+      {/* Campo Referencias editable por el usuario */}
       <div>
-        <label htmlFor="direccion" className="block text-xs font-medium text-gray-700 mb-1">
-          Dirección Detallada y Referencias <span className="text-red-500">*</span>
+        <label htmlFor="referencias" className="block text-xs font-medium text-gray-700 mb-1">
+          Referencias <span className="text-red-500">*</span>
         </label>
         <textarea
-          id="direccion"
-          name="street-address"
-          autoComplete="street-address"
+          id="referencias"
+          name="referencias"
           rows={2}
-          value={direccion}
-          onChange={(e) => onDireccionChange(e.target.value)}
-          placeholder="Ej: Av. Brasil N34-12 y Granda Centeno, Casa blanca portón negro, Timbre Depto 3B."
+          value={referencias}
+          onChange={(e) => onReferenciasChange?.(e.target.value)}
+          placeholder="Ej: Casa blanca de dos pisos, portón negro, timbre Depto 3B, diagonal a la farmacia."
           className={`w-full p-2.5 text-sm bg-white border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#ED6F1D] focus:border-transparent text-gray-800 resize-none ${
-            error ? "border-red-500 ring-1 ring-red-500" : "border-gray-300"
+            errorReferencias ? "border-red-500 ring-1 ring-red-500" : "border-gray-300"
           }`}
         />
-        {error && (
+        {errorReferencias && (
           <p className="text-xs text-red-500 mt-1 flex items-center gap-1">
-            <AlertCircle className="w-3.5 h-3.5" /> {error}
+            <AlertCircle className="w-3.5 h-3.5" /> {errorReferencias}
           </p>
         )}
       </div>

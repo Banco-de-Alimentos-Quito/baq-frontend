@@ -21,6 +21,7 @@ export interface HuevoZenPayload {
   correo_electronico: string;
   ciudad?: string;
   direccion: string;
+  referencias?: string;
   google_maps_url?: string;
   banco_cooperativa: string;
   numero_cuenta: string;
@@ -30,5 +31,8 @@ export interface HuevoZenPayload {
   total_mensual_usd: number;
   acepta_aporte_voluntario: boolean;
   acepta_tratamiento_datos: boolean;
+  acepta_terminos_condiciones?: boolean;
+  version_terminos?: string;
   archivo_cedula?: string;
 }
+

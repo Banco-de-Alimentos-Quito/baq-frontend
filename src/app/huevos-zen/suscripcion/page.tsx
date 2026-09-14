@@ -48,8 +48,12 @@ function HuevoZenContent() {
 
   // 4. Ubicación y Dirección
   const [direccion, setDireccion] = useState("");
+  const [referencias, setReferencias] = useState("");
 
 
+
+  // 5. Términos y condiciones
+  const [aceptaTerminos, setAceptaTerminos] = useState(false);
 
   // 6. Estados de UI y validación
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -101,12 +105,21 @@ function HuevoZenContent() {
       newErrors.banco = "El banco es requerido";
     }
 
-    // Validar dirección
+    // Validar dirección (ubicación del mapa)
     if (!direccion.trim()) {
-      newErrors.direccion = "La dirección detallada es requerida para el envío";
+      newErrors.direccion = "Por favor selecciona tu ubicación en el mapa de Quito";
     }
 
+    // Validar referencias
+    if (!referencias.trim()) {
+      newErrors.referencias = "Por favor ingresa referencias para la entrega (ej: color de casa, timbre, etc.)";
+    }
 
+    // Validar aceptación de términos y condiciones
+    if (!aceptaTerminos) {
+      newErrors.aceptaTerminos =
+        "Debes aceptar los términos y condiciones para continuar";
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -125,6 +138,7 @@ function HuevoZenContent() {
         numero_telefono: phone.trim() || "0999999999",
         correo_electronico: email.trim(),
         direccion: direccion.trim(),
+        referencias: referencias.trim(),
         google_maps_url: googleMapsUrl || undefined,
         banco_cooperativa: banco.trim(),
         numero_cuenta: cuenta.trim(),
@@ -134,6 +148,8 @@ function HuevoZenContent() {
         total_mensual_usd: currentPricing.totalMensual,
         acepta_aporte_voluntario: true,
         acepta_tratamiento_datos: true,
+        acepta_terminos_condiciones: true,
+        version_terminos: "v1.0",
       };
 
       // 1. Registrar datos de la suscripción
@@ -228,7 +244,7 @@ function HuevoZenContent() {
             <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 max-w-md mx-auto mb-6 text-sm text-amber-900 text-left flex items-start gap-3">
               <span className="text-xl">✍️</span>
               <p>
-                <strong>Ten en cuenta:</strong> Tu contrato de débito ha sido enviado en PDF a tu correo. En tu <strong>primera entrega</strong> se te solicitará firmarlo presencialmente para formalizar tu suscripción.
+                <strong>Ten en cuenta:</strong> Tu contrato de débito ha sido enviado en PDF a tu correo. En tu <strong>primera entrega</strong> nuestro equipo llevará este contrato impreso para que lo firmes físicamente y formalices tu suscripción (no es necesario que lo imprimas).
               </p>
             </div>
 
@@ -303,10 +319,16 @@ function HuevoZenContent() {
                 direccion={direccion}
                 onDireccionChange={(dir) => {
                   setDireccion(dir);
-                  if (errors.direccion) setErrors({ ...errors, direccion: "" });
+                  if (errors.direccion) setErrors((prev) => ({ ...prev, direccion: "" }));
+                }}
+                referencias={referencias}
+                onReferenciasChange={(ref) => {
+                  setReferencias(ref);
+                  if (errors.referencias) setErrors((prev) => ({ ...prev, referencias: "" }));
                 }}
                 onGoogleMapsUrlChange={(url) => setGoogleMapsUrl(url)}
                 error={errors.direccion}
+                errorReferencias={errors.referencias}
               />
 
               <hr className="border-gray-100" />
@@ -494,6 +516,49 @@ function HuevoZenContent() {
               </div>
 
 
+
+              {/* Checkbox de Términos y Condiciones */}
+              <div className="bg-white border-2 border-orange-100 rounded-2xl p-5 shadow-sm space-y-3">
+                <label className="flex items-start gap-3 cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    id="aceptaTerminos"
+                    name="aceptaTerminos"
+                    checked={aceptaTerminos}
+                    onChange={(e) => {
+                      const checked = e.target.checked;
+                      setAceptaTerminos(checked);
+                      if (checked && errors.aceptaTerminos) {
+                        setErrors((prev) => {
+                          const copy = { ...prev };
+                          delete copy.aceptaTerminos;
+                          return copy;
+                        });
+                      }
+                    }}
+                    className="mt-1 w-5 h-5 text-[#ED6F1D] border-gray-300 rounded focus:ring-orange-500 cursor-pointer accent-[#ED6F1D] shrink-0"
+                  />
+                  <div className="text-xs sm:text-sm text-gray-700 leading-relaxed select-none">
+                    <span className="font-semibold text-gray-900">
+                      He leído y acepto los{" "}
+                    </span>
+                    <a
+                      href="/huevos-zen/terminos"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[#ED6F1D] font-bold underline hover:text-orange-700 transition-colors inline"
+                    >
+                      términos y condiciones
+                    </a>
+                    . Autorizo expresamente al Banco de Alimentos Quito al débito bancario automático de mi cuenta y al tratamiento de mis datos personales y bancarios para la gestión de la membresía y entregas.
+                  </div>
+                </label>
+                {errors.aceptaTerminos && (
+                  <p className="text-red-500 text-xs font-semibold pl-8 flex items-center gap-1">
+                    <span>⚠️</span> {errors.aceptaTerminos}
+                  </p>
+                )}
+              </div>
 
               {/* Resumen Final de Débito y Botón de Envío */}
               <div className="pt-4 space-y-4">
