@@ -26,7 +26,7 @@ export default function TerminosHuevosZenPage() {
 
   const handleDownload = () => {
     const link = document.createElement('a');
-    link.href = '/Contrato_Membresia_Huevos_ZEN_BAQ.pdf';
+    link.href = '/huevos-zen/Contrato_Membresia_Huevos_ZEN_BAQ.pdf';
     link.download = 'Contrato_Membresia_Huevos_ZEN_BAQ.pdf';
     document.body.appendChild(link);
     link.click();

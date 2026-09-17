@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920" width="100%" height="100%">
+  <!-- Fondo completo gris elegante borde a borde -->
+  <rect width="1080" height="1920" fill="#141c2e"/>
+  <rect width="1080" height="1920" fill="none" stroke="#334155" stroke-width="4"/>
+
+  <!-- Guía diagonal sutil para indicar área de imagen -->
+  <line x1="0" y1="0" x2="1080" y2="1920" stroke="#1e293b" stroke-width="2"/>
+  <line x1="1080" y1="0" x2="0" y2="1920" stroke="#1e293b" stroke-width="2"/>
+
+  <!-- Indicador central minimalista -->
+  <g transform="translate(540, 960)">
+    <rect x="-180" y="-45" width="360" height="90" rx="16" fill="#0f172a" fill-opacity="0.8" stroke="#475569" stroke-width="2"/>
+    <text x="0" y="-8" text-anchor="middle" font-family="'Montserrat', system-ui, sans-serif" font-weight="700" font-size="28" fill="#e2e8f0" letter-spacing="1">
+      1080 × 1920 px
+    </text>
+    <text x="0" y="24" text-anchor="middle" font-family="'Montserrat', system-ui, sans-serif" font-weight="500" font-size="16" fill="#94a3b8">
+      Espacio Arte Móvil (Celulares)
+    </text>
+  </g>
+</svg>
