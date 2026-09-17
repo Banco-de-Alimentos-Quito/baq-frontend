@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useRef } from "react";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   ArrowRight,
   HeartHandshake,
@@ -10,24 +9,9 @@ import {
   Truck,
   Egg,
   CheckCircle2,
-  ChevronDown,
-  ChevronUp,
-  Info,
 } from "lucide-react";
 
 export default function HuevosZenPage() {
-  const [showMoreInfo, setShowMoreInfo] = useState(false);
-  const infoRef = useRef<HTMLDivElement>(null);
-
-  const toggleMoreInfo = () => {
-    const nextState = !showMoreInfo;
-    setShowMoreInfo(nextState);
-    if (nextState) {
-      setTimeout(() => {
-        infoRef.current?.scrollIntoView({ behavior: "smooth" });
-      }, 150);
-    }
-  };
 
   const highlights = [
     {
@@ -121,8 +105,8 @@ export default function HuevosZenPage() {
                 </div>
               </div>
 
-              {/* Botón CTA Principal y Opción MÁS INFORMACIÓN Centrada */}
-              <div className="pt-4 flex flex-col items-stretch sm:items-start gap-3">
+              {/* Botón CTA Principal */}
+              <div className="pt-4 flex flex-col sm:flex-row gap-4">
                 <Link
                   href="/huevos-zen/suscripcion"
                   className="inline-flex items-center justify-center gap-3 px-8 py-4 rounded-xl bg-gradient-to-r from-[#ED6F1D] to-orange-500 hover:from-orange-600 hover:to-[#ED6F1D] text-white text-base font-bold shadow-lg shadow-orange-500/25 hover:shadow-orange-500/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 group"
@@ -130,23 +114,6 @@ export default function HuevosZenPage() {
                   <span>Suscribirme al Programa</span>
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Link>
-
-                {/* Opción MÁS INFORMACIÓN: Centrada debajo del botón de Suscribirme al Programa */}
-                <div className="w-full sm:w-[285px] flex justify-center pt-1">
-                  <button
-                    type="button"
-                    onClick={toggleMoreInfo}
-                    className="inline-flex items-center justify-center gap-2 px-5 py-2 rounded-full text-xs font-bold tracking-wider uppercase text-slate-300 hover:text-orange-300 bg-slate-900/80 hover:bg-slate-800/90 border border-white/15 hover:border-orange-500/40 backdrop-blur-md shadow-md hover:shadow-orange-500/10 transition-all duration-200 cursor-pointer group active:scale-95"
-                  >
-                    <Info className="w-3.5 h-3.5 text-orange-400 group-hover:scale-110 transition-transform" />
-                    <span>{showMoreInfo ? "Menos información" : "Más información"}</span>
-                    <ChevronDown
-                      className={`w-4 h-4 text-orange-400 transition-transform duration-300 ${
-                        showMoreInfo ? "rotate-180" : ""
-                      }`}
-                    />
-                  </button>
-                </div>
               </div>
             </motion.div>
 
@@ -195,68 +162,6 @@ export default function HuevosZenPage() {
           </div>
         </div>
       </section>
-
-      {/* ── DESPLIEGUE DE MÁS INFORMACIÓN (IMAGEN A ANCHO COMPLETO DENTRO DE 01) ── */}
-      <AnimatePresence>
-        {showMoreInfo && (
-          <motion.section
-            ref={infoRef}
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.6, ease: "easeInOut" }}
-            className="relative z-10 w-full min-h-screen bg-slate-950 border-t border-white/10 flex flex-col justify-center items-center overflow-hidden"
-          >
-            {/* 1. VERSIÓN PC (Escritorio / Laptops): Ocupa prácticamente todo el ancho de la pantalla */}
-            <div className="hidden md:block w-full min-h-screen relative">
-              <img
-                src="/huevos-zen/info_desktop.png"
-                onError={(e) => {
-                  const target = e.currentTarget;
-                  if (!target.dataset.triedJpg) {
-                    target.dataset.triedJpg = "true";
-                    target.src = "/huevos-zen/info_desktop.jpg";
-                  } else {
-                    target.src = "/huevos-zen/info_desktop_placeholder.svg";
-                  }
-                }}
-                alt="Arte Huevo Zen Desktop"
-                className="w-full h-full min-h-screen object-cover object-center"
-              />
-            </div>
-
-            {/* 2. VERSIÓN MÓVIL (Celulares): Ocupa prácticamente todo el ancho de la pantalla */}
-            <div className="block md:hidden w-full min-h-screen relative">
-              <img
-                src="/huevos-zen/info_mobile.png"
-                onError={(e) => {
-                  const target = e.currentTarget;
-                  if (!target.dataset.triedJpg) {
-                    target.dataset.triedJpg = "true";
-                    target.src = "/huevos-zen/info_mobile.jpg";
-                  } else {
-                    target.src = "/huevos-zen/info_mobile_placeholder.svg";
-                  }
-                }}
-                alt="Arte Huevo Zen Móvil"
-                className="w-full h-full min-h-screen object-cover object-center"
-              />
-            </div>
-
-            {/* Botón flotante discreto para cerrar información */}
-            <div className="absolute bottom-8 z-20 flex items-center justify-center">
-              <button
-                type="button"
-                onClick={toggleMoreInfo}
-                className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-slate-950/85 hover:bg-slate-900 border border-white/20 hover:border-orange-500/40 text-white text-xs sm:text-sm font-semibold tracking-wider uppercase backdrop-blur-md shadow-2xl transition-all duration-200 cursor-pointer active:scale-95"
-              >
-                <ChevronUp className="w-4 h-4 text-orange-400" />
-                <span>Cerrar</span>
-              </button>
-            </div>
-          </motion.section>
-        )}
-      </AnimatePresence>
     </main>
   );
 }
