@@ -166,6 +166,7 @@ function QuickDonateContent() {
         requiere_factura: false,
         estatus_kyc: "Approved",
         gestor_donacion: "BAQ",
+        via_donacion: "donacion rapida",
       };
 
       // 1. First, register the donation data

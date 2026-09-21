@@ -16,6 +16,7 @@ export interface DonationPayload {
   requiere_factura: boolean;
   gestor_donacion: string;
   archivo_cedula?: string;
+  via_donacion?: string;
 }
 
 export class DonationService {
