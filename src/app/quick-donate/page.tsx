@@ -164,7 +164,7 @@ function QuickDonateContent() {
         acepta_tratamiento_datos: true,
         ciudad: ciudad,
         requiere_factura: false,
-        estatus_kyc: "Not Started",
+        estatus_kyc: "Approved",
         gestor_donacion: "BAQ",
       };
 
