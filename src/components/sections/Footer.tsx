@@ -14,7 +14,7 @@ import { usePathname } from 'next/navigation';
 
 export default function Footer() {
   const pathname = usePathname() || '';
-  if (pathname.startsWith('/carrera')) {
+  if (pathname.startsWith('/carrera') || pathname.startsWith('/membresias-huevo-zen')) {
     return null;
   }
   const currentYear = new Date().getFullYear();

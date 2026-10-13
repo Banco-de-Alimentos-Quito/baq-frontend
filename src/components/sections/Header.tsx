@@ -68,8 +68,8 @@ export default function Header() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Ocultar header en la ruta de la carrera
-  if (pathname.startsWith('/carrera')) {
+  // Ocultar header en la ruta de la carrera y membresias-huevo-zen
+  if (pathname.startsWith('/carrera') || pathname.startsWith('/membresias-huevo-zen')) {
     return null;
   }
 
