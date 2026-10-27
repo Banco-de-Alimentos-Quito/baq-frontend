@@ -351,13 +351,13 @@ export default function MembresiaHuevoZenPage() {
                 </div>
               </div>
 
-              {/* 4. Disponible solo de Jueves a Domingo */}
+              {/* 4. Disponible toda la semana */}
               <div
                 className="bg-white border border-gray-200 p-2.5 rounded-xl relative group cursor-help transition hover:border-amber-400"
                 onClick={() => setActiveTooltip(activeTooltip === "horario" ? null : "horario")}
               >
                 <div className="flex items-center justify-between text-gray-700 font-semibold text-xs">
-                  <span className="truncate">Jueves a Domingo</span>
+                  <span className="truncate">Toda la semana</span>
                   <HelpCircle className="w-3.5 h-3.5 text-amber-500 animate-pulse shrink-0" />
                 </div>
                 {/* Pop-up / Tooltip */}
@@ -370,7 +370,7 @@ export default function MembresiaHuevoZenPage() {
                     Días Habilitados
                   </p>
                   <p>
-                    Disponible exclusivamente de <strong>Jueves a Domingo</strong> (o hasta agotar los cupos semanales). No se aceptan registros fuera de estos días.
+                    Disponible <strong>toda la semana</strong> (o hasta agotar los cupos semanales).
                   </p>
                   <div className="absolute top-full right-4 sm:left-1/2 sm:-translate-x-1/2 border-4 border-transparent border-t-gray-900" />
                 </div>
@@ -457,11 +457,11 @@ export default function MembresiaHuevoZenPage() {
             </div>
             <div className="flex items-center gap-1.5 text-[11px] font-semibold text-blue-700">
               <Clock className="w-3.5 h-3.5" />
-              <span>Jueves a Domingo</span>
+              <span>Toda la semana</span>
             </div>
           </div>
 
-          {/* ── CASO A: BLOQUEO POR DÍA (LUNES A MIÉRCOLES) ── */}
+          {/* ── CASO A: BLOQUEO POR DÍA ── */}
           {!diaEsAbierto && (
             <div className="p-6 bg-amber-50 border border-amber-200 rounded-3xl text-center space-y-3 mb-4 animate-in fade-in duration-300">
               <div className="w-12 h-12 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center mx-auto">
@@ -471,10 +471,10 @@ export default function MembresiaHuevoZenPage() {
                 Inscripciones Semanales Cerradas
               </h3>
               <p className="text-xs sm:text-sm text-amber-800 max-w-md mx-auto leading-relaxed">
-                El formulario de registro para la cubeta semanal se habilita exclusivamente de <strong>Jueves a Domingo</strong> (o hasta agotar los {limiteCupos} cupos disponibles).
+                El formulario de registro para la cubeta semanal se encuentra cerrado temporalmente (o hasta agotar los {limiteCupos} cupos disponibles).
               </p>
               <p className="text-xs text-amber-700 font-medium">
-                Próxima apertura: Este Jueves a primera hora.
+                Próxima apertura próximamente.
               </p>
             </div>
           )}
@@ -492,7 +492,7 @@ export default function MembresiaHuevoZenPage() {
                 Se han completado los {limiteCupos} cupos disponibles para la entrega de esta semana. Las primeras {limiteCupos} personas que pagaron serán las primeras en recibir sus cubetas.
               </p>
               <p className="text-xs text-rose-700 font-medium">
-                Te esperamos el próximo jueves para la nueva entrega semanal.
+                Te esperamos la próxima semana para la nueva entrega semanal.
               </p>
             </div>
           )}

@@ -38,7 +38,7 @@ const API_BASE_URL =
 export class MembresiaHuevoZenService {
   /**
    * Obtiene el estado de las inscripciones de la semana desde el backend.
-   * Devuelve si está abierto por día (jueves a domingo) y cupos disponibles.
+   * Devuelve si está abierto por día (toda la semana) y cupos disponibles.
    */
   public static async obtenerEstadoSemana(): Promise<EstadoSemanaResponse> {
     const res = await fetch(`${API_BASE_URL}/membresias-huevo-zen/estado-semana`, {
