@@ -5,7 +5,7 @@ author_avatar: "/icono-logo-naranja.webp"
 author_bio: "Equipo del Banco de Alimentos Quito – Programa Reagro"
 published_at: "2026-11-09"
 last_modified: "2026-11-09"
-cover_image: "/blog/oscar-flores.jpg"
+cover_image: "/blog/don-oscar-flores.jpg"
 tags: ["Reagro", "Historias de Impacto", "Agricultura", "Solidaridad", "Alianzas"]
 read_time: 4
 excerpt: "Desde 2021, Óscar Flores ha sido un aliado fundamental de Reagro, donando cerca de 40 toneladas de hortalizas para más de 116 mil platos de comida. Un homenaje de profunda gratitud."

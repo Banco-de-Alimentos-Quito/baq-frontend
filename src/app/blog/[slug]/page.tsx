@@ -35,12 +35,23 @@ export default async function PostPage({ params }: PostPageProps) {
       <div className="max-w-4xl mx-auto px-4 py-8 md:py-12">
         {/* Header con imagen de portada */}
         <div className="mb-8">
-          <div className="relative h-60 sm:h-72 md:h-80 lg:h-96 w-full max-w-3xl mx-auto overflow-hidden rounded-2xl shadow-md mb-8">
+          <div className="relative h-64 sm:h-80 md:h-96 lg:h-[420px] w-full max-w-3xl mx-auto overflow-hidden rounded-2xl shadow-md mb-8 bg-white border border-gray-100 flex items-center justify-center">
+            {/* Fondo sutil para rellenar bordes en imágenes verticales */}
+            <div className="absolute inset-0 overflow-hidden">
+              <Image
+                src={post.coverImage}
+                alt=""
+                fill
+                className="object-cover blur-2xl opacity-15 scale-125"
+                aria-hidden="true"
+                priority
+              />
+            </div>
             <Image
               src={post.coverImage}
               alt={post.title}
               fill
-              className="object-cover"
+              className="object-contain relative z-10 p-2 sm:p-4"
               priority
             />
           </div>

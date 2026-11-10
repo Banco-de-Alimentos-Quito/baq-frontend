@@ -51,11 +51,24 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
             </h6>
           ),
           // Párrafos con tipografía moderna y amigable
-          p: ({ node, children, ...props }) => (
-            <p className="text-base md:text-lg leading-relaxed text-gray-700 mb-5 font-normal font-sans">
-              {children}
-            </p>
-          ),
+          p: ({ node, children, ...props }) => {
+            // Evitar anidamiento inválido de <p> dentro de <p> o <div> dentro de <p> si el contenido incluye una imagen
+            const hasImage = node?.children?.some(
+              (child: any) =>
+                child?.tagName === "img" ||
+                (child?.type === "element" && child?.tagName === "img")
+            );
+
+            if (hasImage) {
+              return <div className="my-6 text-center">{children}</div>;
+            }
+
+            return (
+              <p className="text-base md:text-lg leading-relaxed text-gray-700 mb-5 font-normal font-sans">
+                {children}
+              </p>
+            );
+          },
           // Listas mejoradas
           ul: ({ node, ...props }) => (
             <ul className="space-y-2 mb-5 ml-4 sm:ml-6">
@@ -81,45 +94,49 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
               </div>
             </blockquote>
           ),
-          // Imágenes mejoradas
+          // Imágenes mejoradas (soporta imágenes verticales y horizontales sin recortes indeseados)
           img: ({ node, ...props }) => {
             const { src, alt } = props;
-            if (!src || typeof src !== 'string') return null;
-            
+            if (!src || typeof src !== "string") return null;
+
             const isExternalImage = src.startsWith("http");
-            
+
             if (isExternalImage) {
               return (
-                <div className="my-8 text-center">
-                  <img 
-                    src={src} 
-                    alt={alt || ''} 
-                    className="rounded-xl shadow-md object-cover w-full max-w-2xl mx-auto"
-                    style={{ maxHeight: '380px' }}
+                <div className="inline-block max-w-full text-center">
+                  <img
+                    src={src}
+                    alt={alt || ""}
+                    className="rounded-xl shadow-md object-contain max-h-[420px] w-auto max-w-full mx-auto bg-white"
                     onError={(e) => {
-                      console.error('Error loading image:', src);
+                      console.error("Error loading image:", src);
                       const target = e.currentTarget as HTMLImageElement;
-                      target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjQ1MCIgdmlld0JveD0iMCAwIDgwMCA0NTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwMCIgaGVpZ2h0PSI0NTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSI0MDAiIHk9IjIyNSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzk5OTk5OSI+SW1hZ2VuIG5vIGRpc3BvbmlibGU8L3RleHQ+PC9zdmc+';
+                      target.src =
+                        "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjQ1MCIgdmlld0JveD0iMCAwIDgwMCA0NTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwMCIgaGVpZ2h0PSI0NTAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSI0MDAiIHk9IjIyNSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzk5OTk5OSI+SW1hZ2VuIG5vIGRpc3BvbmlibGU8L3RleHQ+PC9zdmc+";
                     }}
                   />
                   {alt && (
-                    <p className="text-sm text-gray-500 mt-2 italic">{alt}</p>
+                    <span className="block text-sm text-gray-500 mt-2 italic">
+                      {alt}
+                    </span>
                   )}
                 </div>
               );
             }
-            
+
             return (
-              <div className="my-8 text-center">
-                <Image 
-                  src={src} 
-                  alt={alt || ''} 
-                  width={640} 
-                  height={380} 
-                  className="rounded-xl shadow-md object-cover max-h-[380px] w-auto mx-auto"
+              <div className="inline-block max-w-full text-center">
+                <Image
+                  src={src}
+                  alt={alt || ""}
+                  width={640}
+                  height={420}
+                  className="rounded-xl shadow-md object-contain max-h-[420px] w-auto max-w-full mx-auto bg-white"
                 />
                 {alt && (
-                  <p className="text-sm text-gray-500 mt-2 italic">{alt}</p>
+                  <span className="block text-sm text-gray-500 mt-2 italic">
+                    {alt}
+                  </span>
                 )}
               </div>
             );

@@ -26,12 +26,22 @@ export default function BlogPage() {
               className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
             >
               {/* Cover Image */}
-              <div className="relative h-48 overflow-hidden">
+              <div className="relative h-52 overflow-hidden bg-white border-b border-gray-100 flex items-center justify-center">
+                {/* Fondo sutil para imágenes con distintas proporciones */}
+                <div className="absolute inset-0 overflow-hidden">
+                  <Image
+                    src={post.coverImage}
+                    alt=""
+                    fill
+                    className="object-cover blur-xl opacity-15 scale-125"
+                    aria-hidden="true"
+                  />
+                </div>
                 <Image
                   src={post.coverImage}
                   alt={post.title}
                   fill
-                  className="object-cover"
+                  className="object-contain relative z-10 p-2"
                 />
               </div>
 
