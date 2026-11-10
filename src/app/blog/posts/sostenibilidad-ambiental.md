@@ -1,6 +1,6 @@
 ---
 title: "Sostenibilidad Ambiental: El Impacto Verde del Banco de Alimentos Quito"
-author: "Ing. Patricia Peréz"
+author: "Patricia Peréz"
 author_avatar: "/blog/authors/patricia-perez.jpg"
 author_bio: "Coordinadora de Sostenibilidad Ambiental del BAQ. Especialista en gestión de residuos y economía circular."
 published_at: "2025-01-03"

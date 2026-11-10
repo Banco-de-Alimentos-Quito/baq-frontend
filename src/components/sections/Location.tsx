@@ -57,7 +57,7 @@ export default function Location() {
           </div>
 
           {/* Parte derecha: Imagen y Mapa */}
-          <div className="lg:w-1/2">
+          <div className="lg:w-1/2 w-full max-w-full overflow-hidden rounded-xl">
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3989.7736407304797!2d-78.52965222551619!3d-0.2711540997261691!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x91d599c062c64f1d%3A0x84f51141f335fc85!2sBanco%20de%20Alimentos%20Quito!5e0!3m2!1ses!2sec!4v1758301534973!5m2!1ses!2sec"
               width="100%"

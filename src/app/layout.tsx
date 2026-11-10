@@ -43,7 +43,7 @@ export default function RootLayout({
 
       <body
         suppressHydrationWarning
-        className={`${montserrat.variable} font-sans antialiased min-h-screen flex flex-col`}
+        className={`${montserrat.variable} font-sans antialiased min-h-screen flex flex-col overflow-x-hidden w-full max-w-full`}
       >
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-XJNTP3SK76"
@@ -63,7 +63,7 @@ export default function RootLayout({
 
         <LoadingWrapper>
           <Header />
-          <main className="flex-1 w-full">{children}</main>
+          <main className="flex-1 w-full max-w-full overflow-x-hidden">{children}</main>
           <Footer />
           <Toaster />
         </LoadingWrapper>

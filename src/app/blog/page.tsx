@@ -9,11 +9,11 @@ export default function BlogPage() {
     <div className="min-h-screen bg-orange-50">
       <div className="container mx-auto px-4 py-12">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+        <div className="text-center mb-10">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
             <span style={{ color: '#EB711B' }}>Blog</span>
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-base md:text-lg text-gray-600 max-w-xl mx-auto">
             Descubre las historias, proyectos y logros del Banco de Alimentos Quito
           </p>
         </div>
@@ -50,12 +50,12 @@ export default function BlogPage() {
                 </div>
 
                 {/* Title */}
-                <h2 className="text-xl font-bold text-gray-900 mb-3 overflow-hidden" style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
+                <h2 className="text-lg md:text-xl font-bold text-gray-900 mb-2 overflow-hidden" style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
                   {post.title}
                 </h2>
 
                 {/* Excerpt */}
-                <p className="text-gray-600 mb-4 overflow-hidden" style={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical' }}>
+                <p className="text-sm text-gray-600 mb-4 overflow-hidden" style={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical' }}>
                   {post.excerpt}
                 </p>
 

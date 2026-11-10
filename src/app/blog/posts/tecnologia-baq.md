@@ -1,6 +1,6 @@
 ---
 title: "Tecnología al Servicio de la Solidaridad: La Transformación Digital del BAQ"
-author: "Ing. Patricia Peréz"
+author: "Patricia Peréz"
 author_avatar: "/blog/authors/patricia-perez.jpg"
 author_bio: "Director de Tecnología del Banco de Alimentos Quito. Especialista en sistemas de gestión para organizaciones sin fines de lucro."
 published_at: "2025-01-05"

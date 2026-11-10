@@ -1,7 +1,7 @@
 ---
 title: "Empresa Solidaria: Alianzas empresariales con impacto real"
 author: "Banco de Alimentos Quito"
-author_avatar: "/logo.png"
+author_avatar: "/icono-logo-naranja.webp"
 author_bio: "El Banco de Alimentos Quito trabaja para conectar la producción responsable con el impacto social real."
 published_at: "2025-01-01"
 last_modified: "2025-08-01"

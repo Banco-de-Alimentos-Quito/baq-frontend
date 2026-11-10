@@ -1,6 +1,6 @@
 ---
 title: "REAGRO 2025 – Alimentamos personas. Salvamos alimentos. Protegemos el planeta."
-author: "Ing. Patricia Peréz"
+author: "Patricia Peréz"
 author_avatar: "/blog/authors/patricia-perez.jpg"
 author_bio: "Equipo del Banco de Alimentos Quito comprometido con la lucha contra el hambre y el desperdicio alimentario."
 published_at: "2025-01-15"

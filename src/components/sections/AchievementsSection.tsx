@@ -68,8 +68,8 @@ const StatCard: React.FC<StatCardProps> = ({
   const { count, ref } = useCountUp(endValue, 2200);
 
   return (
-    <div className="flex flex-col items-center gap-2">
-      <div className="relative w-28 h-28 md:w-32 md:h-32">
+    <div className="flex flex-col items-center gap-1.5 sm:gap-2 text-center">
+      <div className="relative w-16 h-16 sm:w-28 sm:h-28 md:w-32 md:h-32">
         <img
           src={imageSrc}
           alt={imageAlt}
@@ -78,11 +78,11 @@ const StatCard: React.FC<StatCardProps> = ({
       </div>
       <span
         ref={ref}
-        className="text-2xl md:text-3xl font-extrabold text-orange-500 tabular-nums"
+        className="text-lg sm:text-2xl md:text-3xl font-extrabold text-orange-500 tabular-nums leading-tight"
       >
         {prefix}{formatFn(count)}
       </span>
-      <span className="text-xs md:text-sm font-semibold text-gray-700 bg-orange-100 px-3 py-1 rounded-full whitespace-nowrap">
+      <span className="text-[10px] sm:text-xs md:text-sm font-semibold text-gray-700 bg-orange-100 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-center leading-tight">
         {label}
       </span>
     </div>
@@ -191,7 +191,7 @@ const AchievementsSection: React.FC = () => {
                 Atendimos a:
               </h2>
 
-              <div className="grid grid-cols-3 gap-4 md:gap-6">
+              <div className="grid grid-cols-3 gap-2 sm:gap-4 md:gap-6">
                 <StatCard
                   imageSrc="/achievements/PERSONAS.png"
                   imageAlt="Ilustración de personas atendidas"

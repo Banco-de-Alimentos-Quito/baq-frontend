@@ -19,7 +19,7 @@ export default function WhatWeDoSection() {
               alt="Voluntarios organizando alimentos"
               width={600}
               height={400}
-              className="rounded-lg shadow-xl object-cover max-h-[35rem] w-auto"
+              className="rounded-lg shadow-xl object-cover max-h-[35rem] w-auto max-w-full h-auto"
               quality={75}
               priority
             />

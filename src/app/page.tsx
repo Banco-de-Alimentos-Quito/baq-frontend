@@ -13,11 +13,9 @@ import AchievementsSection from "@/components/sections/AchievementsSection";
 import EnvironmentalImpactSection from "@/components/sections/EnvironmentalImpactSection";
 import AmbassadorsSection from "@/components/sections/Ambassadors";
 import WhyWeDoExist from "@/components/sections/WhyWeDoExist";
-import QuickDonateButton from "./quick-donate/QuickDoanteButton";
-
 export default function Home() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen overflow-x-hidden w-full max-w-full">
       <HeroSection />
       <WhatWeDoSection />
       <WhyWeDoExist />

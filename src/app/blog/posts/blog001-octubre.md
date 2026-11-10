@@ -1,6 +1,6 @@
 ---
 title: "16 de octubre: Un día para reafirmar el derecho a una alimentación adecuada"
-author: "Ing. Patricia Peréz"
+author: "Patricia Peréz"
 author_avatar: "/blog/authors/patricia-perez.jpg"
 author_bio: "Directora de Programas del Banco de Alimentos Quito. Especialista en seguridad alimentaria y políticas públicas de nutrición."
 published_at: "2025-10-16"

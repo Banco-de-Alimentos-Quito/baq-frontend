@@ -14,69 +14,69 @@ interface MarkdownRendererProps {
 
 const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
   return (
-    <div className="max-w-4xl mx-auto px-4">
+    <div className="max-w-3xl mx-auto">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeRaw, rehypeSanitize]}
         components={{
-          // Títulos principales estilizados modernos y amigables
+          // Títulos principales estilizados modernos y equilibrados
           h1: ({ node, ...props }) => (
-            <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight mb-8 mt-12 font-sans">
+            <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900 leading-tight mb-5 mt-8 font-sans">
               {props.children}
             </h1>
           ),
           h2: ({ node, ...props }) => (
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight mb-6 mt-12 border-l-4 border-orange-500 pl-6 bg-orange-50 py-4 rounded-r-lg font-sans">
+            <h2 className="text-xl md:text-2xl font-bold text-gray-900 leading-snug mb-4 mt-8 border-l-4 border-orange-500 pl-4 bg-orange-50/70 py-2.5 rounded-r-lg font-sans">
               {props.children}
             </h2>
           ),
           h3: ({ node, ...props }) => (
-            <h3 className="text-2xl md:text-3xl font-bold text-gray-800 leading-tight mb-5 mt-10 font-sans">
+            <h3 className="text-lg md:text-xl font-bold text-gray-800 leading-snug mb-3 mt-6 font-sans">
               {props.children}
             </h3>
           ),
           h4: ({ node, ...props }) => (
-            <h4 className="text-xl md:text-2xl font-semibold text-orange-600 leading-tight mb-4 mt-8 font-sans">
+            <h4 className="text-base md:text-lg font-semibold text-orange-600 leading-snug mb-2 mt-4 font-sans">
               {props.children}
             </h4>
           ),
           h5: ({ node, ...props }) => (
-            <h5 className="text-lg md:text-xl font-semibold text-gray-700 leading-tight mb-3 mt-6 font-sans">
+            <h5 className="text-sm md:text-base font-semibold text-gray-700 leading-snug mb-2 mt-4 font-sans">
               {props.children}
             </h5>
           ),
           h6: ({ node, ...props }) => (
-            <h6 className="text-base md:text-lg font-semibold text-gray-700 leading-tight mb-3 mt-6 font-sans">
+            <h6 className="text-xs md:text-sm font-semibold text-gray-700 leading-snug mb-2 mt-4 font-sans">
               {props.children}
             </h6>
           ),
           // Párrafos con tipografía moderna y amigable
           p: ({ node, children, ...props }) => (
-            <p className="text-xl leading-relaxed text-gray-700 mb-6 font-normal font-sans">
+            <p className="text-base md:text-lg leading-relaxed text-gray-700 mb-5 font-normal font-sans">
               {children}
             </p>
           ),
           // Listas mejoradas
           ul: ({ node, ...props }) => (
-            <ul className="space-y-3 mb-6 ml-6">
+            <ul className="space-y-2 mb-5 ml-4 sm:ml-6">
               {props.children}
             </ul>
           ),
           ol: ({ node, ...props }) => (
-            <ol className="space-y-3 mb-6 ml-6 list-decimal">
+            <ol className="space-y-2 mb-5 ml-4 sm:ml-6 list-decimal">
               {props.children}
             </ol>
           ),
           li: ({ node, ...props }) => (
-            <li className="text-xl text-gray-700 leading-relaxed flex items-start font-sans">
-              <span className="text-orange-500 mr-3 mt-1">•</span>
+            <li className="text-base md:text-lg text-gray-700 leading-relaxed flex items-start font-sans">
+              <span className="text-orange-500 mr-2.5 mt-1">•</span>
               <span>{props.children}</span>
             </li>
           ),
           // Citas destacadas con estilo moderno
           blockquote: ({ node, ...props }) => (
-            <blockquote className="border-l-4 border-orange-500 bg-orange-50 p-6 my-8 rounded-r-lg">
-              <div className="text-xl font-medium text-gray-800 leading-relaxed font-sans">
+            <blockquote className="border-l-4 border-orange-500 bg-orange-50/80 p-4 sm:p-5 my-6 rounded-r-lg">
+              <div className="text-base md:text-lg font-medium text-gray-800 leading-relaxed font-sans">
                 {props.children}
               </div>
             </blockquote>
@@ -90,12 +90,12 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
             
             if (isExternalImage) {
               return (
-                <div className="my-10 text-center">
+                <div className="my-8 text-center">
                   <img 
                     src={src} 
                     alt={alt || ''} 
-                    className="rounded-xl shadow-lg object-cover w-full max-w-4xl mx-auto"
-                    style={{ maxHeight: '500px' }}
+                    className="rounded-xl shadow-md object-cover w-full max-w-2xl mx-auto"
+                    style={{ maxHeight: '380px' }}
                     onError={(e) => {
                       console.error('Error loading image:', src);
                       const target = e.currentTarget as HTMLImageElement;
@@ -103,23 +103,23 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
                     }}
                   />
                   {alt && (
-                    <p className="text-sm text-gray-500 mt-3 italic">{alt}</p>
+                    <p className="text-sm text-gray-500 mt-2 italic">{alt}</p>
                   )}
                 </div>
               );
             }
             
             return (
-              <div className="my-10 text-center">
+              <div className="my-8 text-center">
                 <Image 
                   src={src} 
                   alt={alt || ''} 
-                  width={800} 
-                  height={500} 
-                  className="rounded-xl shadow-lg object-cover mx-auto"
+                  width={640} 
+                  height={380} 
+                  className="rounded-xl shadow-md object-cover max-h-[380px] w-auto mx-auto"
                 />
                 {alt && (
-                  <p className="text-sm text-gray-500 mt-3 italic">{alt}</p>
+                  <p className="text-sm text-gray-500 mt-2 italic">{alt}</p>
                 )}
               </div>
             );

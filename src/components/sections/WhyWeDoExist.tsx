@@ -24,12 +24,12 @@ const WhyWeDoExist: React.FC = () => {
             niños, adulto mayor, madres gestantes, personas con capacidades especiales o enfermedades.
           </p>
 
-          <div className="text-right mt-6">
+          <div className="text-center sm:text-right mt-6">
             <a 
               href="https://atlas.foodbanking.org/country/ecuador/" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-orange-500 hover:text-orange-600 underline text-lg font-medium transition-colors"
+              className="text-orange-500 hover:text-orange-600 underline text-sm sm:text-base md:text-lg font-medium transition-colors break-all"
             >
               https://atlas.foodbanking.org/country/ecuador/
             </a>

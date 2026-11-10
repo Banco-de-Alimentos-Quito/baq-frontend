@@ -1,6 +1,6 @@
 ---
 title: "La importancia de la seguridad alimentaria: un compromiso con el presente y el futuro"
-author: "Ing. Patricia Peréz"
+author: "Patricia Peréz"
 author_avatar: "/blog/authors/patricia-perez.jpg"
 author_bio: "Directora de Programas del Banco de Alimentos Quito. Especialista en seguridad alimentaria y sistemas de distribución sostenible."
 published_at: "2025-10-24"

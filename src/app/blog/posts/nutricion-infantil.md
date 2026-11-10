@@ -1,6 +1,6 @@
 ---
 title: "Nutrición Infantil: La Base del Futuro de Ecuador"
-author: "Ing. Patricia Peréz"
+author: "Patricia Peréz"
 author_avatar: "/blog/authors/patricia-perez.jpg"
 author_bio: "Nutricionista especializada en pediatría. Coordinadora del programa de nutrición infantil del BAQ."
 published_at: "2025-01-08"

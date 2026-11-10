@@ -32,10 +32,10 @@ export default async function PostPage({ params }: PostPageProps) {
 
   return (
     <div className="min-h-screen bg-orange-50">
-      <div className="container mx-auto px-4 py-12">
+      <div className="max-w-4xl mx-auto px-4 py-8 md:py-12">
         {/* Header con imagen de portada */}
         <div className="mb-8">
-          <div className="relative aspect-video w-full overflow-hidden rounded-xl shadow-lg mb-8">
+          <div className="relative h-60 sm:h-72 md:h-80 lg:h-96 w-full max-w-3xl mx-auto overflow-hidden rounded-2xl shadow-md mb-8">
             <Image
               src={post.coverImage}
               alt={post.title}
@@ -46,11 +46,11 @@ export default async function PostPage({ params }: PostPageProps) {
           </div>
 
           {/* Tags */}
-          <div className="flex flex-wrap gap-2 mb-4">
+          <div className="flex flex-wrap gap-2 mb-3">
             {post.tags.map((tag) => (
               <span
                 key={tag}
-                className="px-3 py-1 bg-orange-100 text-orange-800 text-sm font-medium rounded-full"
+                className="px-2.5 py-0.5 bg-orange-100 text-orange-800 text-xs sm:text-sm font-medium rounded-full"
               >
                 {tag}
               </span>
@@ -58,28 +58,28 @@ export default async function PostPage({ params }: PostPageProps) {
           </div>
 
           {/* Título */}
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4 leading-tight">
             {post.title}
           </h1>
 
           {/* Metadatos */}
-          <div className="flex items-center justify-between flex-wrap gap-4 mb-8 pb-6 border-b border-gray-200">
+          <div className="flex items-center justify-between flex-wrap gap-4 mb-6 pb-6 border-b border-gray-200">
             <div className="flex items-center space-x-3">
               {post.author.avatar && (
                 <Image
                   src={post.author.avatar}
                   alt={post.author.name}
-                  width={48}
-                  height={48}
+                  width={40}
+                  height={40}
                   className="rounded-full"
                 />
               )}
               <div>
-                <p className="font-medium text-gray-900">{post.author.name}</p>
-                <p className="text-sm text-gray-500">{post.author.bio}</p>
+                <p className="font-medium text-gray-900 text-sm sm:text-base">{post.author.name}</p>
+                <p className="text-xs sm:text-sm text-gray-500">{post.author.bio}</p>
               </div>
             </div>
-            <div className="text-sm text-gray-600">
+            <div className="text-xs sm:text-sm text-gray-600">
               <p>
                 Publicado el{" "}
                 {new Date(post.publishedAt).toLocaleDateString("es-ES", {
@@ -94,7 +94,7 @@ export default async function PostPage({ params }: PostPageProps) {
         </div>
 
         {/* Contenido del post con renderizado Markdown */}
-        <article className="bg-white rounded-xl shadow-lg p-6 md:p-10">
+        <article className="bg-white rounded-xl shadow-md p-6 md:p-8">
           <MarkdownRenderer content={post.content} />
         </article>
       </div>

@@ -1,6 +1,6 @@
 ---
 title: "El Poder del Voluntariado: Transformando Vidas en Quito"
-author: "Ing. Patricia Peréz"
+author: "Patricia Peréz"
 author_avatar: "/blog/authors/patricia-perez.jpg"
 author_bio: "Coordinadora de Voluntariado del Banco de Alimentos Quito. Apasionada por conectar personas con causas sociales."
 published_at: "2025-01-10"
