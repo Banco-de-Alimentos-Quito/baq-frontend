@@ -7,6 +7,7 @@ import rehypeRaw from "rehype-raw";
 import rehypeSanitize from "rehype-sanitize";
 import Image from "next/image";
 import Link from "next/link";
+import ImageCarousel from "./ImageCarousel";
 
 interface MarkdownRendererProps {
   content: string;
@@ -50,6 +51,32 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
               {props.children}
             </h6>
           ),
+          // Soporte para carrusel inline mediante <div data-carousel="true" data-images="..." />
+          div: ({ node, ...props }) => {
+            const isCarousel =
+              props["data-carousel"] ||
+              props.className?.includes("carousel") ||
+              props.className?.includes("carrusel");
+            const rawImages = props["data-images"];
+            if (isCarousel && typeof rawImages === "string") {
+              const imagesList = rawImages
+                .split(",")
+                .map((s) => s.trim())
+                .filter(Boolean);
+              if (imagesList.length > 0) {
+                return (
+                  <div className="my-8">
+                    <ImageCarousel
+                      images={imagesList}
+                      aspectRatioClass="h-60 sm:h-72 md:h-80 lg:h-96"
+                      showThumbnails={true}
+                    />
+                  </div>
+                );
+              }
+            }
+            return <div {...props}>{props.children}</div>;
+          },
           // Párrafos con tipografía moderna y amigable
           p: ({ node, children, ...props }) => {
             // Evitar anidamiento inválido de <p> dentro de <p> o <div> dentro de <p> si el contenido incluye una imagen

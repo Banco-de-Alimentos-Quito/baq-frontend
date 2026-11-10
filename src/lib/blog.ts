@@ -16,6 +16,7 @@ export interface BlogPost {
   publishedAt: string;
   lastModified: string;
   coverImage: string;
+  images: string[];
   tags: string[];
   readTime: number;
 }
@@ -46,6 +47,14 @@ export function getAllPosts(): BlogPost[] {
         }
       });
 
+      const rawImages = matterResult.data.images;
+      const images: string[] = Array.isArray(rawImages)
+        ? rawImages
+        : matterResult.data.cover_image
+        ? [matterResult.data.cover_image]
+        : [];
+      const coverImage = matterResult.data.cover_image || images[0] || '';
+
       return {
         slug,
         title: matterResult.data.title || '',
@@ -58,7 +67,8 @@ export function getAllPosts(): BlogPost[] {
         },
         publishedAt: matterResult.data.published_at || '',
         lastModified: matterResult.data.last_modified || matterResult.data.published_at || '',
-        coverImage: matterResult.data.cover_image || '',
+        coverImage,
+        images,
         tags: matterResult.data.tags || [],
         readTime: matterResult.data.read_time || 5,
       };
@@ -89,6 +99,14 @@ export function getPostBySlug(slug: string): BlogPost | null {
       }
     });
 
+    const rawImages = matterResult.data.images;
+    const images: string[] = Array.isArray(rawImages)
+      ? rawImages
+      : matterResult.data.cover_image
+      ? [matterResult.data.cover_image]
+      : [];
+    const coverImage = matterResult.data.cover_image || images[0] || '';
+
     return {
       slug,
       title: matterResult.data.title || '',
@@ -101,7 +119,8 @@ export function getPostBySlug(slug: string): BlogPost | null {
       },
       publishedAt: matterResult.data.published_at || '',
       lastModified: matterResult.data.last_modified || matterResult.data.published_at || '',
-      coverImage: matterResult.data.cover_image || '',
+      coverImage,
+      images,
       tags: matterResult.data.tags || [],
       readTime: matterResult.data.read_time || 5,
     };

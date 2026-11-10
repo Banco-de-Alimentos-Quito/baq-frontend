@@ -6,8 +6,8 @@ export default function BlogPage() {
   const posts = getAllPosts();
 
   return (
-    <div className="min-h-screen bg-orange-50">
-      <div className="container mx-auto px-4 py-12">
+    <div className="min-h-screen bg-orange-50 pt-24 pb-16 sm:pt-28 md:pt-32">
+      <div className="container mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-10">
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">

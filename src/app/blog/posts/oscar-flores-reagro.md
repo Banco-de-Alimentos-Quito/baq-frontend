@@ -1,11 +1,17 @@
 ---
 title: "Óscar Flores: un aliado que sembró esperanza con Reagro BAQ"
 author: "Jorge Viteri"
-author_avatar: "/icono-logo-naranja.webp"
+author_avatar: "/blog/authors/jorge-viteri.jpg"
 author_bio: "Equipo del Banco de Alimentos Quito – Programa Reagro"
 published_at: "2026-11-09"
 last_modified: "2026-11-09"
-cover_image: "/blog/don-oscar-flores.jpg"
+cover_image: "/blog/oscar-flores/oscar-flores-1.jpg"
+images:
+  - "/blog/oscar-flores/oscar-flores-1.jpg"
+  - "/blog/oscar-flores/oscar-flores-2.jpg"
+  - "/blog/oscar-flores/oscar-flores-3.jpg"
+  - "/blog/oscar-flores/oscar-flores-4.jpg"
+  - "/blog/oscar-flores/oscar-flores-5.jpg"
 tags: ["Reagro", "Historias de Impacto", "Agricultura", "Solidaridad", "Alianzas"]
 read_time: 4
 excerpt: "Desde 2021, Óscar Flores ha sido un aliado fundamental de Reagro, donando cerca de 40 toneladas de hortalizas para más de 116 mil platos de comida. Un homenaje de profunda gratitud."

@@ -1,5 +1,6 @@
 import { getPostBySlug } from "@/lib/blog";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
+import ImageCarousel from "@/components/ImageCarousel";
 import HuevosZenLandingPage from "@/components/mdx/HuevosZenLandingPage";
 import Image from "next/image";
 import { notFound } from "next/navigation";
@@ -31,30 +32,16 @@ export default async function PostPage({ params }: PostPageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-orange-50">
-      <div className="max-w-4xl mx-auto px-4 py-8 md:py-12">
-        {/* Header con imagen de portada */}
+    <div className="min-h-screen bg-orange-50 pt-24 pb-16 sm:pt-28 md:pt-32">
+      <div className="max-w-4xl mx-auto px-4">
+        {/* Header con carrusel de imágenes / imagen de portada */}
         <div className="mb-8">
-          <div className="relative h-64 sm:h-80 md:h-96 lg:h-[420px] w-full max-w-3xl mx-auto overflow-hidden rounded-2xl shadow-md mb-8 bg-white border border-gray-100 flex items-center justify-center">
-            {/* Fondo sutil para rellenar bordes en imágenes verticales */}
-            <div className="absolute inset-0 overflow-hidden">
-              <Image
-                src={post.coverImage}
-                alt=""
-                fill
-                className="object-cover blur-2xl opacity-15 scale-125"
-                aria-hidden="true"
-                priority
-              />
-            </div>
-            <Image
-              src={post.coverImage}
-              alt={post.title}
-              fill
-              className="object-contain relative z-10 p-2 sm:p-4"
-              priority
-            />
-          </div>
+          <ImageCarousel
+            images={post.images && post.images.length > 0 ? post.images : [post.coverImage]}
+            alt={post.title}
+            aspectRatioClass="h-64 sm:h-80 md:h-96 lg:h-[430px]"
+            className="mb-8"
+          />
 
           {/* Tags */}
           <div className="flex flex-wrap gap-2 mb-3">
@@ -80,9 +67,9 @@ export default async function PostPage({ params }: PostPageProps) {
                 <Image
                   src={post.author.avatar}
                   alt={post.author.name}
-                  width={40}
-                  height={40}
-                  className="rounded-full"
+                  width={44}
+                  height={44}
+                  className="rounded-full object-cover w-11 h-11 border border-orange-200 shadow-sm"
                 />
               )}
               <div>
