@@ -15,11 +15,19 @@ declare global {
   }
 }
 
-const NavLinks = ({ onClick }: { onClick?: () => void }) => (
-  <>
+const NavLinks = ({ onClick }: { onClick?: () => void }) => {
+  const [campaignActive, setCampaignActive] = useState(false);
+  useEffect(() => {
+    const date = new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'America/Guayaquil', year: 'numeric', month: '2-digit', day: '2-digit',
+    }).format(new Date());
+    setCampaignActive(date >= '2026-11-20' && date <= '2026-12-20');
+  }, []);
+  return <>
     <ScrollLink href="/#what-we-do" className="text-sm font-medium hover:text-primary transition-colors" onClick={onClick}>
       ¿Qué Hacemos?
     </ScrollLink>
+    {campaignActive && <Link href="/navidad" className="text-sm font-bold text-orange-600 hover:text-orange-700 transition-colors" onClick={onClick}>Apoya a la causa</Link>}
     <ScrollLink href="/#how-to-help" className="text-sm font-medium hover:text-primary transition-colors" onClick={onClick}>
       Cómo Ayudar
     </ScrollLink>
@@ -37,8 +45,8 @@ const NavLinks = ({ onClick }: { onClick?: () => void }) => (
       Otras formas de ayuda
       <span className="absolute -bottom-0.5 left-0 right-0 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
     </Link>
-  </>
-);
+  </>;
+};
 
 export default function Header() {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
@@ -73,7 +81,7 @@ export default function Header() {
     return null;
   }
 
-  const isDarkPage = pathname.startsWith('/huevos-zen');
+  const isDarkPage = pathname.startsWith('/huevos-zen') || pathname.startsWith('/navidad');
 
   return (
     <div className={`fixed top-0 left-0 right-0 z-50 transition-transform duration-200 ease-in-out ${isVisible ? 'translate-y-0' : '-translate-y-full'}`}>
