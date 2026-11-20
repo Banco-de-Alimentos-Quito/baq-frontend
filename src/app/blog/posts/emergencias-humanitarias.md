@@ -1,6 +1,6 @@
 ---
 title: "Respuesta a Emergencias: El BAQ en Tiempos de Crisis"
-author: "Patricia Peréz"
+author: "Patricia Pérez"
 author_avatar: "/blog/authors/patricia-perez.jpg"
 author_bio: "Director de Respuesta a Emergencias del BAQ. Experto en logística humanitaria y gestión de crisis."
 published_at: "2024-12-28"
