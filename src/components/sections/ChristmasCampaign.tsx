@@ -302,12 +302,12 @@ export default function ChristmasCampaign() {
               </button>
             </div>
 
-            <div aria-hidden="true" className="relative z-0 ml-auto mt-2 w-[64%] max-w-[290px] sm:max-w-[475px] lg:ml-0 lg:mt-0 lg:w-full lg:max-w-[540px] lg:justify-self-end">
+            <div aria-hidden="true" className="relative z-0 ml-auto mt-2 w-[64%] max-w-[290px] sm:-mb-2 sm:max-w-[475px] lg:-mb-9 lg:ml-0 lg:mt-0 lg:w-full lg:max-w-[540px] lg:self-end lg:justify-self-end">
               <Image
                 src="/navidad-voluntaria.png"
                 alt=""
                 width={1199}
-                height={1148}
+                height={1141}
                 priority
                 className="h-auto w-full drop-shadow-[0_0_7px_rgba(255,255,255,.85)]"
               />
