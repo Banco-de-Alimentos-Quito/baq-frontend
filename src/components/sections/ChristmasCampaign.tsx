@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { Fredoka } from "next/font/google";
 import { useRouter } from "next/navigation";
-import { type ReactNode, useEffect, useState } from "react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
 import {
   AlertCircle,
   ArrowRight,
@@ -66,6 +66,8 @@ function GoalPill({
 
 export default function ChristmasCampaign() {
   const router = useRouter();
+  const paymentButtonRef = useRef<HTMLButtonElement | null>(null);
+  const donationSectionRef = useRef<HTMLDivElement | null>(null);
   const [amount, setAmount] = useState(10);
   const [customAmount, setCustomAmount] = useState("");
   const selectedAmount = customAmount === "" ? amount : Number(customAmount);
@@ -287,7 +289,17 @@ export default function ChristmasCampaign() {
               <p className="mt-7 max-w-[320px] text-lg font-semibold leading-tight sm:max-w-[500px] sm:text-2xl lg:text-3xl">
                 Esta Navidad, hagamos <span className="text-[#ffc631]">que llegue</span> el alimento, el abrigo y la esperanza a quienes más lo necesitan.
               </p>
-              <p className="relative z-30 mt-4 inline-flex w-fit rounded-full bg-[#ec6f1d] px-5 py-2 text-lg font-bold text-white shadow-[0_8px_20px_rgba(0,58,89,.22)] sm:mt-5 sm:px-6 sm:py-3 sm:text-3xl lg:text-4xl">¡DONA AHORA!</p>
+              <button
+                type="button"
+                onClick={() => {
+                  const target = paymentButtonRef.current ?? donationSectionRef.current;
+                  target?.scrollIntoView({ behavior: "smooth", block: "center" });
+                  paymentButtonRef.current?.focus({ preventScroll: true });
+                }}
+                className="relative z-30 mt-4 inline-flex w-fit cursor-pointer items-center justify-center rounded-full bg-[#ec6f1d] px-5 py-2 text-lg font-bold text-white shadow-[0_8px_20px_rgba(0,58,89,.22)] transition-all hover:scale-105 hover:bg-[#d85e0c] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:mt-5 sm:px-6 sm:py-3 sm:text-3xl lg:text-4xl"
+              >
+                ¡DONA AHORA!
+              </button>
             </div>
 
             <div aria-hidden="true" className="relative z-0 ml-auto mt-2 w-[64%] max-w-[290px] sm:max-w-[475px] lg:ml-0 lg:mt-0 lg:w-full lg:max-w-[540px] lg:justify-self-end">
@@ -295,7 +307,7 @@ export default function ChristmasCampaign() {
                 src="/navidad-voluntaria.png"
                 alt=""
                 width={1199}
-                height={1312}
+                height={1148}
                 priority
                 className="h-auto w-full drop-shadow-[0_0_7px_rgba(255,255,255,.85)]"
               />
@@ -353,7 +365,7 @@ export default function ChristmasCampaign() {
         </div>
       </div>
 
-      <div className="mx-auto max-w-7xl px-4 pb-14 sm:px-8 sm:pb-20 lg:px-12">
+      <div ref={donationSectionRef} id="donar-deuna" className="mx-auto max-w-7xl px-4 pb-14 sm:px-8 sm:pb-20 lg:px-12">
         <div className="relative -mt-1 rounded-[2rem] bg-[#fffdf8] p-5 shadow-[0_12px_34px_rgba(16,45,76,.1)] sm:p-8 lg:p-10">
           <h2 className="text-xl font-extrabold tracking-tight sm:text-2xl lg:text-3xl">Elige tu monto de donación</h2>
           <div className="mt-4 grid grid-cols-4 gap-2 sm:mt-5 sm:gap-3">
@@ -418,6 +430,7 @@ export default function ChristmasCampaign() {
           {!paymentData ? (
             <>
               <button
+                ref={paymentButtonRef}
                 type="button"
                 onClick={startDonation}
                 disabled={
