@@ -77,17 +77,22 @@ export default function MembresiaHuevoZenPage() {
     fetchEstado();
   }, []);
 
-  // ── Lógica real basada en la fecha y cupos del sistema ──
-  const diaEsAbierto = estadoSemana?.abierto_por_dia ?? true;
+  // ── Lógica real basada en la campaña activa y cupos del sistema ──
+  const campanaActiva = estadoSemana?.campana_activa ?? null;
+  const proximaCampana = estadoSemana?.proxima_campana ?? null;
+  const diaEsAbierto = estadoSemana?.abierto_por_dia ?? false;
   const limiteCupos = estadoSemana?.limite_cupos ?? 130;
   const cuposEstanAgotados = estadoSemana?.cupos_agotados ?? false;
   const totalInscritos = estadoSemana?.total_inscritos ?? 0;
   const cuposDisponibles =
     estadoSemana?.cupos_disponibles ?? Math.max(0, limiteCupos - totalInscritos);
-  const estaAbierto =
-    estadoSemana !== null
-      ? estadoSemana.abierto
-      : diaEsAbierto && !cuposEstanAgotados;
+  const estaAbierto = !loadingEstado && (estadoSemana?.abierto ?? false);
+
+  const rangoFechasTexto =
+    campanaActiva?.rango_fechas_texto ||
+    estadoSemana?.rango_fechas_texto ||
+    proximaCampana?.rango_fechas_texto ||
+    null;
 
   // ── Validación de la cédula ──
   const handleVerificarCedula = async () => {
@@ -351,13 +356,15 @@ export default function MembresiaHuevoZenPage() {
                 </div>
               </div>
 
-              {/* 4. Disponible de Jueves a Domingo */}
+              {/* 4. Días habilitados según campaña activa */}
               <div
                 className="bg-white border border-gray-200 p-2.5 rounded-xl relative group cursor-help transition hover:border-amber-400"
                 onClick={() => setActiveTooltip(activeTooltip === "horario" ? null : "horario")}
               >
                 <div className="flex items-center justify-between text-gray-700 font-semibold text-xs">
-                  <span className="truncate">Jueves a Domingo</span>
+                  <span className="truncate">
+                    {campanaActiva?.rango_fechas_texto || "Fechas de campaña"}
+                  </span>
                   <HelpCircle className="w-3.5 h-3.5 text-amber-500 animate-pulse shrink-0" />
                 </div>
                 {/* Pop-up / Tooltip */}
@@ -370,7 +377,19 @@ export default function MembresiaHuevoZenPage() {
                     Días Habilitados
                   </p>
                   <p>
-                    Disponible exclusivamente de <strong>Jueves a Domingo</strong> (o hasta agotar los cupos semanales). No se aceptan registros fuera de estos días.
+                    {campanaActiva ? (
+                      <>
+                        Campaña vigente: <strong>{campanaActiva.rango_fechas_texto || `${campanaActiva.fecha_inicio} al ${campanaActiva.fecha_fin}`}</strong> (o hasta agotar los {limiteCupos} cupos). No se aceptan registros fuera de estas fechas.
+                      </>
+                    ) : proximaCampana ? (
+                      <>
+                        Próxima campaña programada: <strong>{proximaCampana.rango_fechas_texto || `${proximaCampana.fecha_inicio} al ${proximaCampana.fecha_fin}`}</strong> ({proximaCampana.limite_cupos} cupos).
+                      </>
+                    ) : (
+                      <>
+                        El registro se habilita únicamente durante las fechas definidas para cada campaña activa (o hasta agotar cupos).
+                      </>
+                    )}
                   </p>
                   <div className="absolute top-full right-4 sm:left-1/2 sm:-translate-x-1/2 border-4 border-transparent border-t-gray-900" />
                 </div>
@@ -446,53 +465,84 @@ export default function MembresiaHuevoZenPage() {
             </div>
           </div>
 
-          {/* ── BARRA DE DISPONIBILIDAD Y CUPOS (LÍMITE CONFIGURADO A 130) ── */}
-          <div className="mb-5 p-3 rounded-2xl border transition-all text-xs flex items-center justify-between bg-blue-50/70 border-blue-200 text-blue-900">
-            <div className="flex items-center gap-2">
-              <Users className="w-4 h-4 text-blue-600 shrink-0" />
-              <span>
-                <strong className="font-bold">Cupos Semanales:</strong>{" "}
-                {cuposDisponibles} disponibles de {limiteCupos} cubetas
-              </span>
+          {/* ── BARRA DE DISPONIBILIDAD Y CUPOS (DINÁMICA SEGÚN CAMPAÑA ACTIVA) ── */}
+          {loadingEstado ? (
+            <div className="mb-5 p-4 rounded-2xl border border-slate-200 bg-slate-50 text-slate-600 text-xs flex items-center justify-center gap-2">
+              <RefreshCw className="w-4 h-4 animate-spin text-[#ED6F1D]" />
+              <span>Consultando disponibilidad de la campaña actual...</span>
             </div>
-            <div className="flex items-center gap-1.5 text-[11px] font-semibold text-blue-700">
-              <Clock className="w-3.5 h-3.5" />
-              <span>Jueves a Domingo</span>
+          ) : (
+            <div className="mb-5 p-3 rounded-2xl border transition-all text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-blue-50/70 border-blue-200 text-blue-900">
+              <div className="flex items-center gap-2">
+                <Users className="w-4 h-4 text-blue-600 shrink-0" />
+                <span>
+                  <strong className="font-bold">
+                    {campanaActiva ? "Cupos de Campaña:" : "Estado de Campaña:"}
+                  </strong>{" "}
+                  {campanaActiva
+                    ? `${cuposDisponibles} disponibles de ${limiteCupos} cubetas`
+                    : "Sin campaña activa en este momento"}
+                </span>
+              </div>
+              {rangoFechasTexto && (
+                <div className="flex items-center gap-1.5 text-[11px] font-semibold text-blue-700">
+                  <Clock className="w-3.5 h-3.5 shrink-0" />
+                  <span>
+                    {campanaActiva ? rangoFechasTexto : `Próxima: ${rangoFechasTexto}`}
+                  </span>
+                </div>
+              )}
             </div>
-          </div>
+          )}
 
-          {/* ── CASO A: BLOQUEO POR DÍA (LUNES A MIÉRCOLES) ── */}
-          {!diaEsAbierto && (
+          {/* ── CASO A: BLOQUEO POR CAMPAÑA CERRADA / FUERA DE FECHA ── */}
+          {!loadingEstado && !diaEsAbierto && (
             <div className="p-6 bg-amber-50 border border-amber-200 rounded-3xl text-center space-y-3 mb-4 animate-in fade-in duration-300">
               <div className="w-12 h-12 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center mx-auto">
                 <Clock className="w-6 h-6" />
               </div>
               <h3 className="text-lg font-bold text-amber-900">
-                Inscripciones Semanales Cerradas
+                Inscripciones Cerradas
               </h3>
-              <p className="text-xs sm:text-sm text-amber-800 max-w-md mx-auto leading-relaxed">
-                El formulario de registro para la cubeta semanal se habilita exclusivamente de <strong>Jueves a Domingo</strong> (o hasta agotar los {limiteCupos} cupos disponibles).
-              </p>
-              <p className="text-xs text-amber-700 font-medium">
-                Próxima apertura: Este Jueves a primera hora.
-              </p>
+              {proximaCampana ? (
+                <>
+                  <p className="text-xs sm:text-sm text-amber-800 max-w-md mx-auto leading-relaxed">
+                    El formulario de registro se habilitará del{" "}
+                    <strong>
+                      {proximaCampana.rango_fechas_texto ||
+                        `${proximaCampana.fecha_inicio} al ${proximaCampana.fecha_fin}`}
+                    </strong>{" "}
+                    (o hasta agotar los {proximaCampana.limite_cupos} cupos disponibles).
+                  </p>
+                  <p className="text-xs text-amber-700 font-medium">
+                    Próxima apertura: {proximaCampana.rango_fechas_texto || proximaCampana.fecha_inicio}
+                  </p>
+                </>
+              ) : (
+                <p className="text-xs sm:text-sm text-amber-800 max-w-md mx-auto leading-relaxed">
+                  Actualmente no hay una campaña de inscripciones activa. Te avisaremos apenas se habiliten las próximas fechas de registro.
+                </p>
+              )}
             </div>
           )}
 
           {/* ── CASO B: BLOQUEO POR CUPOS AGOTADOS ── */}
-          {diaEsAbierto && cuposEstanAgotados && (
+          {!loadingEstado && diaEsAbierto && cuposEstanAgotados && (
             <div className="p-6 bg-rose-50 border border-rose-200 rounded-3xl text-center space-y-3 mb-4 animate-in fade-in duration-300">
               <div className="w-12 h-12 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center mx-auto">
                 <AlertTriangle className="w-6 h-6" />
               </div>
               <h3 className="text-lg font-bold text-rose-900">
-                Cupos Agotados para esta Semana
+                Cupos Agotados para esta Campaña
               </h3>
               <p className="text-xs sm:text-sm text-rose-800 max-w-md mx-auto leading-relaxed">
-                Se han completado los {limiteCupos} cupos disponibles para la entrega de esta semana. Las primeras {limiteCupos} personas que pagaron serán las primeras en recibir sus cubetas.
+                Se han completado los {limiteCupos} cupos disponibles para{" "}
+                <strong>{campanaActiva?.nombre || "la campaña actual"}</strong>. Las primeras {limiteCupos} personas que registraron su pago serán las primeras en recibir sus cubetas.
               </p>
               <p className="text-xs text-rose-700 font-medium">
-                Te esperamos el próximo jueves para la nueva entrega semanal.
+                {proximaCampana
+                  ? `Próxima campaña programada: ${proximaCampana.rango_fechas_texto || proximaCampana.fecha_inicio}.`
+                  : "Te esperamos en la próxima campaña."}
               </p>
             </div>
           )}

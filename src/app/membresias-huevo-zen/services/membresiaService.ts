@@ -22,6 +22,15 @@ export interface RegistroMembresiaResponse {
   data?: any;
 }
 
+export interface CampanaInfo {
+  id: string;
+  nombre: string;
+  fecha_inicio: string;
+  fecha_fin: string;
+  limite_cupos: number;
+  rango_fechas_texto?: string;
+}
+
 export interface EstadoSemanaResponse {
   total_inscritos: number;
   limite_cupos: number;
@@ -30,6 +39,9 @@ export interface EstadoSemanaResponse {
   abierto_por_dia: boolean;
   cupos_agotados: boolean;
   abierto: boolean;
+  campana_activa?: CampanaInfo | null;
+  proxima_campana?: CampanaInfo | null;
+  rango_fechas_texto?: string | null;
 }
 
 const API_BASE_URL =
