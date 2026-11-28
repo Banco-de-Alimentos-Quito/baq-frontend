@@ -22,6 +22,7 @@ import {
 import { CedulaValidator } from "../../donacion/mensual/validators/documentValidators";
 import { useFormStore } from "../../store/formStore";
 import { DonationService } from "../../donacion/mensual/services/donationService";
+import { trackDonationCheckout, trackDonationRequestSubmitted } from "@/lib/donationAnalytics";
 
 const PRESET_AMOUNTS = [2, 10, 30, 50];
 
@@ -159,6 +160,7 @@ export function DebitoBancarioSection({ initialMonto = 10 }: DebitoBancarioSecti
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
+    trackDonationCheckout(monto, "mensual");
 
     setLoading(true);
 
@@ -185,6 +187,7 @@ export function DebitoBancarioSection({ initialMonto = 10 }: DebitoBancarioSecti
 
       // 1. Register donation data
       await DonationService.submitQuickDonation(payload as any);
+      trackDonationRequestSubmitted(monto, "debito_bancario");
 
       // 2. Submit front and back images
       if (cedulaFile) {

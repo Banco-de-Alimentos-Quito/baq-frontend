@@ -12,6 +12,7 @@ import { toast, Toaster } from "sonner";
 import { getOrCreateUserId } from "@/app/utils/utils";
 import { useMobile } from "@/hooks/use-mobile";
 import { useFormStore } from "@/app/store/formStore";
+import { trackDonationPurchase } from "@/lib/donationAnalytics";
 
 // Componente interno que usa useSearchParams
 function QRContent() {
@@ -512,6 +513,7 @@ json' -d '${JSON.stringify(statusPayload)}'`;
         });
         console.log("✅ Toast de PENDING mostrado");
       } else if (result.status === "APPROVED") {
+        trackDonationPurchase(transactionId, cantidad, "deuna");
         console.log(
           "✅ Estado: APPROVED - Mostrando mensaje de éxito y abriendo modal"
         );

@@ -3,12 +3,15 @@
 import { useEffect, useRef } from "react";
 import Script from "next/script";
 import { useFormStore } from "../store/formStore";
+import { useRouter } from "next/navigation";
+import { trackDonationPurchase } from "@/lib/donationAnalytics";
 
 interface PayPalButtonProps {
   productDescription?: string;
   amount?: number;
   currency?: string;
   successUrl?: string;
+  onSuccess?: () => void;
 }
 
 export default function PayPalButton({
@@ -16,10 +19,14 @@ export default function PayPalButton({
   amount = 0,
   currency = "USD",
   successUrl = "thank-you",
+  onSuccess,
 }: PayPalButtonProps) {
+  const router = useRouter();
   // Usar useRef para verificar si los botones ya han sido renderizados
   const buttonsRendered = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const onSuccessRef = useRef(onSuccess);
+  onSuccessRef.current = onSuccess;
 
   useEffect(() => {
     // Función para inicializar los botones de PayPal
@@ -57,14 +64,7 @@ export default function PayPalButton({
 
                 const { userId, identificacion: identificacionDonante, direccion: direccionDonante } = useFormStore.getState();
 
-                console.log("Datos de la transacción y los que son para enviar al backend:", {
-                  transacction,
-                  userId,
-                  identificacionDonante,
-                  direccionDonante,    
-                });
-
-                await fetch(`${process.env.NEXT_PUBLIC_API_URL}/paypal/capture-order`, {
+                const captureResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/paypal/capture-order`, {
                   method: "POST",
                   headers: {
                     "Content-Type": "application/json",
@@ -76,9 +76,17 @@ export default function PayPalButton({
                     direccionDonante,
                   }),
                 });
+                if (!captureResponse.ok) throw new Error("No se pudo confirmar la captura de PayPal");
+                const payload = await captureResponse.json();
+                const order = payload?.data?.purchase_units ? payload.data : payload;
+                const capture = order?.purchase_units
+                  ?.flatMap((unit: any) => unit?.payments?.captures || [])
+                  .find((item: any) => item?.status === "COMPLETED" && item?.id);
+                if (!capture) throw new Error("PayPal no devolvió una captura completada verificable");
 
-                // Usar router.push en lugar de window.location
-                //window.location.href = `/${successUrl}`;
+                trackDonationPurchase(capture.id, Number(capture.amount?.value || amount), "paypal");
+                onSuccessRef.current?.();
+                router.push(`/${successUrl.replace(/^\//, "")}`);
               } catch (error) {
                 console.error("Error al procesar el pago:", error);
               }
@@ -107,7 +115,7 @@ export default function PayPalButton({
     return () => {
       buttonsRendered.current = false;
     };
-  }, [productDescription, amount, currency, successUrl]);
+  }, [productDescription, amount, currency, successUrl, router]);
 
   return (
     <>

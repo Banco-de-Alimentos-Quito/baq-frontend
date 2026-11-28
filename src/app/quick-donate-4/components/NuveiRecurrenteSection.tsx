@@ -20,6 +20,7 @@ import {
   Check,
 } from "lucide-react";
 import { CedulaValidator } from "../../donacion/mensual/validators/documentValidators";
+import { trackDonationCheckout, trackDonationPaymentMethod, trackSubscriptionActivated } from "@/lib/donationAnalytics";
 
 declare global {
   var PaymentGateway: any;
@@ -127,6 +128,8 @@ export function NuveiRecurrenteSection({ initialMonto = 10 }: NuveiRecurrenteSec
     if (!validatePreForm()) {
       return;
     }
+    trackDonationCheckout(monto, "mensual");
+    trackDonationPaymentMethod("nuvei_recurrente", monto, "mensual");
     donorDataRef.current = {
       email: inputEmail.trim(),
       nombre: nombre.trim(),
@@ -233,6 +236,7 @@ export function NuveiRecurrenteSection({ initialMonto = 10 }: NuveiRecurrenteSec
                     "Fallo en el servidor al guardar la suscripción",
                 );
               }
+              trackSubscriptionActivated(finalData.monto, "nuvei_recurrente");
               setStatus("success");
               setTxResult({
                 status: "success",

@@ -6,6 +6,7 @@ import PaymentModal from "../components/PaymentModal";
 import Image from "next/image";
 import { useRouteLoading } from "@/hooks/useRouteLoading";
 import { useMobile } from "@/hooks/use-mobile";
+import { trackDonationAmount, trackDonationCheckout, trackDonationPaymentMethod } from "@/lib/donationAnalytics";
 
 // Type for Google Analytics gtag function
 declare global {
@@ -205,6 +206,7 @@ export default function DonacionPage() {
 
   const handleCantidad = (valor: number) => {
     setCantidad(Number(valor.toFixed(2)));
+    trackDonationAmount(valor, tipo);
     setOtroActivo(false);
     setOtro("");
   };
@@ -216,7 +218,9 @@ export default function DonacionPage() {
 
   const handleDonarAhora = async (e: React.MouseEvent) => {
     e.preventDefault();
-    if (cantidad < 0) return;
+    if (cantidad < 1) return;
+
+    trackDonationCheckout(cantidad, tipo);
 
     // GA4 event for donation action
     if (typeof window !== "undefined" && window.gtag) {
@@ -494,6 +498,7 @@ export default function DonacionPage() {
                 placeholder="Monto"
                 value={otroActivo ? otro : ""}
                 onFocus={handleOtroFocus}
+                onBlur={() => trackDonationAmount(cantidad, tipo)}
                 onChange={(e) => {
                   const raw = e.target.value;
                   // permitir vacío mientras escribe
@@ -828,6 +833,8 @@ export default function DonacionPage() {
                 </div>
                 <button
                   onClick={() => {
+                    trackDonationCheckout(cantidad, "mensual");
+                    trackDonationPaymentMethod("nuvei_recurrente", cantidad, "mensual");
                     window.location.href = `/donacion/nuvei?monto=${cantidad}&tipo=mensual`;
                   }}
                   className="w-full bg-gradient-to-r from-[#2F3388] to-[#4a4fbf] hover:from-[#252a6e] hover:to-[#3d42a8] text-white font-bold py-3 px-6 rounded-xl shadow-md transform transition-all duration-200 hover:scale-[1.02] hover:shadow-lg active:scale-95 flex items-center justify-center gap-3 cursor-pointer"

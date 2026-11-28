@@ -10,6 +10,7 @@ import PluxModal from "./PluxModal";
 import { getOrCreateUserId } from "../utils/utils";
 import { useFormStore } from "../store/formStore";
 import { GestorDonacionSelector } from "../donacion/mensual/components/GestorDonacionSelector";
+import { trackDonationPaymentMethod } from "@/lib/donationAnalytics";
 
 interface DeunaForm {
   nombre: string;
@@ -74,20 +75,13 @@ export default function PaymentModal({
 
   if (!isOpen) return null;
   const goToDeuna = () => {
+    trackDonationPaymentMethod("deuna", cantidad, "unica");
     onClose();
-    const params = new URLSearchParams({
-      monto: cantidad.toString(),
-      nombre: deunaForm.nombre,
-      apellido: deunaForm.apellido,
-      correo: deunaForm.correo,
-      telefono: deunaForm.telefono,
-      documento: deunaForm.documento,
-      comunidad: comindadesChecked ? "1" : "0",
-    });
-    router.push(`/donacion/qr?${params.toString()}`);
+    router.push(`/donacion/deuna?monto=${cantidad}`);
   };
 
   const goToPayphone = () => {
+    trackDonationPaymentMethod("payphone", cantidad, "unica");
     onClose();
     const params = new URLSearchParams({
       monto: cantidad.toString(),
@@ -125,6 +119,8 @@ export default function PaymentModal({
       return;
     }
 
+    trackDonationPaymentMethod("pagoplux", cantidad, "unica");
+
     // Si la validación es exitosa, limpia los errores
     setValidationErrors({ email: "", phone: "", gestorDonacion: "" });
 
@@ -132,22 +128,18 @@ export default function PaymentModal({
       direccion,
       ciudad,
       gestorDonacion: ppxUserData.gestorDonacion,
+      email: result.data.email,
+      phone: result.data.phone,
+      monto: cantidad.toString(),
     });
 
     // Cerrar modales
     setIsPpxFormOpen(false);
     onClose();
 
-    const { userId } = useFormStore.getState();
-
     // Redirigir a la página de PagoPlux con los datos validados
     const params = new URLSearchParams({
       monto: cantidad.toString(),
-      email: result.data.email,
-      phone: result.data.phone,
-      user_id: userId,
-      direccion: encodeURIComponent(direccion),
-      ciudad: encodeURIComponent(ciudad),
     });
     router.push(`/donacion/pagoplux?${params.toString()}`);
   };
@@ -199,6 +191,7 @@ export default function PaymentModal({
                 <button
                   className="flex items-center justify-center gap-2 py-5 rounded-lg bg-orange-600 text-white font-semibold hover:bg-orange-700 transition"
                   onClick={() => {
+                    trackDonationPaymentMethod("deuna", cantidad, "unica");
                     onClose();
                     router.push(`/donacion/deuna?monto=${cantidad}`);
                   }}
@@ -273,6 +266,7 @@ export default function PaymentModal({
             <button
               className="flex items-center justify-center gap-2 py-3 rounded-lg bg-[#1B2A4A] text-white font-semibold hover:bg-[#142038] transition"
               onClick={() => {
+                trackDonationPaymentMethod("nuvei", cantidad, "unica");
                 onClose();
                 router.push(`/donacion/nuvei?monto=${cantidad}`);
               }}

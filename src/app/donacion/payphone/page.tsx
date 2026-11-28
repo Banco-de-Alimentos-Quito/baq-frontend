@@ -107,6 +107,7 @@ function PayphonePageContent() {
 
     if (montoParam) {
       setMonto(parseFloat(montoParam));
+      useFormStore.getState().setFormField("monto", montoParam);
     }
 
     if (referenceParam) {
@@ -117,8 +118,13 @@ function PayphonePageContent() {
   }, [searchParams]);
 
   const handleSuccess = (response: any) => {
-    console.log("Pago exitoso:", response);
-    router.push("/thank-you");
+    const id = response?.id || response?.transactionId;
+    const clientTransactionId = response?.clientTransactionId || response?.ClientTransactionId;
+    if (id && clientTransactionId) {
+      router.push(`/payment-confirmation?id=${encodeURIComponent(String(id))}&clientTransactionId=${encodeURIComponent(String(clientTransactionId))}`);
+    }
+    // Payphone can also redirect to its configured response URL. Only that
+    // confirmation route may show the thank-you page after backend approval.
   };
 
   const handleError = (error: any) => {

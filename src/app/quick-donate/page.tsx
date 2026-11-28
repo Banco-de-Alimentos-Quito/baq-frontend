@@ -12,6 +12,7 @@ import { Upload, X, ImageIcon, CheckCircle } from "lucide-react";
 import { CedulaValidator } from "../donacion/mensual/validators/documentValidators";
 import { useFormStore } from "../store/formStore";
 import { DonationService } from "../donacion/mensual/services/donationService";
+import { trackDonationCheckout, trackDonationRequestSubmitted } from "@/lib/donationAnalytics";
 
 const PRESET_AMOUNTS = [2, 10, 30, 50];
 
@@ -145,6 +146,7 @@ function QuickDonateContent() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
+    trackDonationCheckout(monto, "mensual");
 
     setLoading(true);
 
@@ -171,6 +173,7 @@ function QuickDonateContent() {
 
       // 1. First, register the donation data
       await DonationService.submitQuickDonation(payload as any);
+      trackDonationRequestSubmitted(monto, "debito_bancario");
 
       // 2. Submit the images
       if (cedulaFile) {

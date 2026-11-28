@@ -12,6 +12,7 @@ import { AccountTypeSelector } from "./components/AccountTypeSelector";
 import { GestorDonacionSelector } from "./components/GestorDonacionSelector";
 import { BANK_OPTIONS, ACCOUNT_TYPE_OPTIONS } from "./constants/formOptions";
 import { DonationService } from "./services/donationService";
+import { trackDonationCheckout, trackDonationRequestSubmitted } from "@/lib/donationAnalytics";
 
 // Componente del Carnet de Donador
 const DonorCard = ({
@@ -542,6 +543,7 @@ export default function DonacionMensualForm() {
 
     setEnviado(true);
     setShowConfirmationModal(false);
+    trackDonationCheckout(monto, "mensual");
 
     try {
       const facturaValue = quiereFactura === true ? true : false;
@@ -552,6 +554,7 @@ export default function DonacionMensualForm() {
         termsChecked,
         facturaValue,
       );
+      trackDonationRequestSubmitted(monto, "debito_bancario");
       setEnviado(false);
       setShowSuccessModal(true);
     } catch (error) {

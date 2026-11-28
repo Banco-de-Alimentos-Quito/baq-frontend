@@ -6,6 +6,7 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useFormStore } from "../store/formStore";
+import { trackDonationConfirmationViewed } from "@/lib/donationAnalytics";
 
 export default function ThankYou() {
   const router = useRouter();
@@ -21,6 +22,7 @@ export default function ThankYou() {
   useEffect(() => {
     // actualizar solo en cliente después del mount
     setShareUrl(window.location.href);
+    trackDonationConfirmationViewed();
   }, []);
 
   const shareImage = "/thanks-image.jpeg";

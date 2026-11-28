@@ -7,6 +7,7 @@ import Header from "@/components/sections/Header";
 import Footer from "@/components/sections/Footer";
 import LoadingWrapper from "@/components/ui/LoadingWrapper";
 import StoreInitializer from "./components/StoreInitializer";
+import DonationRouteTracker from "@/components/analytics/DonationRouteTracker";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -21,6 +22,8 @@ export const metadata: Metadata = {
   description:
     "Con tu ayuda, llevamos alimento a quienes más lo necesitan en Quito. Dona alimentos o dinero y sé parte del cambio.",
 };
+
+const gaMeasurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 
 export default function RootLayout({
   children,
@@ -46,7 +49,7 @@ export default function RootLayout({
         className={`${montserrat.variable} font-sans antialiased min-h-screen flex flex-col overflow-x-hidden w-full max-w-full`}
       >
         <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-XJNTP3SK76"
+          src={`https://www.googletagmanager.com/gtag/js?id=${gaMeasurementId}`}
           strategy="afterInteractive"
         />
         <Script id="google-analytics" strategy="afterInteractive">
@@ -54,12 +57,13 @@ export default function RootLayout({
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', 'G-XJNTP3SK76');
+            gtag('config', '${gaMeasurementId}');
             `}
         </Script>
 
 
         <StoreInitializer />
+        <DonationRouteTracker />
 
         <LoadingWrapper>
           <Header />

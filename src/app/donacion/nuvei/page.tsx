@@ -7,6 +7,7 @@ import Script from "next/script";
 import { motion, AnimatePresence } from "framer-motion";
 import { Upload, X } from "lucide-react";
 import { DonationService } from "../mensual/services/donationService";
+import { trackDonationPurchase, trackSubscriptionActivated } from "@/lib/donationAnalytics";
 
 // ── Tipos ───────────────────────────────────────────────────────────────────
 
@@ -166,6 +167,7 @@ function NuveiPageContent() {
           if (!tx) return;
 
           if (tx.status === "success" && tx.status_detail === 3) {
+            trackDonationPurchase(tx.id, monto, "nuvei");
             setStatus("success");
 
             // Mostrar modal gráfico de éxito
@@ -278,6 +280,7 @@ function NuveiPageContent() {
                 const errorData = await res.json().catch(() => ({}));
                 throw new Error(errorData.error || "Fallo en el servidor al guardar la suscripción");
               }
+              trackSubscriptionActivated(monto, "nuvei_recurrente");
               setTxResult({
                 status: "success",
                 title: "¡Suscripción Activa!",

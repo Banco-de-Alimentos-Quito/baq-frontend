@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { PaymentService } from "../services/paymentService";
 import { getOrCreateUserId } from "../utils/utils";
 import { useFormStore } from "../store/formStore";
+import { trackDonationPurchase } from "@/lib/donationAnalytics";
 
 export default function PaymentConfirmationContent() {
   const searchParams = useSearchParams();
@@ -47,6 +48,11 @@ export default function PaymentConfirmationContent() {
         );
 
         if (response.status === "Approved" || response.status === "Aproved") {
+          trackDonationPurchase(
+            String(response.transactionId || id),
+            Number(useFormStore.getState().monto) || Number(response.amount || 0) / 100,
+            "payphone",
+          );
 
           // Continuar con el flujo normal
           setStatus("success");
